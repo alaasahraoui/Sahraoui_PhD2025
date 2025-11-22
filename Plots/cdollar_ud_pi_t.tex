@@ -1,0 +1,48 @@
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}[scale=.7]
+        \begin{axis}[
+            xlabel={\large{Training samples per gesture class}},
+            ylabel={\large{Recognition rates [\%]}},
+            xmin=0, xmax=5,
+            ymin=80, ymax=100,
+            xtick pos=bottom,
+            ytick pos=left,
+            xtick={1,2,3,4},
+            ytick={80,85,90,95,100},
+            legend pos=south east,
+            ymajorgrids=true
+        ]
+            \addplot[color=orange,mark=square*]
+                coordinates {(1, 83.29) (2, 88.88) (3, 90.82) (4, 91.78)};
+            \addplot[color=blue,mark=*]
+                coordinates {(1, 80.27) (2, 85.77) (3, 88.17) (4, 89.36)};
+            \legend{\$P, \$C}
+        \end{axis}https://www.overleaf.com/project/5cb494b9e51a152e6d1e1bc9
+    \end{tikzpicture}%
+    \begin{tikzpicture}[scale=.7]
+        \begin{axis}[
+            xlabel={\large{Training samples per gesture class}},
+            ylabel={\large{Execution times [ms]}},
+            xmin=0, xmax=5,
+            ymin=0.05, ymax=0.3,
+            xtick pos=bottom,
+            ytick pos=left,
+            xtick={1,2,3,4},
+            ytick={0.05,0.1,0.15,0.2,0.25,0.3},
+            legend pos=south east,
+            ymajorgrids=true,
+            y tick label style={
+                /pgf/number format/.cd,fixed,fixed zerofill,precision=2,/tikz/.cd
+            }
+        ]
+            \addplot[color=orange,mark=square*]
+                coordinates {(1, 0.07) (2, 0.14) (3, 0.21) (4, 0.28)};
+            \addplot[color=blue,mark=*]
+                coordinates {(1, 0.09) (2, 0.15) (3, 0.20) (4, 0.26)};
+            \legend{\$P, \$C}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{User-dependent platform-independent testing of \$P and \$C in terms of recognition rates [\%] and execution times [ms] when the recognizers are trained with gestures performed on a tablet and tested with gestures performed on a smartphone.}
+    \label{fig:cdollar_ud_pi_t}
+\end{figure}

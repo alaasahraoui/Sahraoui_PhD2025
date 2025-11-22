@@ -1,0 +1,237 @@
+\chapter{Related Work}
+\label{chap:Related}
+% Insert here the chapter along with remaining entries
+Adapting UIs to their contexts of use aims at meeting both evolving requirements, such as the needs, desires, and preferences of individual users or user groups, and evolving resources, such as the available interaction devices in the surroundings, that all may be dependent on the current situation. There are two categories of adaptation, whether the end user or the application is responsible for the modification~\cite{Gajos:2017}. \textit{Adaptability} refers to the end user's ability to adjust the UI, while \textit{adaptivity} or \textit{self-adaptation} denotes the application's ability to perform UI adjustments \cite{Browne:1990}. AUIs refer to user interfaces benefiting from adaptivity.
+\textit{Personalisation} or \textit{customisation}, a subset of adaptivity, focuses on adapting the UI contents, presentation, and behaviour based solely on end-user data, such as personal traits~\cite{Gajos:2017}. When data comes from external sources, like other user groups, it results in \textit{recommendations} instead. \textit{Mixed-initiative adaptation} occurs when both the end user and the application collaborate to make adaptations~\cite{Horvitz:1999}.
+
+The ultimate goal of any UI adaptation is to make the UI better from the end user perspective to satisfy him/her as much as possible, by optimising factors such as efficiency (\eg reducing the task execution time and error rates or improving the learning curve), effectiveness (\eg by ensuring full task completion), and subjective user satisfaction. This goal is commendable, but it carries some risk because adaptation is multifactorial and not all its impacts have been thoroughly researched.
+Benefiting from the adaptation resulting from the improvement of certain factors comes at the price of suffering the resulting disadvantages (\eg user disruption~\cite{Hui:2009}), which may have an impact on factors other than those initially considered.
+
+The challenge lies in suggesting and/or executing the appropriate adaptation at the right time and place to provide value to the end user~\cite{Alvarez:2009}. Otherwise, adaptation may encounter limitations that hinder expected benefits~\cite{Lavie:2010}, including the risk of misfit, user cognitive disruption, lack of prediction, lack of explanation, lack of user involvement, and privacy risks \cite{Dwork:2014}. Therefore, adapting UIs means responding adequately to the following questions of the Quintilian hexameter~\cite{Motti:2013}:
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{Images/Content.pdf}
+    \caption{Example of contents adaptation: before \textcircled{1} and after \textcircled{2}.}
+    \label{fig:content}
+\end{figure}
+
+\begin{itemize}
+\item \textit{What to adapt?} Specifies the type of resource or aspect that is subject to adaptation: contents (\eg text, images, videos), presentation (\eg format of UI elements, position, size, arrangement), or behaviour (\eg navigational flow, activation, and deactivation of features, promotion or demotion of widgets~\cite{Bouzit:2019} - see \autoref{fig:promotion}). For example, \autoref{fig:content} shows an adaptation of a weather forecast application \textcircled{1} with more data depending on the user's location \textcircled{2}. \autoref{fig:presentation} shows an adaptation of the presentation where the background colour is adapted from daytime \textcircled{1} to nighttime \textcircled{2}. \autoref{fig:behavior} shows three examples of behaviour adaptation depending on desktop \textcircled{1}, tablet \textcircled{2}, and smartphone \textcircled{3}.
+
+\item \textit{Why to adapt?} Specifies the main goals that the adaptation should reach and satisfy, preferably expressed as software qualities (\eg support the transition from a novice user to an expert user, maximise the learnability) and explains how the adaptation can contribute to achieving these goals (\eg this adaptation is expected to reduce the cognitive load). 
+
+\item \textit{How to adapt?} Specifies according to which method, technique, algorithm, or strategy the adaptation will be performed (\eg a technique of changing the video quality, a decision tree to select the most preferred widget or menu type). This chapter will define an adaptation operation to specify how an adaptation action could be operationalised based on its event and condition for a certain value.
+
+\item \textit{With regard to what?} Specifies contextual information related to the user (\eg preferences, skills, level of experience) and interactive tasks (\eg what type of task is subject to adaptation), to the computing platform (\eg device characteristics, platform features, screen resolution, interaction capabilities), and to the environment (\eg location, level of light, noise, stress) with regard to which the adaptation is justified and performed. For example, adapt the UI to colour-blind users, to a set of devices, or to a noisy environment.
+
+\item \textit{Who is controlling the adaptation?} Specifies the actor that initiates, triggers, or is in charge of each stage of the adaptation (\eg the end user, the application, the UI, a third party such as a proxy, or any combination). This chapter addresses this question by referring to the seven stages of the life cycle.
+
+\item \textit{When to adapt?} Specifies the temporal state in which the adaptation is performed (\eg at design time, run time, or compilation time). For example, the adaptation moment is at run-time whether it is for adaptability or adaptivity.
+
+\item \textit{Where to adapt?} Specifies the physical location where the adaptation is computed (\eg based on the software architecture at the client, at the proxy, or on the server). For example, an adaptation can be performed on the server side when its logic is computationally demanding and cannot be operated at the UI level. 
+\end{itemize}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{Images/Presentation.pdf}
+    \caption{Example of Presentation adaptation: daylight \textcircled{1} and nightlight \textcircled{2}.}
+    \label{fig:presentation}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{Images/Behavior.pdf}
+    \caption{Example of behaviour adaptation: desktop \textcircled{1}, tablet \textcircled{2}, and smartphone \textcircled{3}.}
+    \label{fig:behavior}
+\end{figure}
+
+
+\section{The User Interface Adaptation Life Cycle}
+\label{sec:lifecycle}
+The UI adaptation life cycle can be decomposed into seven stages~\cite{Abrahao:2021,Lopez:2007} (\autoref{fig:isatine}):
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{Images/Isatine.pdf}
+    \caption{The seven stages of user interface adaptation~\cite{Lopez:2007}.}
+    \label{fig:isatine}
+\end{figure}
+
+\begin{enumerate}
+\item \textit{Specification of the adaptation goals}: this first stage states the goals that UI adaptation should pursue, maintain, and update by any entity involved, such as the user ($U$), the application or system ($S$), a third-party ($T$), or any combination of them. Various contextual aspects are considered, such as the user profile, the task at hand, the computational platform (both hardware and software), and the entire physical and organisational environment in which the task is performed. The goals fall into three categories: self-expressed, application-expressed (locally or remotely), or according to their location. When the application is tolerant of faults depending on conditions, a machine-expressed goal is specified.
+
+
+\item \textit{Specification of initiative for adaptation}: this second stage specifies which entity is responsible for initiating the adaptation: the user (explicit initiative), the application (implicit initiative that detects a change in the context of use requiring adaptation), or both jointly (as a decision taken by the entities in control). When the machine initiates an adaptation that the user subsequently cancels, a mixed initiative occurs \cite{Horvitz:1999}. This stage is further refined into an adaptation request, a detection of an adaptation need, and a notification for an adaptation request, depending on their location. 
+
+\item \textit{Specification of adaptation}: this third stage specifies which entity is responsible for deciding that an adaptation should occur. After the adaptation is initiated, a set of adaptation proposals is created that contains zero, one, or many proposals. These proposals can be further elaborated by the user, the application, or a third party, such as a broker.  If the application is responsible for creating adaptation proposals, then adaptation rules generate proposals and even infer new rules. Once the set of proposals is obtained, a decision must be made to accept (\eg which adaptation proposal or which ones are the most appropriate), to reject (\eg if no proposal corresponds to the goals), to cancel (\eg no adaptation is finally needed), to defer (\eg by the next session), or to propose a new set.
+
+
+\item \textit{Application of adaptation}: this fourth stage specifies which entity is responsible for applying the adaptation decided in the previous stage, if any. Since the adaptation will be applied to the UI, it should incorporate a mechanism that supports adaptation (\eg via an API for parameterisation \cite{Cockton:1987}). The user adapts the UI (\eg through UI options, personalisation) or the application does it on behalf of the user. For example, transformations apply various presentation adaptations of a GUI to multiple platforms with various resolutions~\cite{Furtado:2001,Aquino:2010}. 
+
+\item \textit{Transition with adaptation}: this fifth stage specifies which entity is responsible for ensuring a smooth transition between the UIs before and after adaptation. For example, an application uses some visualisation techniques to present the intermediary steps executed (\eg by progressive rendering \cite{Rogers:1999} or by animated transition, by morphing~\cite{Dessart:2011}).
+
+
+\item \textit{Interpretation of evaluation}: this sixth stage specifies which entity is responsible for providing information meaningful for understanding the adaptation. When the application performs some adaptation without any explanation, the user does not necessarily understand why this type of adaptation has been performed. Conversely, when the user has performed some adaptation, the user should tell the application how to interpret this adaptation. For example, a Machine Learning (ML) algorithm first proposes some adaptation to be applied~\cite{Eisenstein:2000}; if this adaptation does not correspond to the goals, the user produces an alternate adaptation and informs the application how to incorporate this new scheme for future use. The machine updates the knowledge base by interpreting this explanation. User-control of the adaptation is key and can be supported by unsupervised learning~\cite{Eloi:2024}.
+
+\item \textit{Evaluation of adaptation}: this seventh stage specifies which entity is responsible for evaluating the quality of the adaptation performed to check whether the initially-specified goals are met. For example, if the application maintains some internal plan of goals, it should update this plan according to the adaptations applied so far. If the goals are in the users’ mind, they could also be evaluated with respect to what has been performed in the previous stages. In this case, the explanation of the adaptation contributes to updating the goals’ status too. For example, \autoref{fig:evaluation} shows how a previously-applied adaptation can be evaluated: the adaptation operation applied is displayed and subject to evaluation by the system itself (based on internal analysis) or by the end-user, which can be qualitative (\eg by a rating bar) or quantitative (\eg by a rating scale).
+\end{enumerate}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{Images/Evaluation.PNG}
+    \caption{Example of adaptation evaluation in \href{https://symbiotik-infovis.eu/}{Symbiotik}: by the user and/or the system.}
+    \label{fig:evaluation}
+\end{figure}
+
+\section{Targeted Literature Review on User Interface Adaptation}
+\label{sec:TLR}
+Despite the significant progress in AUIs, several challenges persist, which complicate the broader adoption of these systems and their development. Instead of performing a systematic literature review, this section prefers a targeted literature review that summarises the literature on UI adaptation, considering the most relevant and representative references in the domain. 
+
+\subsection{Existing and Future Challenges in User Interface Adaptation}
+
+This section therefore discusses a limited set of challenges that are still active and open today for UI adaptation.
+
+
+\begin{enumerate}[
+    topsep=5pt,
+    itemsep=1pt,
+    parsep=0pt,
+    label={$C_{\arabic*}.$},
+    leftmargin=0.675cm
+]
+
+ \item \textbf{Complexity in user modelling.} Building precise and thorough user models that can anticipate and adjust to each user's demands is still challenging. These models must account for the diversity of human behaviour and preferences, which are shaped by a wide range of elements such as the user's present emotional state, personal experience, and cultural background. Because of this complexity, models frequently oversimplify the user or become too complicated to be used in real-time adaptivity~\cite{Ontanon:2021}. Several factors influence the complexity in user modelling.
+ Human behaviour is intrinsically highly variable and influenced by numerous external and internal factors. Capturing this variability in a user model requires sophisticated algorithms and extensive datasets~\cite{AlSeraj:2018}. Various user modelling approaches, such as GOMS models, cognitive architectures, grammar-based models, and application-specific models, have varied levels of complexity and are appropriate for different types of applications~\cite{Castillejo:2014}. The complexity increases while selecting and applying the appropriate strategy in the appropriate situation. End-users interact with AUIs in various contexts of use~\cite{Calvary:2002} that change over time, such as different tasks, devices, platforms, and environments~\cite{Calvary:2003}. Adapting to these dynamic contexts of use adds another layer of complexity~\cite{Coutaz:2006}. Cultural background, personal experiences, and personal traits~\cite{Gajos:2017} significantly influence user preferences and interactions. Models must be sensitive to these differences to provide meaningful adaptations~\cite{Castillejo:2014}. User models used for adaptation may initially be correct or not and become outdated over time due to changes in external factors. Identifying, correcting, and updating these models while the context is evolving is even more complex. Mechanisms need to be in place to detect and address inaccuracies in the user models~\cite{AlSeraj:2018}.
+  Environmental factors in the context of use are often underestimated if not overlooked. The environment in which the user operates~\cite{Dubiel:2022}, including factors like traffic, noise, light, pressure, and the presence of other users, especially in collaborative configurations, significantly impacts user behaviour and the effectiveness of AUIs.
+
+ Due to all these reasons, obtaining an accurate AUI is no longer a matter of predefined adaptation rules, heuristics, and models, but a matter of taking the evolution into play.
+
+\item \textbf{Balancing adaptation with user control.} While AUIs aim to provide a highly adapted user experience~\cite{Abrahao:2021}, there is a fine line between helpful adaptation and perceived intrusion. Users may feel a loss of control over the UI when changes are too frequent, too disruptive~\cite{Todi:2021}, unexpected~\cite{Lavie:2010}, or disturbing~\cite{Hui:2009}. Ensuring that adaptations enhance user experience without undermining user autonomy is a crucial design consideration that remains largely unresolved. A totally automatic adaptation is certainly disrupting; a totally manual adaptation is probably even more disrupting as the adaptability cost is too expensive for the end-user. The aim of possessing a good AUI is to seem finally as if adaptation lies in mixed-initiative~\cite{Horvitz:1999} control. 
+
+For example, \textsc{MyUI}~\cite{Peissner:2013} tested the effectiveness and acceptability of adaptation patterns in different cost-benefit situations and for different users. The patterns turn out to increase the transparency and controllability~\cite{Gajos:2017} of adaptations as soon as they are under user control. Preference and acceptance of the patterns depend on the cost-benefit condition. In the same vein, \textsc{Scaler}~\cite{Eloi:2024} supports user control by unsupervised learning by enabling end-users to personalise the form widgets based on their preferences or based on the system.
+
+\item \textbf{Integration with existing systems.}
+Integrating advanced adaptive mechanisms into existing technological ecosystems poses technical and operational challenges. Compatibility with legacy systems, scalability, and maintaining consistent performance across different platforms are significant hurdles for developers of AUIs~\cite{Abrahao:2021}. Software engineering techniques, such as reverse engineering of UIs~\cite{Bouillon:2005} are helpful, but will always require some manual code tweaking. 
+
+\item \textbf{Privacy and security.}
+To provide personalised \cite{Ontanon:2021} and context-aware services \cite{Crowley:2002}, AUIs collect a variety of user data, such as demographic data, location history, preferences, and even psychological states. Deep data collecting, however, presents privacy issues \cite{Dwork:2014,Hazard:2016} because private data may be exposed and misused. For example, an AUI can improperly determine a user's home location based on repeated visits \cite{Beresford:2003}. 
+Additionally, AUIs influence user behaviour through subtly nudging them, such as encouraging in-app purchases during decision-weariness-prone moments. This is especially true when it comes to games that use subtle cues to encourage in-app purchases, which is particularly remarkable in some games \cite{Teachout:2016}. This could force end-users to buy at times when they are most likely to be vulnerable, including when they are tired from making decisions. This is an illustration of indirect manipulation of autonomy, in which the interface is made to sway the choices made by the user according to information gathered about their actions and emotional state \cite{Hazard:2016}. 
+Ethical design principles should put user liberty and privacy first to reduce these hazards and protect personal data \cite{Zyskind:2015}.
+
+Differential privacy is one promising strategy that preserves individual privacy while enabling user data analysis. Differential privacy lowers the likelihood of privacy breaches by adding "noise" to the data, which makes it harder to identify particular users \cite{Dwork:2014}. Blockchain technology can also be used to improve data usage accountability and transparency. Users can have more insight into how and by whom their data is being used by keeping track of data transactions on a decentralised ledger. This helps foster trust and prevent data misuse \cite{Zyskind:2015}.
+
+\item \textbf{Handling wrong, outdated, and inadequate data in adaptivity.}
+AUIs heavily rely on user models that are intended to anticipate and react to unique demands, preferences \cite{Eslami:2018}, and behaviours \cite{Cockton:1987}. These models frequently encounter difficulties because of errors resulting from a variety of sources \cite{Abrahao:2021}. User preferences and behaviours may not be fully captured, which might result in incorrect assumptions when building user models. For example, Netflix's recommendation engine begins with user inputs, such as preferred genres, and improves over time by analysing movie viewing patterns to provide more precise recommendations \cite{Gomez-Uribe:2015}. To avoid these models becoming out of date, they should be regularly updated with new data to preserve the relevance and responsiveness of AUIs. For this purpose, methods like data mining and categorisation ensure that the AUI adapts to suit the user's evolving needs \cite{Jalil:2021}.
+
+For example, in a smart home setting, an AUI may adjust lighting settings in response to user behaviour. If the user's schedule changes, the model may become unaligned.
+The system can determine the requirement for model upgrades by identifying more frequent manual illumination adjustments \cite{Mahdavinejad:2018}.
+Furthermore, due to privacy restrictions, incomplete data collection, or difficulties in predicting specific behaviours, the data available for creating user models may occasionally be insufficient, thus resulting in user dissatisfaction, decreased efficiency, and possible disengagement \cite{Abrahao:2021}. 
+\end{enumerate}
+
+\vspace{-8pt}
+\subsection{Recent Advances in User Interface Adaptation}
+
+In response to the aforementioned challenges, recent advances in technology and methodology have been made to enhance the functionality and applicability of AUIs:
+
+\begin{enumerate}[topsep = -3pt, itemsep = 1pt, parsep=0pt, label={A$_\arabic*$.}, leftmargin=0.675cm]
+\item \textbf{Enhanced machine learning techniques.}
+Recent developments in ML, Deep Learning (DL), and neural networks have provided new ways to process and analyse large datasets more effectively for AUIs. These advancements enable more nuanced understanding and prediction of user behaviour, improving the accuracy of user models. For example, techniques like reinforcement learning~\cite{Todi:2021,Gaspar:2024} dynamically adapt AUIs based on user interactions, learning from each user’s preferences to optimise the UI configuration over time. This way of supporting adaptation induces two sets of operations between the end-user and the AUI~\cite{Bouzit:2017:PDA}: a Perception-Decision-Action (PDA) cycle for the user followed by a Learning-Prediction-Action (LPA) cycle for the AUI.
+
+\item \textbf{Multimodal interaction.}
+Advancements in multimodal interfaces, which combine inputs from various sources, such as voice, touch, and even gaze, offer new ways to understand user intentions and context more holistically~\cite{Blumendorf:2010}. These AUIs can adapt more effectively to the user’s current state and preferences by integrating different types of data, leading to a more intuitive and seamless user experience. In particular, the modality can be adapted to environmental conditions \cite{Josifovska:2019} while allowing the end user to choose among the available modalities which is the most adapted. For example, polymodal menus~\cite{Bouzit:2017} enable end-users to select menu items graphically, vocally, or gesturally depending on their preferences and their context of use.
+
+\item \textbf{Context-aware adaptation.}
+Progress in sensor technology and context-aware computing allows AUIs to adapt not only to the user, but also to the entire context of use at once~\cite{Motti:2013,Yigitbas:2016,Yigitbas:2020}. AUIs can now consider factors such as location, time of day, and even the presence of other people to tailor user experiences. For example, a UI might simplify its options and enlarge buttons when it detects that the user is in a moving vehicle.
+
+\item \textbf{User-centred design approaches.}
+There is a growing emphasis on involving users directly in the adaptation process. User-centred design approaches \cite{Velsen:2008} that allow users to set preferences on how and when the UI should adapt are being explored to balance automation with user control. This approach not only addresses the challenge of maintaining user agency but also helps in fine-tuning the system according to individual preferences.
+Although AUIs have made remarkable progress, they continue to evolve in response to technological advances and user feedback. Overcoming existing challenges and effectively leveraging recent advances will be key to developing more intuitive, efficient, and user-friendly AUIs in the future. These advances promise not only to enhance user interaction but also to pave the way for UIs that are truly responsive to the complex and dynamic nature of human needs and behaviours.
+\end{enumerate}
+
+\vspace{-8pt}
+\subsection{Computational Approaches to Adaptive User Interfaces}
+
+ Using modern computational techniques, AUIs dynamically adjust user experiences in real-time, adapting to users' changing choices, actions, and environmental situations. The need for these UIs is growing as systems become more complicated and as users demand more customized experiences. Incorporating developed computational methods \cite{Jiang:2022} into the comprehension, creation, and modification of UIs not only improves the adaptability and responsiveness of these UIs, but also addresses important issues in human-computer interaction (HCI), including context awareness, usability, and accessibility. In order to enable AUIs, a number of generations of computational approaches \cite{Jiang:2022} from rule-based systems to machine learning algorithms and model-based techniques \cite{Hussain:2018} have been studied over time.
+
+
+\subsubsection{Model-Based Development of Adaptive User Interfaces}
+Model-based development (MBD)~\cite{Eisenstein:2000,Derakhshanmanesh:2019,Hussain:2018} provides a structured approach to designing AUIs that can dynamically adjust to the user's context of use. By defining high-level abstractions that represent the core functionalities and user interactions, MBD allows for the creation of flexible and adaptable systems. This section explores how MBD facilitates the development of AUIs and examines case studies to illustrate its practical applications.
+MBD focuses on creating a set of models that define the UI at various levels of abstraction, from user interactions down to the specific elements of the UI design. These models include:
+\begin{enumerate}
+\item \textit{Domain models}: Define the data and logic specific to the application domain, ensuring that the UI aligns with the business requirements~\cite{Stocq:2004} and needs \cite{Gomez-Uribe:2015}.
+\item \textit{User models}: Capture information about the users, their preferences, and behaviours to tailor the UI accordingly. These models make it possible to modify the UI in real-time, improving usability and satisfaction by customising the experience to each user's requirements. For example, the "Mining Minds" platform adapts its UI based on user context, such as increasing the font size for visually impaired users or switching to graphical modes \cite{Hussain:2018}.
+\item \textit{Interaction models}: Specify how users will interact with the system, detailing the flow and dynamic aspects of the UI.
+For example, interaction models can be constantly modified according to user circumstances and preferences using a Rule-Based User Interface (RBUI) method~\cite{Akiki:2016}. RBUI, which uses a rule-based framework, allows real-time UI adaptation by considering many variables, including user experience, device capabilities, and ambient conditions. This method closely adheres to MBD principles while also improving the user experience and facilitating a more customised interaction flow.
+\item \textit{Presentation models}: Describe the UI rendering (\eg the graphical components in the case of graphical UIs) while making sure that they are consistent and easy to use on various platforms \cite{Aquino:2010} and UI types \cite{Martinez:2006}. These models are made to adapt dynamically to changes in context, such as different screen sizes and resolutions, while also retaining a consistent look and feel when users switch between different devices, like desktops, tablets, and smartphones. For example, \textit{graceful degradation} exploits a presentation model to adapt an existing UI for a certain platform to a new UI for a smaller platform (\autoref{fig:graceful}) \cite{Florins:2004}. The opposite operation is called \textit{progressive enhancement}.
+This flexibility offers a productive user experience, especially when the AUI instantly adapts to changing user preferences or environmental circumstances. For example, the UI of a travel planning application adapts based on the user's context~\cite{Abrahao:2021}: a business traveler in a busy airport using a smartphone might see a simplified layout with larger buttons to facilitate quick interactions, while a tourist using a laptop in a quiet hotel room might experience a more detailed UI, taking advantage of the larger screen and calmer environment. 
+\end{enumerate}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{Images/Graceful.pdf}
+    \caption{Graceful degradation of a desktop UI to a mobile~\cite{Amouh:2005}.} 
+    \label{fig:graceful}
+\end{figure}
+
+By abstracting these elements, MBD supports the generation of UIs that can adapt to different user requirements and operating environments without significant rework. This approach not only enhances the adaptability of the UI but also promotes reusability and scalability. The MBD advantages include:
+\begin{itemize}
+\item \textit{Consistency across platforms}: MBD allows developers to maintain a consistent user experience across various platforms by adapting the base model to fit different device specifications \cite{Furtado:2001}.
+\item \textit{Efficiency in development}: by abstracting the UI into models, changes can be implemented more quickly and propagated across platforms automatically \cite{Montero:2006}.
+\item \textit{Improved adaptability}: with models that dynamically adjust based on user data and context, the UI can respond in real-time to changes in user behaviour or environmental conditions, such as ubiquitous environments \cite{Paterno:2009}.
+\item \textit{Model reusability}: once some UI or user aspects have been captured in the models, any model excerpt can be reused in other contexts of use that share some common characteristics \cite{Delgado:2016}. For example, the nomadic gestures \cite{Vatavu:2012} can be reused from one context to another.
+\end{itemize}
+The main MBD limitations are:
+\begin{itemize}
+\item \textit{Required abstraction by modelling}: the big win with MBD is that, when the model(s) change, the UI should change accordingly. This approach always requires abstracting various UI aspects and user parameters into a set of models, an approach that is not straightforward for any designer or developer \cite{Puerta:1996,Puerta:1997}.
+\item \textit{Dependence on rendering engines}: UI rendering engines can produce final AUIs either by code generation or by model parsing and interpretation. In both cases, the quality of produced AUIs heavily depends on the power of such engines and on adaptation rules or operations \cite{Akiki:2014}.
+\item \textit{Increased complexity}: the MBD process adds another layer of complexity on top of the adaptation process, but this is probably inevitable since adaptation cannot happen without such mechanisms \cite{Jalil:2021}.
+\end{itemize}
+
+\subsubsection{Model-Driven Engineering of Adaptive User Interfaces}
+Model-Driven Engineering (MDE) is a computational approach that focuses on creating and exploiting models, which are representations of the knowledge and know-how in specific areas. In the context of AUIs, MDE allows developers to abstract and automate the generation of UIs from high-level models. These models describe the UI independent of technology, enabling the adaptive system to instantiate UIs tailored to different devices, users, or surroundings.
+
+%remplacer le texte par la référence
+For example, Yigitbas \etal \cite{Yigitbas:2020} discuss how MDE can facilitate the development of UIs that automatically adjust to user-specific data and context changes without manual intervention. By employing a model-driven approach, developers can ensure consistency across different platforms while accommodating individual user needs and preferences.
+
+\subsubsection{Model-Free Approaches of Adaptive User Interfaces}
+
+Model-free approaches do not assume to have any particular underlying model. For example, ACE (Adaptive CSS-oriented Engine)~\cite{Leiva:2011} automatically adapts presentation properties of widgets in a web page based on designer's input and interaction history: adapt the font size of title, labels, and contents, changing the margins,  increase the surface of push buttons to enable touch-based interaction. Adaptation of presentation properties can also be generated, either completely or partially unsupervised, according to the collective behaviour of a set of web page users~\cite{Leiva:2012,Leiva:2018}. While a representation of the UI elements subject to adaptation exists in both cases, there is no explicit user or complete UI model to support adaptation.
+
+
+\subsubsection{Artificial Intelligence, Machine Learning, and Deep Learning of AUIs}
+AI and ML are at the forefront of driving adaptive capabilities in UIs. These technologies enable systems to learn from data, identify patterns, and make decisions with minimal human intervention. In AUIs, machine learning algorithms can predict user behavior, adapt interfaces to new contexts, and even anticipate future needs by analyzing historical data.
+
+The application of AI in AUIs often involves natural language processing (NLP), image recognition, and predictive analytics. For example, NLP can interpret and respond to user inputs in natural language, enhancing UI accessibility and ease of use. More recently, Reinforcement Learning (RL) of AUIs for Accessibility Context \cite{Zouhaier:2021} exploits three Knowledge Layers depending on the target adaptation: the Disability Knowledge Layer learns the behaviour of the structure of the UI depending on the disability profile, the Modality Knowledge Layer learns adaptation facilities based on the couple (UI, profile), and the Platform Knowledge Layer exploits platform knowledge to learn adaptation facilities.
+RL can also train agents to learn how to adapt UIs in a specific context of use to maximise user engagement (which can be measured by electroencephalography \cite{Gaspar:2023}) by using an interaction model in a reward function \cite{Gaspar:2024}. \textsc{Marlui} \cite{Langerak:2024} engaged a user agent that mimics a real user and learns to interact via point-and-click actions with a UI agent that learns UI adaptations, to maximise efficiency by observing the user agent's behaviour.
+
+%\textbf{Context-Aware Computing}
+
+Context-aware computing is crucial for the development of AUIs that can intelligently \cite{Jalil:2021} adapt to the user environment \cite{Dubiel:2022}. This approach utilizes sensors, data from the device, and other sources to detect and interpret the surrounding physical and digital environment. Then it adjusts the UI accordingly, addressing factors such as location, time, ambient conditions, and even social context.
+
+For example, an AUI might enlarge buttons on a mobile device when it detects that the user is in a shaky environment, such as riding in a vehicle. Similarly, it might switch to a dark mode in low-light conditions to reduce eye strain. 
+
+% \textbf{User Modeling and Simulation}
+
+% User modeling is a computational technique used to represent the behaviors, preferences, and abilities of users within a system. These models are often simulated to predict how changes to the UI will affect user performance and satisfaction. By creating detailed user models, AUIs can adapt to the specific needs and limitations of individual users, enhancing accessibility and usability.
+
+% Simulations allow designers to test and refine adaptive interfaces under varied conditions and with virtual users before deploying them in real-world environments. This approach is particularly beneficial for assessing the usability of interfaces in scenarios that are difficult to replicate physically or where user testing might be impractical or costly.
+
+%\textbf{Adaptive Algorithms}
+
+Adaptive algorithms are designed to modify and control their behaviour based on feedback or changes in their operating environment. In AUIs, these algorithms adjust the UI in response to user interactions. They manage the layout, content, and functionality of the UI based on real-time data to optimise the user experience.
+
+For example, an adaptive algorithm might alter the UI layout when it detects that the user frequently accesses certain features but ignores others~\cite{Schlee:2004}. It could bring those frequently used features to a more prominent position within the UI. For example, AUI layout and widgets constraints feed a fuzzy constraint satisfaction problem to dynamically adapt them in a graphical UI depending on the screen resolution and the window size (\autoref{fig:fwl})~\cite{Yanagida:2023}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{Images/FWL.pdf}
+    \caption{Adaptive layout and widgets depending on screen resolution~\cite{Yanagida:2023}.}
+    \label{fig:fwl}
+\end{figure}
+
+The use of computational design in AUIs represents a significant shift towards more dynamic, responsive, and personalised user experiences. By harnessing model-driven engineering, artificial intelligence, context-aware computing, user modelling, and adaptive algorithms, designers can create UIs that not only meet the diverse needs of users but also anticipate and adapt to changes in user behaviour and environmental conditions. These technologies foster a deeper integration of human factors into system design, leading to UIs that are not only more functional but also more intuitive and satisfying to use. As these computational techniques continue to evolve, the potential for creating truly intelligent and adaptive UIs will expand, offering new possibilities to improve interaction.
+
+
+
+% \textbf{Integrated Model-Driven Development of Self-Adaptive User Interfaces} This case study discussed in "Integrated model-driven development of self-adaptive user interfaces" highlights the implementation of an MBD approach in developing a UI that automatically adjusts according to the user's current context and device capabilities. The system utilizes context-aware models to detect changes in the user's environment and adapts the UI components dynamically to provide an optimal user experience.\item 

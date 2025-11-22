@@ -1,0 +1,852 @@
+\chapter[Use Case 1: Comparative Testing on Unipath Dynamic Gestures]{Use Case 1: Comparative Testing of Recognizers on Unipath Dynamic Gestures}\label{chap:Unipath_Comparative}
+
+%ToDo
+The work presented in this chapter was initially published in \textit{Proceedings of the ACM on Human-Computer Interaction, Volume 4, Issue ISS, Article No.: 198, pp 1–21}, published in 2020.\cite{Ousmer:2020}
+
+In this work, we use the term \enquote{use case} in its general definition \enquote{\textbf{Use Case} \textit{n. A use to which something (such as a proposed product or service) can be put}}(Merriam-webster: Use Case)\cite{Merriam-webster:UseCase}. It is an application of the comparative testing systematic procedure defined in Chapter~\ref{chap:Concepts}. Two experiments will be conducted in the context of specific use cases focusing on \enquote{unipath dynamic} gestures (Chapter~\ref{chap:Unipath_Comparative}) and \enquote{multipath dynamic} gestures (Chapter~\ref{chap:LMCmultipathComparative}), respectively. These experiments will be evaluated under an \enquote{intra-device configuration}, where a single device will be used during different stages of the gesture recognition process, as shown in Figure~\ref{fig:UseCase_Configurations}. This configuration was determined by the datasets used for the experiments. 
+
+In this chapter, we perform an experiment on seven template-based recognizers. In order to assess the efficiency of these recognizers for interaction using the comparative testing method. This interaction requires a low response time (\eg, 0.1 s according to Nielsen~\cite{Nielsen:1994}) and high accuracy (\eg, a recognition rate of $\geq90\%$~\cite{Marin:2016,Wang:2015}).  Under predefined conditions (\textit{\ie}, parameter values), we will use a challenging set of 3D trajectories known as \enquote{unipath dynamic} gestures which are divided into six datasets from different input device categories, including “LeapMotionController” for SHREC2019 and 3DTCGS, and “SoftKinetic DepthSense DS325” for the 3DMadLabSD.
+  The experiment will be conducted to measure recognition rates and execution times for two datasets in user-independent scenarios. Additionally, we include one dataset that includes both user-dependent and user-independent scenarios.
+
+
+\begin{sidewaysfigure}[!h]
+    \centering
+    %\hspace{-140px}
+    \includegraphics[height=0.59\textheight]{Figures/Chap4/Chap3_TestingConfiguration.pdf}
+    \caption{Configuration of Input Devices in Use Cases.}
+    \label{fig:UseCase_Configurations}
+\end{sidewaysfigure}
+
+\clearpage
+
+Some recognizers perform similarly to existing 3D recognizers for these gestures. We also discuss the implications of selecting a recognizer based on context-specific conditions, such as sampling and number of points, to determine the impact on recognition rate and execution time.
+\section{Recognizers}
+\label{sec:selection}
+Based on the TLR in Subsection~\ref{subsec:2DRelated},  four recognizers were selected for comparative testing. Rubine ~\cite{Rubine:1991} pioneered 2D stroke recognition using statistical matching on weighted feature vectors. $\$P$~\cite{Vatavu:2012b} introduced the cloud matching principle, while $\$P+$~\cite{Vatavu:2017} has the best accuracy and $\$Q$~\cite{Vatavu:2018} has the fastest execution time.
+    
+
+$\$1$\cite{Wobbrock:2007} is not included because several aforementioned recognizers outperform it~\cite{Taranta:2015,Vanderdonckt:2018}. Similarly, $\$N$ is also not included due to a combinatory explosion in both memory and execution time despite two-speed optimizations.
+
+$\$P$ addresses this limitation by treating gestures as unordered sets of points. Other extensions and local optimizations discussed in Subsection~\ref{subsec:2DRelated} are excluded. $\$3$ and similar algorithms are potential candidates but are not included because they rely on additional data from a wearable device, such as an accelerometer, which we want to avoid.
+Vector-based recognizers~\cite{Taranta:2015,Vanderdonckt:2018} are not retained as they may require recomputation of vectors between points or vectors between vectors for each plane, leading to increased computational cost. Other 3D recognizers belonging to classifier classes with different computational complexities to cover a broader range of 3D gestures were not included.
+
+The selected recognizers undergo a three-dimensionalization process, adding the $Z$ dimension as an independent dimension to the existing $X$ and $Y$ dimensions~\cite{Ngan:2004}.
+
+\subsection{Rubine3D, a 3D Extension of Rubine}
+\label{sec:rubine3D}
+Rubine3D (\textit{R3D}) extends the feature-Based 2D gesture recognizer Rubine~\cite{Rubine:1991} to handle 3D gesture.  It is inspired by the Rubine3D implemented in the iGesture framework~\cite{Signer:2007} (Subsection~\ref{subsec:Related_Rubine3D}). The Rubine3D recognizer combines three individual 2D Rubine recognizers for each plane: $XY$, $YZ$, and $ZX$. The projection on each plane is achieved by transforming each point of the 3D trajectory to the three coordinate system planes $(XY,YZ,ZX)$. A plane in an orthogonal coordinate system is represented by the linear equation $Ax+By+Cz +D=0$, where $n(A,B,C)$ are the coordinates of the normal vector to a plane. If the plane passes through the origin, the equation has constant term $D{=}0$. The $XY$, $YZ$, and $ZX$ planes passing through the origin have equations $z=0$, $x=0$, and $y=0$ respectively. For a point $M(i, j, h)$ in the 3D trajectory, $P, Q, R$ are the 2D points where the coordinates of $M$ intersect the $(XY, YZ, ZX)$ planes. These points are the orthogonal projections of $M$ onto each plane with vectors parallel to the $X$, $Y$, and $Z$ axes. Thus, $P(i,j)$, $Q(j,h)$, and $R(h,i)$ are the coordinates of the 2D projections on $(XY, YZ, ZX)$.
+
+
+First, the raw data are preprocessed by scaling and filtering points. Thus, a point is discarded if the distance from the previous point is under a threshold of $d{=}.005$.
+Next, for each training gesture projected on each plane, the thirteen original features $(f_1,..,f_{13})$ ~\cite{Rubine:1991} are calculated.
+
+After that, every class mean feature vector and covariance matrix are computed for all planes. We then calculate the common covariance matrix and the inverse matrix, of which the gesture class weights are estimated.
+Thus, several actions are required to determine the possible class of the candidate gesture. To begin, the gesture is projected on each plane.
+
+Next, the feature vectors are extracted from the three gestures projections. After that, the gestures projections are defined as one of the possible gesture classes with a linear function. This function evaluates which class maximizes the evaluation function result.
+
+ Finally, a heuristic inspired by iGesture is used to determine the final result class of the 3D gesture. If all three projections have the same result class, this is called the final result. However, if there are two or three different classes, we calculate the scores of these classes for the three planes and multiply each score result by a weight factor. The weight factors for the planes are \textit{$W_{XY}=0.4, W_{YZ}=0.3, W_{ZX}=0.3$}, based on the ease of producing gestures in the sagittal plane, then in the transversal plane, and finally in the frontal plane, which is particularly observed for head and shoulder gestures~\cite{Vanderdonckt:2019}. We found that using only two planes decreased accuracy. The final gesture class is determined by summing the scores.
+ 
+ However, the gesture rejection part of Rubine has not been implemented. This decision was made to ensure consistency in computational complexity with other recognizers and to focus solely on the classification problem.
+
+\subsection{Rubine-Sheng, Another 3D Extension of Rubine}
+\label{sec:rubinesheng}
+Rubine-Sheng (RS) uses a vector of sixteen features computed from a 3D gesture $G = \{p_t = (x_t, y_t, z_t) | \forall t = 1,...,n\}$. These features extend Rubine's original feature vector to 3D by incorporating three additional features proposed in the AdaBoost recognizer and applied to 3D gestures~\cite{Sheng:2003}. Similar to its 2D counterpart, the Rubine-Sheng recognizer classifies a candidate gesture by identifying its corresponding gesture class. First, each class's mean feature vectors and covariance matrix are estimated using the feature vectors of the training samples. Then, the common covariance matrix is computed and its inverse is used to determine the weights of the gesture classes. Finally, the class of a candidate gesture is the class that maximizes the result of the discrimination function.
+
+\subsection{\texorpdfstring{$\$P^3$}{\$P3}, a 3D Extension of \texorpdfstring{$\$P$}{\$P}}
+\label{sec:dollarp}
+The $\$P$ algorithm matches a candidate gesture $C$ with each template $T$ in the training set. This is done using a function $M$ that associates each point $C_i{\in}C$ with one point $T_j{\in}T$, where $T_j{=}M(C_i)$. The classification result determines the closest template $T$ to the candidate $C$ by calculating the matching distance: $C \in \text{class of } T \text{ where } T{=}argmin_T \{\$P(C,T)\}$. This principle is extended to 3D by defining a set of points with three-dimensional coordinates: $C=\{p_i = (x_i, y_i, z_i) | \forall i=1,...,n\}$.
+
+$\$P^3$ is the 3D extension of $\$P$, inspired by the implementation of the \$P3D recognizer by Cook \etal~\cite{Cook:2016}. However, unlike \$P3D, the \$P\textsuperscript{3} recognizer does not support 3D static poses and 2D dynamic gesture recognition. 
+
+To minimize gesture variations, the recognizer performs three pre-processing steps:
+
+\begin{itemize}
+    \item Resampling the point clouds of gestures to ensure they have the same number of points $n$ for matching.
+    \item Scaling the gesture points to a non-uniform reference box.
+    \item Translating the centroid of the gesture $(Gx, Gy, Gz)$, to the origin $O=(0,0,0)$.
+\end{itemize}
+The matching score is defined as the sum of Euclidean distances of all pairs of points from $M$. This calculation is generalized into 3D by incorporating the third coordinate, $z$. Let's assume that point $C_i$ from the candidate gesture $C$ is matched to point $T_j$ from the template $T$. The score is then given by:
+ \begin{equation}
+ \label{eq:euc}
+ \sum_{i=1}^{n} \parallel C_i - T_j \parallel =\sum_{i=1}^{n} \sqrt{(C_i.x - T_j.x)^2+(C_i.y-T_j.y)^2+(C_i.z-T_j.z)^2}
+ \end{equation}
+ 
+In order to compute the dissimilarity score between two clouds of points, we performed a one-to-one time-free alignment between points, inspired by Vatavu's matching heuristic named \textsf{Greedy-5} because it gave the best results among the tested methods~\cite{Vatavu:2012b}. The heuristic matches each point from the first cloud with one point in the second cloud, with the condition that it has not been matched before. Next, it matches points from the second cloud that have not been matched yet can be matched to one point in the first cloud resulting in a complexity of $\mathcal{O}(n^2)$. The algorithm runs several times with different starting points considered circularly through all points and returns the minimum matching of all runs. The returned matching sum is multiplied by a weight representing a confidence degree on the matching.
+
+\begin{equation}
+ w = \sum_{i} w_i \cdot \parallel C_i - T_j \parallel
+\end{equation} 
+The $\epsilon$ threshold controls the number of runs and affects the complexity of the heuristic to $\mathcal{O}(n^{2+\epsilon}))$. We take into account that the direction of matching impacts the result of the heuristic.
+%\textit{min (GREEDY-5(C,T), GREEDY-5(T,C))}.
+
+%\subsection{$\$FP^3$ -- A Flexible P Dollar Recognizer} - Peut-être remplacer le nom plus tard
+ \subsection{\texorpdfstring{$\$F$}{\$F}, a Flexible Variant of \texorpdfstring{$\$P^3$}{\$P3}}
+\label{sec:dollarf}
+$\$F$ extends the previously mentioned $\$P^3$ with the flexible cloud matching of $\$P+$~\cite{Vatavu:2017}. As usual, both the candidate and template points are resampled to equidistantly-spaced points, scaled within a unit box, and translated so that their centroid is at the origin $(0,0,0)$. The template with the lowest dissimilarity score is considered the best matching template for the candidate. 
+
+The $\$P+$'s cloud matching process involves matching the points from the first cloud with their closest point from the second cloud, and then matching the remaining points from the second cloud with their closest point from the first cloud. To investigate the possibility of a more flexible matching, $\$F$ allows the matching of two points that have already been matched, hence its name $\$F$.
+
+\subsection{FreeHandUni, a 3D Extension of \$P}
+\label{sec:freehanduni}
+The FreeHandUni (\textit{FH}) recognizer is based on the pseudocode of the FreeHand recognizer, which extends the 2D gesture recognizer \$P++~\cite{Vatavu:PseudAlgo}. Additionally, it uses full-hand information for free-hand gesture recognition.
+FreeHandUni is adapted to recognize the unipath character of 3D trajectories by replacing the hand pose structure with a 3D point structure $(x,y,z)$. With this modification, FreeHandUni can be seen as an improvement of $\$P^3$, using a flexible cloud matching approach based on one-to-many alignment between points~\cite{Vatavu:2017}. The pre-processing step remains the same, and the matching process uses Euclidean distance (Eq.~\ref{eq:euc}) with increased flexibility. Each point from the template cloud is matched to the closest point from the candidate cloud, and each remaining point from the candidate cloud is matched to the closest point from the template cloud. The gesture class is determined based on the template cloud with the lowest dissimilarity score compared to the candidate cloud, and vice versa. Unlike $\$F$, FreeHandUni does not implement early abandoning to keep the computational complexity close to $\$P^3$.
+
+
+\subsection{\texorpdfstring{$\$P+^3$}{\$P+3}, a 3D Extension of \texorpdfstring{$\$P+$}{\$P+}}
+\label{sec:dollarpplus}
+One of the major improvements with respect to $\$P$ lies in expanding the matching from one-to-one to one-to-many points, which clears the weights of the starting point used in $\$P$. Based on the 3D points, we compute the turning angle at each point with points coordinates gesture:
+\begin{equation}
+\scalebox{1}{
+$
+C_{i.\theta} = \frac{1}{\pi} \arccos{( \gamma)}
+$
+}
+\end{equation}
+where
+\begin{equation}
+\vspace{-8pt}
+\hspace{-10pt}
+\scalebox{0.92}{
+$
+\gamma = 
+\frac{(C_{i+1}.x−C_i.x)\cdot(C_{i}.x−C_{i-1}.x)+(C_{i+1}.y−C_i.y)
+\cdot(C_{i+1}.y−C_i.y) +(C_i.z−C_{i-1}.z)
+\cdot(C_{i}.z−C_{i-1}.z)}{||C_{i+1}−C_i ||\cdot|| C_i - C_{i−1}||} 
+$}
+\vspace{8pt}
+\end{equation}
+
+  
+To optimize the execution time, the early abandoning used in $\$Q$ is added, as well as the third coordinate in the computation of the point distance beside the angle as in $\$P+$:
+
+\begin{equation}
+\scalebox{.8}{
+$
+D(C_i,T_j)=\sqrt{(T_j.x-C_i.x)^2+(T_j.y-C_i.y)^2+(T_j.z-C_i.z)^2+(T_j.a-C_i.a)^2}
+$
+}
+\end{equation}
+
+\subsection{\texorpdfstring{$\$Q^3$}{\$Q3}, a 3D Extension of \texorpdfstring{$\$Q$}{\$Q}}
+\label{sec:dollarq}
+$\$Q^3$, is the 3D extension of \$Q~\cite{Vatavu:2018}. It performs the same preprocessing as $\$P+^3$, except for the calculation of a 3D Look-Up-Table (LUT) offline for each template and its storage with the cloud points. The look-up point-matching technique is generalized to three dimensions using a $16{\times}16{\times}16$ 3D grid of equidistant points. Each cloud point $C$ is positioned within this grid. The index of the row, column, and layer of the closest point in the grid is stored for each point, resulting in a computational complexity of $\mathcal{O}(n\cdot m^3)$. To recognize a candidate, the closest point from a template to $C_i$ is determined by iterating through the cloud points and summing the Euclidean distances of Eq.~\ref{eq:euc} between each pair of points. This computation is stopped when the sum exceeds the minimum dissimilarity score.
+\section{Datasets}
+\subsection{SHREC2019}
+The \textbf{SHREC2019} dataset~\cite{Caputo:2019} was used as a benchmark for the Eurographics 2019 SHape Retrieval Contest (SHREC) track on online gesture recognition. It consists of 195 3D trajectories performed by 13 participants using their whole hand, representing five iconic gestures: \enquote{Cross} (X), \enquote{Circle} (O), \enquote{V-mark} (V), \enquote{Caret} (/\textbackslash), and \enquote{Square} ([]). The dataset is relevant because it is recent and contains simple gestures.
+
+To detect command gestures from hand movements in a virtual reality context, the training set and testing set were combined to create a single dataset. Unnecessary hand movements were filtered by clipping the sequences before and after the main section~\cite{Kratz:2015}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.84\textwidth]{Figures/Chap4/SHREC-Images.pdf}
+    \vspace{-4pt}
+    \caption{The SHREC2019 dataset~\cite{Caputo:2019}.}
+    \vspace{-8pt}
+   \label{fig:dataset_SHREC2019}
+\end{figure}
+
+\subsection{3DTCGS}
+The \textbf{3DTCGS} dataset~\cite{Caputo:2017} is used to test the classification performance of the 3\textcent~\cite{Caputo:2017} recognizer on interface command gestures. The data is provided in a segmented form, making it easier to exploit during experimentation for the classification task. This dataset contains gestures of varying complexity, ranging from simple ones like a \enquote{3D swipe} to more complex ones like a \enquote{3D spiral}. Similar trajectories also include different directions (\textit{\eg}, \enquote{left-swipe} vs. \enquote{right-swipe}, \enquote{arc3Dleft} vs. \enquote{arc3Dright}), to test the direction-invariance property.
+
+Each subject produces one sample per gesture, which makes the user-independent evaluation particularly challenging.
+
+Participants were asked to perform short iconic gestures with their dominant hand forefinger. The collected data consists of 347 sequences of 3D coordinates, combined with a timestamp. These sequences describe 26 gesture classes performed by 14 subjects and recorded with a Leap Motion (see Figure~\ref{fig:dataset_3DTCGS}).
+
+\begin{figure}[h]
+    \centering
+    \vspace{-8pt}
+    \includegraphics[width=.97\textwidth]{Figures/Chap4/3DM-Images.pdf}
+    \vspace{-4pt}
+    \caption{The 3DTCGS dataset~\cite{Caputo:2017}.}
+    \vspace{-8pt}
+    \label{fig:dataset_3DTCGS}
+\end{figure}
+
+
+\subsection{MadLabSD}
+  The \textbf{MadLabSD} (MadLab Sketch Dataset) dataset ~\cite{Huang:2019} is publicly available online since 2018. It was used to assess a new gesture-based system~\cite{Huang:2019}. This dataset consists of mid-air single stroke gestures, which are palm-centered dynamic motion trajectories. It offers a wide range of gestures, from common symbols  (\textit{\ie,}, alphabets and numerals) to uncommon ones (\textit{\eg}, CAD primitives), making it particularly attractive.
+  
+ The dataset was recorded by a group of 10 users who captured 40 segmented symbols and sketches. These were split into four domains, as shown in Figure~\ref{fig:dataset_domains}, resulting in a total of 4,000 samples. Each user recorded 10 samples per gesture, which included the 3D position coordinates of the center of their palm along with a timestamp.
+ 
+ The dataset also includes the extraction of the center palm from depth grayscale images, which were recorded using a SoftKinetic DepthSense DS325. The gesture was recorded based on the static hand pose, allowing the user to switch between active (hand open) and inactive (closed hand) states.
+ 
+It is important to note that the raw data from the depth camera is not preprocessed, potentially containing spurious data, such as noisy points at the start of the sketch, due to user latency after mode switching ~\cite{Huang:2019}.
+
+The dataset comprises four domains:
+
+\begin{itemize}
+\item \textbf{(D1) Arabic numerals}: \textit{0-9}
+\item \textbf{(D2) English alphabets (Handwritten)}: \textit{a-j}
+\item \textbf{(D3) Simulation symbols}: \textit{Spring-Mass-Wheel-Pulley-Hinge-Fast Forward-Rewind-Play-Pause-Delete}
+\item \textbf{(D4) CAD primitives}: \textit{Cuboid-Cylinder-Sphere-Rectangular Pipe-Hemisphere-Cylindrical Pipe-Pyramid-Tetrahedron-Cone-Toroid}
+\end{itemize}
+
+
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{Figures/Chap4/Domains-Images2.pdf}
+    \vspace{-8pt}
+    \caption{The four domains of the MadLabSD dataset.~\cite{Huang:2019}}
+    \label{fig:dataset_domains}
+\end{figure}
+
+\vspace{-8pt}
+\section{Design}
+\label{sec:Unipath_Comparative_evaluation}
+We evaluated the seven recognizers using both traditional user-dependent and user-independent scenarios~\cite{Anthony:2010, Anthony:2012, Vatavu:2012b, Vatavu:2017} on 3D trajectories from six datasets. The goal was to demonstrate the efficiency of these recognizers under different conditions (\textit{\ie}, parameters values). We focused solely on evaluating the classification task, not the preprocessing, as this task can be done offline.
+\vspace{-6pt}
+
+\subsection{Experiment}
+Our study was within-factors with four independent variables:
+\begin{itemize}
+    \item \textsc{Recognizer}: This nominal variable with 7 conditions, representing the various recognizers implemented to recognize 3D trajectories: $\$P^3$, $\$P+^3$, $\$Q^3$, $\$F$, $FH$ (FreeHandUni), $R3D$ (Rubine3D), and $RS$ (Rubine-Sheng).
+    \item \textsc{Dataset}: This nominal variable with 6 conditions (see Table~\ref{tab:datasets-description} and Figure~\ref{fig:dataset_SHREC2019},\ref{fig:dataset_3DTCGS},\ref{fig:dataset_domains}), representing two datasets considered as a whole, namely SHREC2019~\cite{Caputo:2019} and 3DTCGS~\cite{Caputo:2017}, and four domains of 3DMadLabSD~\cite{Huang:2019}-D1, 2, 3, and 4. 
+    \item \textsc{Number of Templates}: This numerical variable with 5 conditions, representing the number of templates per gesture class used to train the recognizer: $T{=}\{1,2,4,8,16\}$.
+    \item \textsc{Sampling}: This numerical variable with 5 values representing the number of points per gesture: $N{=}\{4,8,16,32,64\}$.
+\end{itemize}
+
+\begin{table}[h]
+\vspace{-10pt}
+  \caption[Description of selected datasets.]{Description of selected datasets. Notation for the Ground truth information: Timestamp (T), Label (L), Hand joints (J).}
+\resizebox{\columnwidth}{!}{
+  \begin{tabular}{l|lcccc}
+    \toprule
+   \thead{\large \textbf{Name}}&\thead{\large \textbf{Sensor}}&\thead{\large \textbf{Subjects}}&\thead{\large \textbf{Classes}}&\thead{\large \textbf{Instances}}&\thead{\large \textbf{Ground truth} \\\large \textbf{information}}\\
+    \midrule
+    SHREC2019~\cite{Caputo:2019} & Leap Motion & 13 & 5 & 195 & T, L, J\\
+    3DTCGS~\cite{Caputo:2017} & Leap Motion & 13 & 26 & 347 & T, L\\
+    \makecell{3DMadLabSD~\cite{Huang:2019}} & \makecell[t]{SoftKinetic DepthSense DS325} & \makecell{10\\ } &   \makecell[t]{40 \\(10 x 4 Domains)} & \makecell{4000\\ } & T, L \\
+  \bottomrule
+\end{tabular}
+} 
+%  \vspace{-6pt}
+  \label{tab:datasets-description}
+\end{table}
+\vspace{-12pt}
+\subsubsection{Apparatus}
+ We used a sexa-core Intel Core i7 2.20 GHz CPU and running a Windows 10 Home Edition operating system. The RAM was 16 GB DDR4  memory with 2400 MHz. We ran the framework described in Chapter~\ref{chap:QuantumLeapTesting} with the seven recognizers on the six individual datasets.
+
+
+
+\subsection{Procedures and Quantitative Measures}\label{subsec:Comparative_scenarios}
+We compute the \textit{recognition rate} (Which is the ratio of positive recognitions divided by the total number of trials) and the \textit{execution time} (measured in milliseconds as the time taken to preprocess a candidate gesture and recognize its result class) for the 7 (\textsc{Recognizer}) $\times$ 6 (\textsc{Dataset}) = 42 basic configurations following the typical procedure used in the literature to evaluate gesture recognizers~\cite{Akl:2010,Anthony:2010,Anthony:2012,Vatavu:2012b,Vatavu:2018,Wobbrock:2007}.
+In the \enquote{user-independent scenario}, recognition is evaluated on gestures produced by users other than those used to train the recognizer. In the \enquote{user-dependent scenario}, recognition is evaluated on gestures produced by the same users used to train the recognizer. In total, 665,000 trials were performed.
+
+\subsubsection{User-Independent Scenario}
+For the user-independent scenario, one template is randomly selected for each gesture class from all participants and saved for testing. Then, a training set is created by randomly choosing $T$ templates for each gesture class across all users. These templates should be different from those selected for testing. The recognizer is then trained using the resulting training set.
+
+To evaluate the performance, the recognizer is tested 100 times for each $T$ value: $T{=}\{1,2,4,8,16\}$ for SHREC2019 and MadLabSD, and $T{=}\{1,2,4,8,11\}$ for 3DTCGS. 
+For the Rubine's recognizer 3D extensions ($R3D$ and $RS$),  \break $T{=}\{2,3,4,8,16\}$ for the SHREC2019 and MadLabSD datasets, and \break $T{=}\{2,3,4,8,11\}$ for the 3DTCGS dataset. The number of correctly recognized gestures is counted, and this is repeated for each $T$ value. Finally, the average recognition rate is calculated by averaging the number of recognized gestures and formatting it as a percentage for each $N$ and for each recognizer. In total,105,000 recognition trials were performed by running 6 (\textsc{Dataset}) $\times$ 5 (\textsc{Sampling}) $\times$ 5 (\textsc{Number of Templates}) $\times$ 100 (Repetitions) $\times$ 7 (\textsc{Recognizer}).
+
+\subsubsection{User-Dependent Scenario}
+For the user-dependent scenario, one template from each gesture class is randomly selected for each user. Then, for each user, a set of randomly selected $T$ templates is created for each gesture class, excluding the templates selected for testing by the same user. This training dataset is used to train the recognizer. 
+Similar to the user-independent scenario, the recognizer is tested 100 times for each user and for each $T$ value, depending on the recognizer: $T{=}\{2,3,4,8\}$ for $R3D$ and $RS$, and $T{=}\{1,2,4,8\}$ for the others. The number of correctly recognized gestures is counted, and the average recognition rate is calculated by averaging the results for each user and $T$ value. The recognition rate is then presented in percentage format for each $N$ and for each recognizer.
+Only the MadLabSD dataset was used because SHREC2019 does not identify the emitter of the gesture, and 3DTCGS contains only one template per user for each gesture class. In total, we performed 560,000 recognition trials by running 4 (\textsc{Dataset}) $\times$ 10 (Users) $\times$ 5 (\textsc{Sampling}) $\times$ 4 (\textsc{Number of Templates}) $\times$ 100 (Repetitions) $\times$ 7 (\textsc{Recognizer}).
+
+
+\section{Results}
+Table~\ref{tab:summary} provides a summary of these results for all datasets as well as for each individual dataset.
+
+All reported results are averaged on all datasets, ranging from the simplest one to the most complex one (\textit{\eg}, Domain 4). 
+
+
+\begin{table}[h]
+%\vspace{-16pt}
+  \caption[Summary of recognition rates and execution times for all datasets and per individual dataset.]{Summary of recognition rates and execution times for all datasets and per individual dataset. Recognizers are sorted in decreasing order of their average recognition rate for all datasets.}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}lrrrcrrrrrrrrrr@{}}
+\toprule
+\multicolumn{2}{c}{\textbf{Recognizer}}  &   & \phantom{.} &     \multicolumn{10}{c}{\textbf{Datasets}} \\
+\cmidrule{3-15}
+ & & \multicolumn{2}{c}{\textbf{Overall}} & & \multicolumn{1}{c}{\textbf{SHREC}} & \multicolumn{1}{c}{\textbf{3DTCGS}} & \multicolumn{2}{c}{\textbf{Domain 1}} & \multicolumn{2}{c}{\textbf{Domain 2}} & \multicolumn{2}{c}{\textbf{Domain 3}} & \multicolumn{2}{c}{\textbf{Domain 4}} \\
+\cmidrule{3-4} \cmidrule{6-15}
+& & \multicolumn{1}{c}{UD} & \multicolumn{1}{c}{UI} & & \multicolumn{1}{c}{UI} & \multicolumn{1}{c}{UI} & \multicolumn{1}{c}{UD} & \multicolumn{1}{c}{UI} & \multicolumn{1}{c}{UD} & \multicolumn{1}{c}{UI} & \multicolumn{1}{c}{UD} & \multicolumn{1}{c}{UI} & \multicolumn{1}{c}{UD} & \multicolumn{1}{c}{UI} \\
+ \midrule
+$\$P+^3$ & rate (M) & 74.40  & 87.48 & & 86.94 & 84.28 & 98.45 & 88.08 & 98.81 & 87.87 & 99.26 & 94.45 & 93.86 & 66.36 \\
+         & rate (SD) & 1.73 & 13.68 & & 0.75 & 2.22 & 4.13 & 2.34 & 3.67 & 1.27 &  2.78 & 0.76 & 0.92 & 1.65 \\
+\rowcolor{blue!45!gray!35}
+      & time (M) &0.53	&	0.77	&	&	0.36	&	1.24	&	0.54	&	0.76	&	0.53	&	0.77	&	0.49	&	0.69	&	0.54	&	0.81 \\
+\rowcolor{blue!45!gray!35}
+    & time (SD) & 1.43	&	0.85	&	&	0.64	&	2.00	&	0.87	&	1.37	&	0.87	&	1.39	&	0.78	&	1.24	&	0.88	&	1.46
+  \\
+       \hline 
+$\$F$ & rate (M) & 68.13 & 79.54 & & 79.36 & 78.83 & 96.22 & 76.38 & 96.78 & 75.45 & 97.67 & 85.66 & 91.76 & 57.94 \\
+         & rate (SD) & 1.89 & 16.08 & & 3.55 & 2.76 & 6.98 & 1.63 & 6.70 & 3.28 & 5.26 & 1.28 & 1.07 & 1.68 \\
+\rowcolor{blue!45!gray!35}
+      & time (M) & 0.42	&	0.59	&	&	0.29	&	0.91	&	0.41	&	0.57	&	0.42	&	0.58	&	0.38	&	0.53	&	0.45	&	0.67 \\
+\rowcolor{blue!45!gray!35}
+    & time (SD) & 1.04	&	0.63	&	&	0.48	&	1.40	&	0.63	&	0.96	&	0.64	&	1.00	&	0.57	&	0.91	&	0.69	&	1.15
+  \\
+       \hline
+$FH$ & rate (M) & 68.46 & 79.49 & & 79.28 & 78.84 & 96.21 & 76.05 & 96.69 & 75.78 & 97.70 & 85.55 & 91.96 & 57.75 \\
+         & rate (SD) & 1.89 & 16.28 & & 0.93 & 2.80 & 6.97 & 3.20 & 6.79 & 3.24 & 5.28 & 1.26 & 1.04 & 1.70 \\
+
+  \rowcolor{blue!45!gray!35}
+      & time (M) &0.94	&	1.23	&	&	0.49	&	2.41	&	0.92	&	1.07	&	0.92	&	1.08	&	0.93	&	1.14	&	0.97	&	1.19 \\
+\rowcolor{blue!45!gray!35}
+    & time (SD) & 2.55	&	1.65	&	&	0.94	&	4.22	&	1.62	&	2.04	&	1.62	&	2.07	&	1.66	&	2.13	&	1.70	&	2.30  \\
+         \hline
+$\$Q^3$ & rate (M) & 67.36 & 79.09 & & 79.36 & 78.45 & 95.79 & 75.20 & 96.28 & 74.55 & 97.51 & 84.88 & 91.31 & 57.02 \\
+         & rate (SD) & 1.91 & 16.54 & & 0.93 & 2.94 & 7.22 & 3.21 & 7.05 & 3.22 & 5.47 & 1.31 & 1.09 & 1.72 \\
+
+  \rowcolor{blue!45!gray!35}
+      & time (M) & 3.12	&	3.76	&	&	3.01	&	4.81	&	3.14	&	3.55	&	2.97	&	3.53	&	3.13	&	3.42	&	3.25	&	4.27 \\
+\rowcolor{blue!45!gray!35}
+    & time (SD) & 4.16	&	3.14	&	&	2.94	&	5.39	&	3.11	&	3.70	&	2.89	&	3.67	&	3.19	&	3.51	&	3.36	&	4.92
+  \\
+       \hline
+$\$P^3$ & rate (M) & 65.90 & 77.50 & & 78.10 & 77.43 & 95.28 & 72.57 & 95.70 & 71.55 & 97.18 & 82.92 & 90.68 & 54.98 \\
+         & rate (SD) & 1.93 & 16.88 & & 0.96 & 2.99 & 7.70 & 3.19 & 7.54 & 3.28 & 5.93 & 1.40 & 1.12 & 1.73 \\
+
+    \rowcolor{blue!45!gray!35}
+      & time (M) & 8.71	&	10.94	&	&	4.80	&	20.79	&	8.59	&	9.83	&	8.65	&	10.19	&	8.72	&	9.87	&	8.88	&	10.16 \\
+\rowcolor{blue!45!gray!35}
+    & time (SD) & 24.45	&	16.76	&	&	10.02	&	39.79	&	16.49	&	20.69	&	16.62	&	21.38	&	16.76	&	20.87	&	17.15	&	21.12\\
+         \hline
+$R3D$ & rate (M) & 60.80 & 67.22 & & 52.51 & 74.48 & 75.60 & 72.57 & 75.94 & 70.33 & 76.93 & 76.52 & 72.99 & 54.40 \\
+         & rate (SD) & 2.98 & 24.93 & & 1.61 & 2.29 & 38.46 & 6.49 & 38.48 & 6.45 & 38.83 & 3.43 & 3.74 & 2.69 \\
+\rowcolor{blue!45!gray!35}
+      & time (M) & 0.08	&	0.08	&	&	0.05	&	0.12	&	0.06	&	0.07	&	0.06	&	0.06	&	0.07	&	0.08	&	0.10	&	0.10 \\
+\rowcolor{blue!45!gray!35}
+    & time (SD) & 0.027	&	0.016	&	&	0.013	&	0.018	&	0.004	&	0.009	&	0.005	&	0.005	&	0.005	&	0.009	&	0.002	&	0.007  \\
+         \hline
+$RS$ & rate (M) & 50.04 & 57.45 & & 40.82 & 68.82 & 69.07 & 58.37 & 70.76 & 58.10 & 73.36 & 67.98 & 65.04 & 43.49 \\
+         & rate (SD) & 2.63 & 23.56 & & 1.51 & 2.50 & 36.18 & 5.77 & 36.86 & 5.66 & 38.01 & 3.24 & 3.48 & 2.35 \\
+\rowcolor{blue!45!gray!35}
+      & time (M) & 0.03	&	0.03	&	&	0.02	&	0.05	&	0.03	&	0.03	&	0.03	&	0.03	&	0.03	&	0.03	&	0.04	&	0.04 \\
+\rowcolor{blue!45!gray!35}
+    & time (SD) & 0.012	&	0.007	&	&	0.006	&	0.011	&	0.002	&	0.002	&	0.005	&	0.005	&	0.003	&	0.003	&	0.004	&	0.002 \\\bottomrule
+\end{tabular}
+}
+\vspace{+4pt}
+  \label{tab:summary}
+  \vspace{-15pt}
+\end{table}
+
+
+\begin{table}[b!]
+%\hspace{-80pt}
+%\vspace{-8pt}
+  \caption[ANOVAs computed for the 7 \textsc{Recognizers} in the user-independent scenario: G1=group 1, G2=group 2.]{ANOVAs computed for the 7 \textsc{Recognizers} in the user-independent scenario: G1=group 1, G2=group 2. For each dataset, three data are provided: the $q$ value resulting from the ANOVA, the significance of the \textit{p} value if any (***$p{\leq}$), and Cohen's d coefficient for effect size ((S)mall when $d{\geq}.02$, (M)edium when $d{\geq}.05$, (L)arge when $d{\geq}.08$,  and (--) when there is no significant effect size ($d{<}.02$)).}
+     \resizebox{\columnwidth}{!}{
+\begin{tabular}{ll|l|l|l|l|l|l|l}
+\hline
+\multicolumn{2}{c|}{\textbf{Recognizer}}         & \multicolumn{7}{c}{\textbf{Dataset (q-stat, \textit{p} value, Cohen's \textit{d})}}                                                                                                                                                         \\ \hline
+\multicolumn{1}{c}{G1} & \multicolumn{1}{c|}{G2} & \multicolumn{1}{c|}{Overall} & \multicolumn{1}{c|}{SHREC2019} & \multicolumn{1}{c|}{3DTCGS} & \multicolumn{1}{c|}{Domain 1} & \multicolumn{1}{c|}{Domain 2} & \multicolumn{1}{c|}{Domain 3} & \multicolumn{1}{c}{Domain 4} \\ \hline
+\rowcolor{blue!45!gray!35}$\$P+^3$             & $\$F$                     & 21.18,***, S            & 16.80,***, S            & 26.64,***,  M         & 27.48,***, M        & 29.11,***, M            & 21.30,***, M            & 21.35,***, S            \\ 
+             \rowcolor{blue!45!gray!35}            & $FH$                   & 21.30,***, --           & 16.97,***,  S            &   26.63,***, M        & 28.15,***, M        & 28.33,***, M           &  21.57,***, M            & 21.83,***, S                              \\ 
+       \rowcolor{blue!45!gray!35}                  & $\$Q^3$                & 22.89,***, --           & 16.80,***, S              &   28.50,***, M          & 30.23,***, M        & 31.22,***, M          &   23.19,***, S             &  23.70,***, M                             \\ 
+        \rowcolor{blue!45!gray!35}                 & $\$P^3$                & 27.50,***, S            & 19.58,***, S             &    36.49,***,M          &  36.41,***, M       &  38.24,***, M          &  27.96,***, M            &  28.85,***, M                             \\ 
+      \rowcolor{blue!45!gray!35}                   & $R3D$                       & 37.75,***,  S            &  76.28,***, L            &   47.90,***, L       &  36.42,***, M       &  41.11,***, L           &   43.47,***, L             &  30.32,***, M                             \\ 
+        \rowcolor{blue!45!gray!35}                 & $RS$                      & 61.51,***, M            & 102.19,***, L            &  75.64,***, L     &  69.78,***, L        &  69.77,***, L          &   64.17,***, L              &  58.02,***, L                             \\ 
+$\$F$                    & $FH$                    & 0.11, \textit{n.s.}            & 0.17, \textit{n.s.}                   &  0.01, \textit{n.s.}       &  0.77, \textit{n.s.}          &  0.77, \textit{n.s.}           &  0.27, \textit{n.s.}                 & 0.47, \textit{n.s.}                              \\ 
+                         & $\$Q^3$                & 1.70, \textit{n.s.}                   & 0.01, \textit{n.s.}                & 1.85, \textit{n.s.}        &   2.75, \textit{n.s.}         &   2.10, \textit{n.s.}          &  1.89, \textit{n.s.}                 & 2.34, \textit{n.s.}                              \\ 
+                         & $\$P^3$                & 6.31,***, M             & 2.78,***,  S             &  6.86,***, --               &  8.93,***, --          &   9.13,***, --          &  6.66,***, --                 & 7.50,***, --                              \\ 
+                         & $R3D$                       & 16.56,***, L            & 59.48,***, L            &   21.28,***, S          & 8.93,***, --           &   12.00,***, S         & 22.17,***, S                & 8.97,***, --                              \\ 
+                         & $RS$                      & 40.32,***, L            & 85.39,***, L           &  48.99,***, L          & 42.29,***, L         &   40.65, ***, L       &  42.87,***, L               & 36.67,***, M                              \\ 
+\rowcolor{blue!45!gray!35}$FH$                  & $\$Q^3$                & 1.58, \textit{n.s.}             & 0.17, \textit{n.s.}             &   1.87, \textit{n.s.}                & 1.98, \textit{n.s.}          &   2.88, \textit{n.s.}           & 1.61, \textit{n.s.}                 &  2.34, \textit{n.s.}                             \\ 
+                \rowcolor{blue!45!gray!35}         & $\$P^3$                & 6.19,***, M             & 2.60, \textit{n.s.}           &    6.86,***, --                & 8.14,***, --          &   9.91, ***, --          & 6.39,***, --                  &  7.02,***, --                             \\ 
+            \rowcolor{blue!45!gray!35}             & $R$                       & 16.44,***, L            & 59.30,***, L           &   21.29,***, S           &  8.16,***, --          &  12.78,***, S           &  21.90,***, S               & 8.49,***, --                              \\ 
+           \rowcolor{blue!45!gray!35}              & $RS$                      & 40.22,***, L            & 85.21,***, L           &  49.01,***, L          & 41.52,***, L         &  41.43,***, L           &  42.60,***, L              & 36.19,***, M                              \\ 
+$\$Q^3$                 & $\$P^3$                & 4.61,***, S              & 2.78, \textit{n.s.}            &    4.98,**, --                  &  6.18,***, --         &   7.02,***, --            &  4.77,**, --                 & 5.15,**, --                              \\ 
+                         & $R3D$                       & 14.86,***, L            & 59.48,***, L           & 19.42,***, S              &  6.18,***, --         &   9.89, ***, --            & 20.28,***, S              & 6.62,***, --                              \\ 
+                         & $RS$                      & 36.61,***, L            & 85.39,***, L           &  47.14,***, L           &  39.54,***, M      &  38.54,***, M         & 40.98,***, L               & 34.32,***, M                              \\ 
+\rowcolor{blue!45!gray!35}$\$P^3$                 & $R3D$                       & 10.24,***, L           & 56.59,***, L           &  14.43,***, S               &   0.01, \textit{n.s.}         &  2.86, ***, --          & 15.50,***, S               & 1.47, \textit{n.s.}                              \\ 
+         \rowcolor{blue!45!gray!35}                & $RS$                      & 34.01,***, L            & 82.61,***,  L           &   42.15,***, L         &  33.36,***, M      & 31.52,***, M          &  36.20,***, M             & 29.17,***, M                              \\ 
+$R3D$                        & $RS$                      & 23.75,***, L            & 25.91,***, M           &   27.71,***, M     & 33.36,***, M       &  28.65,***, M         &  20.69,***, S               & 27.69,***, M                              \\ \bottomrule
+\end{tabular}
+}
+
+  \label{tab:anova_ui}
+\end{table}
+\subsection{User-Independent Scenario}
+\subsubsection{Recognition Rate}
+Recognizers are ranked in descending order according to their average recognition rate on all datasets, as shown in the following Figure~\ref{fig:Overall}): $\$P+^3$ is superior to $\$F$, then $FH$, $\$Q^3$, $\$P^3$, followed by the two Rubine recognizers $R3D$ and $RS$. $\$P+^3$ is 9.98\% more accurate than its successor $\$F$, which is roughly in the same interval as $FH$, $\$Q^3$, and $\$P^3$, which is in turn 15.29\% more accurate than $R3D$. 
+
+
+The overall difference between the recognizers was statistically very highly significant ($F_{6,10459}=352.89$, $^{***}p{<}.001$, $\eta^2{=}.019$ (--)). Table~\ref{tab:anova_ui} details the results of ANOVAs for all datasets (column \enquote{Overall}) and per dataset. For example,  $\$P+^3$ is more accurate than $\$F$ with a very high significant difference ($q{=}21.18$) and a small effect size, more accurate than $FH$ with a very high significant difference but without effect size, more accurate than $\$Q^3$ without any effect size, and so forth. In short, $\$P+^3$ is more accurate than all other recognizers with a very highly significant difference, the effect size ranging from none to medium. The difference between $\$F$ and $FH$, $\$Q^3$, is not significant but becomes significant over $\$P^3$ with a medium effect size, over $R3D$, and $RS$ with a large effect size.
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=.54\textwidth]{Figures/Chap4/Overall.pdf}
+    \vspace{-8pt}
+    \caption{Recognition rates of all recognizers aggregated for all datasets in the user-independent scenario: individual rates (top) for $N{=}4,...,64$ (top) and global rates (bottom) $\forall N$. Error bars show their respective standard deviation.}
+    \label{fig:Overall}
+\end{figure*}
+
+
+\subsubsection{Execution Time}
+Figure~\ref{fig:ExecTime1} depicts the execution time in milliseconds for all recognizers in all conditions for the 3DTCGS and  SHREC2019 datasets.
+\begin{itemize}
+    \item Overall, $R3D$ ($M{=}.047$, $SD{=}.013$) and $RS$ ($M{=}.017$, $SD{=}.006$) have the lowest and the most constant times in all configurations.
+    \item  On the contrary, the \$-like recognizers are the most time-consuming: $\$F$ ($M{=}.289$,  $SD{=}.490$) is the fastest recognizer among them, followed by $\$P+^3$ ($M{=}.363$, $SD{=}.649$), $FH$ ($M{=}.492$, $SD{=}.956$), $\$Q^3$ ($M{=}3.005$, $SD{=}3.005$) and $\$P^3$ ($M{=}4.798$, $SD{=}10.224$). 
+    
+    \item This difference suggests that feature-based recognizers, like $R3D$ and $RS$, are not influenced by the same parameters as template-based ones (\textit{\ie,} $\$P^3$, $\$P+^3$, $\$Q^3$, $\$F$, and $FH$).
+
+    \item $RS$ is the fastest recognizer in most $N$ and $T$ conditions, except when $N{=}4$ and $T{\leq}4 $.
+
+    \item The times for all \$-like recognizers increase while $N$ and $T$ grow.
+
+    \item $\$Q^3$ is the slowest recognizer for $N{=}4,8$. Other curves are under the $\$Q^3$ one but from $N{=}16$, $\$P^3$ execution times increase quickly and exceed the execution time of $\$Q^3$  for $T{=}16$ and it occurs even quicker for $N{=}32$ and $N{=}64$, where $\$P^3$ exceeds $\$Q^3$ immediately after $T{=}4$, resp., $T{=}2$.
+
+    \item $RS$ is three-time faster than $R3D$: the ratio of their averaged execution times is $\frac{t_RS}{t_R3D}{=}2.82$. This ratio makes sense considering that $R3D$ computes 39 features of the candidate (3 times 13 features for the three planes $XY$, $YZ$, and $ZX$) while $RS$ computes 16 features once. 
+\end{itemize}
+    
+    For the feature-oriented recognizers, the candidate is preprocessed and its features are extracted. These features are then multiplied by precomputed weights for each class and summed. The candidate's class is designated by the larger sum resulting from this calculation, which confirms a constant time influenced by the number of classes.
+    Among the \$-like recognizers, $\$F$, $\$P+^3$, and $FH$ show shorter execution times. Comparatively, $\$F$ and $\$P+^3$ outperform $FH$ due to the early abandoning strategy employed by these two recognizers.
+    All conditions for this dataset have execution times below 100 ms, which is the limit for a user to perceive real-time execution of a system~\cite{Nielsen:1994}, as mentioned above.
+
+\begin{figure*}
+\vspace{-10pt}
+    \centering
+    \includegraphics[width=.97\textwidth]{Figures/Chap4/Time_Graphics_Shrec_3DTCGS.pdf}
+    \vspace{-12pt}
+    \caption{Execution times of all recognizers for two datasets (left: SHREC2019~\cite{Caputo:2019}, right: 3DTCGS~\cite{Caputo:2017}): individual times for $N{=}4,...,64$.}
+    \label{fig:ExecTime1}
+\end{figure*}
+
+%\vspace{-29pt}
+
+The overall picture for 3DTCGS remains the same as for SHREC2019. The execution times increase for all recognizers and conditions, causing $\$P^3$ to exceed the 100 millisecond limit. This is due to the increase of the number of classes and samples per class in the dataset (26 classes compared with 5 gestures for SHREC2019). We observe a rapid  increase of the $\$P^3$ curve that exceeds $\$Q^3$ just after $T{=}4$ for $N{=}8$.
+
+The four 3DMadLab domains results are analogous to the first two datasets. Rubine-Sheng remains the fastest recognizer ($M_{D1}{=}.26$ ms, $M_{D2}{=}.28$ ms, $M_{D3}{=}.31$ ms, and $M_{D4}{=}.41ms$), whereas the $\$P^3$ stays the slowest one  ($M_{D1}{=}9.83$ ms, $M_{D2}{=}10.19$ ms, $M_{D3}{=}9.87$ ms, $M_{D4}{=}10.16$ ms). For the fourth domain containing the CAD symbols, the execution times are slightly above the other domains, probably because their shape complexity with more crossing points and angle variations require more comparisons.
+
+
+\subsection{User-Dependent Scenario}
+\subsubsection{Recognition Rate}
+The recognizers are sorted in decreasing order of their recognition rate averaged on \textit{all} datasets as follows:
+$\$P+^3$ is superior to $FH$, then $\$F$, $\$Q^3$, $\$P^3$, ended by the two Rubine conditions $R3D$ and $RS$. $\$P+^3$
+is only 2.04\% more accurate than its successor $FH$, which is roughly in the same interval as $\$F$, $\$Q^3$, and $\$P^3$, which is in turn 25.66\% more accurate than $R3D$. 
+
+
+The overall difference between the recognizers was again statistically very highly significant. Table~\ref{tab:anova_ud} details the results of ANOVAs for the four 3DMadLab domains (column \enquote{Overall}) and per domain. For example,  $\$P+^3$ is more accurate than $\$F$ ($q{=}14.38$), $FH$ ($q{=}13.62$), $\$Q^3$ ($q{=}16.13$), and $\$P^3$ ($q{=}19.50$), all with a very high significant difference and a small effect size. In short, $\$P+^3$ is more accurate than all other recognizers with a very high significant difference, the effect size ranging from small to large. Similarly, the difference between $\$F$ and $FH$, $\$Q^3$ is not significant, but becomes significant over $\$P^3$ without any effect size, over $R3D$ and $RS$ with a small and large effect size, and so forth.
+
+
+
+\begin{table}[h]
+%\vspace{-8pt}
+  \caption[ANOVAs computed for the 7 \textsc{Recognizers} in the user-dependent scenario: G1=group 1, G2=group 2.]{ANOVAs computed for the 7 \textsc{Recognizers} in the user-dependent scenario: G1=group 1, G2=group 2. For each dataset, three data are provided: the $q$ value resulting from the ANOVA, the significance of the \textit{p} value if any (***$p{\leq}$), and Cohen's d coefficient for effect size ((S)mall when $d{\geq}.02$, (M)edium when $d{\geq}.05$, (L)arge when $d{\geq}.08$,  and (--) when there is no significant effect size ($d{<}.02$)).}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{@{}ll|l|llll}
+  \toprule
+  \multicolumn{2}{c}{\textbf{Recognizer}}         & \multicolumn{5}{c}{\textbf{Dataset (q-stat, \textit{p} value, Cohen's \textit{d})}}                                                                                                                                                    \\  \hline    \cmidrule{1-7}
+  \multicolumn{1}{c}{G1} & \multicolumn{1}{c}{G2} & \multicolumn{1}{|c|}{Overall}                               & \multicolumn{1}{c}{Domain 1} & \multicolumn{1}{c}{Domain 2} & \multicolumn{1}{c}{Domain 3} & \multicolumn{1}{c}{Domain 4} \\ \midrule
+  $\$P+^3$               & $\$F$                  & \cellcolor[HTML]{bebee6}{\color[HTML]{333333}14.38,***, S}  & 15.21,***, S                 & 13.78,***, --                & 10.73,***, --                & 13.99,***, --                \\
+                         & $FH$                   & \cellcolor[HTML]{bebee6}{\color[HTML]{333333}13.62,***, S}  & 15.27,***, S                 & 14.39,***, --                & 10.54,***, --                & 12.66,***, --                \\
+                         & $\$Q^3$                & \cellcolor[HTML]{bebee6}{\color[HTML]{333333}16.13,***, S}  & 18.15,***, S                 & 17.15,***, --                & 11.78,***, --                & 16.98,***, --                \\
+                         & $\$P^3$                & \cellcolor[HTML]{bebee6}{\color[HTML]{333333}19.50,***, S}  & 21.63,***, S                 & 21.10,***, --                & 14.04,***, --                & 21.16,***, --                \\
+                         & $R3D$                  & \cellcolor[HTML]{bebee6}{\color[HTML]{333333}31.19,***,  M} & 155.71,***, L                & 154.95,***, L                & 150.50,***, L                & 138.79,***, L                \\
+                         & $RS$                   & \cellcolor[HTML]{bebee6}{\color[HTML]{333333}55.87,***, L}  & 200.24,***, L                & 190.04,***, L                & 174.59,***, L                & 191.70,***, L                \\ \midrule
+  $\$F$                  & $FH$                   & 0.76, \textit{n.s.}                                         & 0.05, \textit{n.s.}          & 0.61, \textit{n.s.}          & 0.18, \textit{n.s.}          & 1.32, \textit{n.s.}          \\
+                         & $\$Q^3$                & 1.75, \textit{n.s.}                                         & 2.94, \textit{n.s.}          & 3.36, \textit{n.s.}          & 1.05, \textit{n.s.}          & 2.99, \textit{n.s.}          \\
+                         & $\$P^3$                & \cellcolor[HTML]{bebee6}{\color[HTML]{333333}5.11,**, -- }  & 6.41,***, --                 & 7.32,***, --                 & 3.30, \textit{n.s.}          & 7.17,***, --                 \\
+                         & $R3D$                  & \cellcolor[HTML]{bebee6}{\color[HTML]{333333}16.81,***, S}  & 140.49,***, L                & 141.16,***, L                & 139.77,***, L                & 124.80,***, L                \\
+                         & $RS$                   & \cellcolor[HTML]{bebee6}{\color[HTML]{333333}41.48,***, L}  & 185.02,***, L                & 176.26, ***, L               & 163.85,***, L                & 177.70,***, L                \\ \midrule
+  $FH$                   & $\$Q^3$                & 2.51, \textit{n.s.}                                         & 2.88, \textit{n.s.}          & 2.75, \textit{n.s.}          & 1.24, \textit{n.s.}          & 4.31,*, --                   \\
+                         & $\$P^3$                & \cellcolor[HTML]{bebee6}{\color[HTML]{333333}5.87,***, --}  & 6.36,***, --                 & 6.70, ***, --                & 3.49, \textit{n.s.}          & 8.49,***, --                 \\
+                         & $R3D$                  & \cellcolor[HTML]{bebee6}{\color[HTML]{333333}17.57,***, S}  & 140.44,***, L                & 140.55,***, L                & 139.96,***, L                & 126.13,***, L                \\
+                         & $RS$                   & \cellcolor[HTML]{bebee6}{\color[HTML]{333333}42.25,***, L}  & 184.97,***, L                & 175.64,***, L                & 164.04,***, L                & 179.03,***, L                \\ \midrule
+  $\$Q^3$                & $\$P^3$                & 3.36, \textit{n.s.}                                         & 3.47, \textit{n.s.}          & 3.95, \textit{n.s.}          & 2.25, \textit{n.s.}          & 4.18,*, --                   \\
+                         & $R3D$                  & \cellcolor[HTML]{bebee6}{\color[HTML]{333333}15.06,***, S}  & 137.55,***, L                & 137.80, ***, L               & 138.72,***, L                & 121.81,***, L                \\
+                         & $RS$                   & \cellcolor[HTML]{bebee6}{\color[HTML]{333333}39.73,***, L}  & 182.08,***, L                & 172.89,***, L                & 162.80,***, L                & 174.71,***, L                \\ \midrule
+  $\$P^3$                & $R3D$                  & \cellcolor[HTML]{bebee6}{\color[HTML]{333333}11.69,***, S}  & 134.08,***, L                & 133.84, ***, L               & 136.46,***, L                & 117.63, ***, L               \\
+                         & $RS$                   & \cellcolor[HTML]{bebee6}{\color[HTML]{333333}36.37,***, M}  & 178.61,***, L                & 168.93,***, L                & 160.54,***, L                & 150.53,***, L                \\ \midrule
+  $R3D$                  & $RS$                   & \cellcolor[HTML]{bebee6}{\color[HTML]{333333}24.67,***, S}  & 44.52,***, S                 & 35.09,***, S                 & 24.08,***, --                & 52.90,***, S                 \\ \bottomrule
+\end{tabular}
+}
+
+  \label{tab:anova_ud}
+  \vspace{-16pt}
+\end{table}
+\break
+\subsubsection{Execution Time}
+The execution time curves of the four domains are depicted in Figure~\ref{fig:Time Exec UDep D1&2} and Figure~\ref{fig:Time Exec UDep 3&4}, resp. In contrast to the user-independent scenario, $RS$ remains the fastest recognizer in all conditions ($M_{D1}{=}.030$ ms, $M_{D2}{=}.027$ ms, $M_{D3}{=}.030$ ms, and $M_{D1}{=}.042 ms$). The $\$P^3$ curve is located under the $\$Q^3$ for $N{=}4$ ($M_{\$P^3}{=}.058$ ms and for $M_{\$Q^3}{=}.447$ ms) and $N{=}8$ ($M_{\$P^3}{=}.444$ ms and $M_{\$Q^3}{=}.853$ ms). 
+
+
+The $\$P^3$ execution time curve progressively increases as $N$ increases and it intersects with the $\$Q^3$ at different points, the intersection point is determined by $T$.
+
+
+The execution time for this scenario is larger than for the user-independent scenario because of the method used in JavaScript to return the timestamp during the recognition. For the user-independent scenario, we used \textsf{performance.now()}, which is a high-performance method returning a value representing the time spent since the beginning of the program with a precision of up to one microsecond, whereas in the user-dependent scenario, we used \textsf{date.now()} which is a method returning the number of milliseconds elapsed since UNIX epoch, which limits the precision by rounding it to 1 millisecond.
+
+
+
+\begin{figure*}
+\vspace{-10pt}
+    \centering
+    \includegraphics[width=.95\textwidth]{Figures/Chap4/Time_Graphics_UDep_MadLabS1&2.pdf}
+    \vspace{-8pt}
+    \caption{Recognition times of all recognizers for two datasets from MadLabSD (left: Domain 1, right: Domain 2~\cite{Huang:2019}): individual times for $N{=}4..64$ for the User-dependent scenario.}
+    \label{fig:Time Exec UDep D1&2}
+\end{figure*}
+
+\begin{figure*}
+\vspace{-10pt}
+    \centering
+    \includegraphics[width=.95\textwidth]{Figures/Chap4/Time_Graphics_UDep_MadLabS3&4.pdf}
+    \vspace{-8pt}
+    \caption{Recognition times of all recognizers for two datasets from MadLabSD (left: Domain 3, right: Domain 4~\cite{Huang:2019}): individual times for $N{=}4..64$ for the User-dependent scenario.}
+    \label{fig:Time Exec UDep 3&4}
+\end{figure*}
+
+
+%\vspace{-8pt}
+\vspace{-4pt}
+
+
+
+
+% \begin{table}[]
+% \begin{tabular}{@{}ccccc@{}}
+% \toprule
+% Recognizer & Effect & \textit{F} & \textit{p} & \eta \\ \midrule
+% $\$P^3$ & Datasets $\times$ Rates & \textit{F}_{5,144} = 21.75 & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333} \textless{}.0001} & 0.43 (L) \\
+%  & Datasets X Time & \textit{F}_{5,144} = 1.15 & \textit{n.s.} &  (--) \\
+% $\$Q^3$ & Datasets $\times$ Rates & \textit{F}_{5,144} = 21.87 & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333} \textless{}.0001} & 0.43 (L) \\
+%  & Datasets $\times$ Time & \textit{F}_{5,144} = 0.61 & \textit{n.s.} &  (--) \\
+% $\$P+^3$ & Datasets $\times$ Rates & \textit{F}_{5,144} = 41.48 & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333} \textless{}.0001} & 0.59 (L) \\
+%  & Datasets $\times$ Time & \textit{F}_{5,144} = 0.95 & \textit{n.s.} &  (--) \\
+% $\$F$ & Datasets $\times$ Rates & \textit{F}_{5,144} = 22.1 & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333} \textless{}.0001} & 0.43 (L) \\
+%  & Datasets $\times$ Time & \textit{F}_{5,144} = 0.93 & \textit{n.s.} &  (--) \\
+% $FH$ & Datasets $\times$ Rates & \textit{F}_{5,144} = 22.48 & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333} \textless{}.0001} & 0.44 (L) \\
+%  & Datasets $\times$ Time & \textit{F}_{5,144} = 1.55 & \textit{n.s.} &  (--) \\
+% $R$ & Datasets $\times$ Rates & \textit{F}_{5,144} = 3.64 & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333} \textless{}.01} & 0.11 (L) \\
+%  & Datasets $\times$ Time & \textit{F}_{5,144} = 147.18 & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333} \textless{}.0001} & 0.84 (L) \\
+% $RS$ & Datasets $\times$ Rates & \textit{F}_{5,144} = 6.07 & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333} \textless{}.0001} & 0.17 (L) \\
+%  & Datasets $\times$ Time & \textit{F}_{5,144} = 89.39 & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333} \textless{}.0001} & 0.76 (L) \\ \bottomrule
+% \end{tabular}
+% \caption{The effect of dataset on  the recognition rate and the execution time of the recognizers with the effect size for the user-independent scenario.}
+%   \label{tab:effect_dataset}
+% \end{table}
+
+% \begin{table}[]
+% \begin{tabular}{@{}ccccc@{}}
+% \toprule
+% Recognizer & Effect & \textit{F} & \textit{p} & \eta \\ \midrule
+% $\$P^3$ & Datasets X Rates & \textit{F}_{3,76} = 8.66 & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333} \textless{}.0001} & 0.25 (L) \\
+%  & Datasets X Time & \textit{F}_{3,76} = 0 & n.s. & 0 (--) \\
+% $\$Q^3$ & Datasets X Rates & \textit{F}_{3,76} = 8.86 & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333} \textless{}.0001} & 0.26 (L) \\
+%  & Datasets X Time & \textit{F}_{3,76} = 0.03 & n.s. & 0 (--) \\
+% $\$P+^3$ & Datasets X Rates & \textit{F}_{3,76} = 20.9 & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333} \textless{}.0001} & 0.45 (L) \\
+%  & Datasets X Time & \textit{F}_{3,76} = 0.02 & n.s. & 0 (--) \\
+% $\$F$ & Datasets X Rates & \textit{F}_{3,76} = 8.45 & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333} \textless{}.0001} & 0.25 (L) \\
+%  & Datasets X Time & \textit{F}_{3,76} = 0.04 & n.s. &  0 (--) \\
+% $FH$ & Datasets X Rates & \textit{F}_{3,76} = 8.28 & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333} \textless{}.0001} & 0.25 (L) \\
+%  & Datasets X Time & \textit{F}_{3,76} = 0 & n.s. & 0 (--) \\
+% $R$ & Datasets X Rates & \textit{F}_{3,76} = 0.04 & n.s. & 0 (--) \\
+%  & Datasets X Time & \textit{F}_{3,76} = 357.48 & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333} \textless{}.0001} & 0.93 (L) \\
+% $RS$ & Datasets X Rates & \textit{F}_{3,76} = 0.19 & n.s. & 0.01 (--) \\
+%  & Datasets X Time & \textit{F}_{3,76} = 65.55 & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333} \textless{}.0001} & 0.72 (L) \\ \bottomrule
+% \end{tabular}
+% \caption{The effect of dataset on  the recognition rate and the execution time of the recognizers with the effect size for the user-dependent scenario.}
+%   \label{tab:effect_dataset_UDep}
+% \end{table}
+
+
+
+
+
+%Figure~\ref{fig:Compar1} plots the recognition rates for all recognizers on the two first datasets, \textit{\ie,}, SHREC2019 and 3DTCGS, side by side for comparison. 
+%and the values obtained by the one-way ANOVAs computed for evaluating potential differences between recognizers. We use Tukey's HSD post-hoc analysis when Levene's test does not indicate unequal variances, and Games-Howell when it does.
+% We first summarize the results for SHREC2019 dataset:
+% \begin{itemize}
+%     \item $\$P+^3$ turns out to be the most accurate recognizer in all conditions ($N{=}\{4,8,16,32,64\}$) in terms of absolute values for all values of $T$. When $N{=}64$, $\$P+^3$ is almost joined by $\$Q^3$, thus suggesting that $\$Q$ exhibits a better accuracy when the amount of templates is increasing. The more points are included for each template, the more accurate $\$Q^3$ becomes as it is the case for $\$Q$~\cite{Vatavu:2018}. $\$P+^3$ is appropriate for gestures with high sampling, even with a low number of templates (\textit{\eg}, $\tau{=}80.00\%$ with $T{=}4$, rapidly increasing above 90\%).  
+    
+%     \item $\$P+^3$ is significantly more accurate than all other recognizers. We computed Student's $t$ test for two paired samples since the samples were the same. There was a very highly significant difference in the global recognition rates for $\$P+^3$ ($M{=}86.94\%$, $SD{=}15.00\%$) and all the other conditions conditions (all with \textit{df}${=}2499$ and $p^{***}{<}.001$):\\
+%     $\$F$ ($M{=}79.36\%$, $SD{=}18.08\%$), t$=\!18.74$, with a Cohen's~$d{=}.37$ representing a small effect~\cite{Cohen:1988};\\
+%     $\$Q^3$ ($M{=}79.36\%$, $SD{=}18.60\%$), t$=\!18.67$, with a Cohen's~$d{=}.37$ representing a small effect~\cite{Cohen:1988};\\
+%     $FH$ ($M{=}79.28\%$, $SD{=}18.51\%$), t$=\!18.20$, with a Cohen's~$d{=}.36$ representing a small effect~\cite{Cohen:1988};\\
+%     $\$P^3$ ($M{=}78.10\%$, $SD{=}19.20\%$), t$=\!21.13$, with a Cohen's~$d{=}.42$ representing a small effect~\cite{Cohen:1988};\\
+%     $R3D$ ($M{=}52.51\%$, $SD{=}32.24\%$), t$=\!52.35$, with a Cohen's~$d{=}1.05$ representing a large effect~\cite{Cohen:1988};\\
+%     $RS$ ($M{=}40.82\%$, $SD{=}30.22\%$), t$=\!73.61$, with a Cohen's~$d{=}1.47$ representing a very large effect~\cite{Sawilowsky:2003}.
+%     These results suggest that using the $\$P+^3$ recognizer has a positive effect on global recognition rates. This is also confirmed by the values obtained by a one-way ANOVA with Tukey's HSD post-hoc analysis: the between-group analysis also returned a very highly significant effect ($SS{=}11036.5$, \textit{df}${=}6$, $F{=}1444.58$, $p^{***}{<}.001$).
+    
+%     \item $\$P+^3$ could accommodate gestures with low sampling: already with one template on four points ($N{=}4$,  $T{=}1$), it benefits from a reasonable rate of $\tau{=}70\%$, the lowest value for this recognizer in all configuration. When $N{=}4$, better to have at least 8 points to reach a rate of $\tau{=}80\%$. When the number of points reaches 8 ($N{=}8$), two or more template are admissible to get a rate of at least ($\tau{=}86\%$). This observation seems to confirm the observation that for \$-family members, a sampling of 8 points already gives acceptable results~\cite{Vatavu:2012:Impact}. When $N{\geq}16$, one template is already enough and there is no need to go up to 16, even if the best rate is obtained when $N{=}32$ with $\tau{=}95.40\%$.
+    
+%     \item Apart from $\$P+^3$, all other \$-like recognizers display a global rate of $\tau{\geq}78\%$. Their differences are very light: they remain included in the same envelope with similar rates and progression when $N{\nearrow}$, $T{\nearrow}$ and the curves are almost superimposed all the time.
+    
+%     \item Although $\$P^3$ returned the lowest global rate of all \$-like recognizers, the one-way ANOVA did not return any significant difference between them, but all of them are always significantly more accurate than $R3D$ and $RS$.
+
+%     \item Regarding the two feature-oriented recognizers, Rubine3D (R3D) is always more accurate than its counterpart Rubine-Sheng (RS) in all conditions. A Student's $t$ test for two paired samples revealed a very highly significant difference in the global recognition rates for $R3D$ ($M{=}52.51$, $SD{=}32.20$) and $RS$ ($M{=}40.82\%$, $SD{=}30.22\%$): $t{=}20.16$, $df{=}2499$, $p^{***}{<}.001$, with a Cohen's $d{=}.40$ representing a small effect. Both exhibit an acceptable rate only when $N{\geq}8$. Below this threshold, they are not useful. Surprisingly, when $N{=}4$, $R3D$ and $RS$ outperform other \$-like recognizers, apart from $\$P+^3$, when $T{\geq}4$. After that, they are obviously completely surpassed.
+    
+%     \item Rubine-Sheng is the least accurate recognizer in almost all conditions as it is outperformed by all other recognizers tested. Therefore, computing more geometric features for a 3D trajectory does not really help and keeping the original features in the three planes is enough to outperform Rubine-Sheng.
+    
+%     \item If we assume that a human-acceptable rate of $\tau{\geq}90\%$, the ideal cases are all when $T{=}16$ for all conditions.
+% \end{itemize}
+
+% For the 3DTCGS dataset, the results (see right part of Figure~\ref{fig:Compar1}) are quite similar to those obtained for the SHREC2019 dataset, except that, overall the curves increase more rapidly. The global recognition rates are quite similar for all \$-like recognizers, but are better for $R3D$ ($\tau{=}74.48\%$ instead of $\tau{=}52.51\%$) and for $RS$ ($\tau{=}68.80\%$ instead of $\tau{=}40.82\%$).
+
+% Since we evaluated all recognizers against all datasets in this user-independent scenario, it is worth examining their aggregated recognition rates to provide figures applicable to the whole set in this most demanding scenario. Figure~\ref{fig:Overall} plots the recognition rates for the seven datasets considered in the user-independent scenario only with the following results:
+
+% \begin{itemize}
+%     \item $\$P+^3$ remains the most accurate recognizer in all conditions ($N{=}\{4,8,16,32,64\}$) in terms of absolute values for all values of $T$ and for its aggregated rate ($M{=}87.48\%$, $SD{=}13.50\%$). 
+%     The rates of $\$F$ ($M{=}79.54\%$, $SD{=}16.98$), FreeHandUni ($M{=}79.49\%$, $SD{=}16.28\%$), $\$Q^3$ ($M{=}79.09\%$, $SD{=}16.54\%$), and $\$P^3$ ($M{=}77.50\%$, $SD{=}16.88$) fit in a pocket square. Their recognition curves are almost asymptotical to their maximum rate while $N$ increases. The two feature-oriented recognizers occupy the last two seats: Rubine3D ($M{=}67.22\%$, $SD{=}24.93\%$) and Rubine-Sheng ($M{=}57.45\%$, $SD{=}23.56\%$), being the least accurate recognizer in this scenario.
+    
+%     \item $\$P+^3$ is significantly more accurate than all other recognizers. A Student's $t$ test for two paired samples reveals that there was a very highly significant difference in the global recognition rates for $\$P+^3$ and all the other conditions conditions (all with \textit{df}${=}14,999$ with $p^{***}{<}.001$):
+%     \begin{itemize}
+%     \item 
+%     for $\$F$ (t${=}66.53$), with a medium effect size for both Pearson's correlation ($r{=}.48$~\cite{Cohen:1992}) and Cohen's~($d{=}.54$~\cite{Cohen:1988});
+%     \item
+%     for FreeHandUni (t${=}66.53$), with a medium effect size for both Pearson's correlation ($r{=}.48$~\cite{Cohen:1992}) and Cohen's~difference ($d{=}.54$~\cite{Cohen:1988});
+%     \item
+%     for $\$Q^3$ (t${=}70.02$), with a large effect size for Pearson's correlation ($r{=}.50$~\cite{Cohen:1992}) and a medium one for Cohen's difference ($d{=}.57$~\cite{Cohen:1988});
+%     \item
+%     for $R3D$ (t${=}79.06$), with a large effect size for Pearson's correlation ($r{=}.54$~\cite{Cohen:1992}) and a medium one for Cohen's difference ($d{=}.64$~\cite{Cohen:1988});
+%     \item
+%     for $RS$ (t${=}137.79$), with a large efect size for Pearson's correlation ($r{=}.75$ ~\cite{Cohen:1992}) and a medium one for Cohen's difference ($d{=}1.12$~\cite{Cohen:1988}).
+%     \end{itemize}
+%     \item Although the recognition rate of the four recognizers ranked 2-5 belong to the same small range, they differ statistically in a few conditions: $\$F$ is not significantly superior to FreeHandUni, but is very highly statistically superior to $\Q^3$ (t${=}5.32$ with a very small effect $d{=}.04$), to $\$P^3$ (t${=}19.80$ with a very small effect $d{=}.16$), to $R3D$ (t${=}34.43$ with a small effect $d{=}.28$) and to $R3D$ (t${=}90.41$ with a medium effect $d{=}.73$).  
+%     \item The error bars of Figure~\ref{fig:Overall} depict the standard deviation of their respective rates computed on all datasets instead of a confidence interval. These confidence intervals computed with $\alpha{=}.05$ were so small that they almost impossible to render on the figure. We notice that $\$P+^3$ benefits from the smallest standard deviation (from about 75\% to about 99\%) on its rate distribution. Subsequent \$-like recognizers see their standard deviation belonging to a very similar interval without any particular significant difference. However, Rubine3D has the largest standard deviation followed by Rubine-Sheng, having its deviation spanning from the minimum value to about 80\% at best. The standard deviation of recognizers tends to increase as their recognition rate decreases (from 13.50\% to 24.93\%), which suggests that their overall recognition behavior is more constant.
+% \end{itemize}
+
+ 
+
+
+\subsubsection{User-dependent \textit{vs.} User-independent Scenario}
+\begin{itemize}
+    \item The $\$P+^3$ recognizer remains the most accurate for the first domain (\textit{\ie,} the ten digits) in both user-dependent ($M{=}98.45\%$) and user-independent scenarios ($M{=}88.08\%)$.
+    \item  For all values of $N$,  a high recognition rate is obtained as soon as with one template and the best recognition rate for more templates.
+    \item With two or more templates ($T{>}2$) used for training, $R3D$'s curve surpasses all the other curves  except the $\$P+^3$ in the user-independent scenario and is competitive with other \$-like recognizers in the user-dependent scenario.
+    \item With less than three templates, $R3D$ is inaccurate, which explains why its overall rate is inferior to the others, except for $RS$. 
+    \item In the user-independent scenario, \$-like recognizers belong to an envelope that progressively grows when $N$ grows.
+    \item In the user-dependent scenario, their curves are confounded most of the time.
+    \item The recognition rates of the second domain, \textit{\ie,} the lowercase letters a-j,  are quite similar to the first domain with a margin of about 1-2\%.
+    \item For the third domain, \textit{\ie,} the simulation symbols, \$-like recognizers are close to perfection in the user-dependent scenario with $\$P+^3$ being the champion in both cases ($M{=}99.26\%$ and $M{=}94.45\%$, respectively).
+    \item The results for the user-independent scenario are slightly superior to those obtained for the previous domains.
+    \item However,  the rates are very low for the fourth domain (\textit{\ie,} the CAD symbols) in the user-independent scenario (they are all below $66\%$), but still very good for the user-dependent scenario (between $M{=}93.86\%$ for $\$P+^3$ and $M{=}90.68\%$ for $\$P^3$).
+\end{itemize}
+   
+   
+%This domain probably contains the least familiar symbols. 
+
+
+For all four domains, the recognition rate significantly decreases when we are switching from the user-dependent scenario to the user-independent scenario, which was expected. Recognizing a 3D trajectory that is different from the templates used for training remains more demanding than re-identifying an already existing one. Figure~\ref{fig:RateDifferences} depicts the loss of recognition rate in terms of a difference of percentage from user-dependent to user-independent. $R3D$ wins the lowest averaged difference of percentage ($M{=}11.75\%$), but its global recognition rate is below the \$-like recognizers. The second place is occupied by $\$P+^3$, which undergoes the next lowest averaged difference of percentage ($M{=}17.50\%$ on four domains), followed by $\$F$, $FH$, $\$P+^3$, $\$P^3$, and $RS$.
+
+In conclusion, $\$P+^3$ reasonably resists to user-independence while keeping the best recognition rate. The two first domains, \textit{\ie,} digits and letters, remain constant in terms of recognition loss for each recognizer, again with  a loss of 12\% for $\$P+^3$. Overall, the third domain benefits from the minimum loss, probably because of straightforward symbols, and the fourth domain suffers from the maximum loss, probably because of the most uncommon symbols. 
+\begin{figure*}[h]
+    \centering
+%    \vspace{-24pt}
+    \includegraphics[width=\textwidth]{Figures/Chap4/RateDifferences.pdf}
+    \vspace{-18pt}
+    \caption{Difference of percentage in recognition rate loss for all recognizers on the MadLabSD dataset~\cite{Huang:2019}, all domains, when restricting the scenario from user-dependent to user-independent. Recognizers are sorted in decreasing order of their global recognition rate.}
+    \label{fig:RateDifferences}
+    \vspace{-10pt}
+\end{figure*}
+
+
+
+\subsection{Impact on Recognition Rate and Execution Time}
+We conducted a series of one-way ANOVAs using IBM SPSS V27 to evaluate the effect of the recognizer, number of templates $T$, and sampling $N$ on recognition rate and execution time. When Levene's test~\cite{Levene:1960} indicated unequal variances, we used Games-Howell post-hoc analysis. Otherwise, we used Tukey's HSD. Before analysis, the data underwent a Bonferroni type I correction.
+
+
+\subsubsection{Impact of Datasets on Recognition Rate and Execution Time}
+To determine the potential impact of the datasets (\textit{\ie,} SHREC2019, 3DTCGS, MadLabSD Domains 1--4 in the user-independent scenario and MadLabSD Domains 1--4 in the user-dependent scenario) on the recognition rate and the execution time, we computed another series of one-way ANOVAs (Table~\ref{tab:effect_dataset}). 
+\begin{itemize}
+    \item The analyses showed a significant effect of the datasets on the recognition rate with a large effect size, but no significant effect on the execution time in both scenarios.
+    \item A medium effect size in the user-independent scenario was observed on the $R3D$ recognition rate, but no significant effect on it and on $RS$ recognition rate in the user-dependent scenario.
+    \item  Tukey’s HSD and Games-Howell post-hoc analyses revealed that the recognizers got the lowest rate for Domain 4 in the two scenarios. For instance, there were significant differences for the $\$P+^3$ recognition rate in user-independent scenario  between the different datasets, Domain 4 \textit{vs.} SHREC2019 ($M_{\text{Diff}}{=}-20.588$,$^{***}p{<}.001$), Domain 4 \textit{vs.} 3DTCGS ($M_{\text{Diff}}{=}-17.923$,$^{***}p{<}.001$), Domain 4 \textit{vs.} Domain 1 ($M_{\text{Diff}}{=}-21.720$,$^{***}p{<}.001$), Domain 4 \textit{vs.} Domain 2 ($M_{\text{Diff}}{=} -21.512$,$^{***}p{<}.001$), Domain 4 \textit{vs.} Domain 3 ($M_{\text{Diff}} {=} -28.092$,$^{***}p{<}.001$), and Domain 4 \textit{vs.} 3DMadLab ($M_{\text{Diff}}{=}-20.588$,$^{***}p{<}.001$). 
+    \item There was also a significant effect of the datasets on $R3D$ and $RS$ execution time. The $R3D$ execution times are significantly different between each pair of datasets.
+\end{itemize}
+
+
+\begin{table}[t]
+\caption[The effect of dataset on the recognition rate and the execution time with the effect size]{The effect of dataset on the recognition rate and the execution time with the effect size ( (L)arge when $\eta^2{\geq}.14$, (M)edium when $\eta^2{\geq}.06$, (S)mall when $\eta^2{\geq}.01$, and (–-) when there is a null effect size).}
+ \begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}ll|rcrc|rcr@{}}
+\toprule
+%Recognizer & Effect & \textit{F} & \textit{p} & \eta \\ 
+\textbf{Recognizer} & \textbf{Effect} & \multicolumn{3}{c}{\textbf{User independent}} & \phantom{a} & \multicolumn{3}{c}{\textbf{User dependent}} \\ 
+\cmidrule{3-5} \cmidrule{7-9}
+           &        &  \multicolumn{1}{c}{$F_{5,144}$} & \multicolumn{1}{c}{$p$} & \multicolumn{1}{c}{$\eta^2$} && \multicolumn{1}{c}{$F_{3,76}$} & \multicolumn{1}{c}{$p$} & \multicolumn{1}{c}{$\eta^2$} \\
+\midrule
+$\$P^3$ & Datasets $\times$ Rates & 21.75 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .43 (L) &&   8.66 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .25 (L)\\
+ & Datasets $\times$ Time & 1.15 & \textit{n.s.} & .04 (--) &&   0 & \textit{n.s.} & 0 (--) \\
+$\$Q^3$ & Datasets $\times$ Rates & 21.87 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .43 (L) &&   8.86 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .26 (L) \\
+ & Datasets $\times$ Time &  0.61 & \textit{n.s.} & .02 (--) &&  0 &  \textit{n.s.} & 0 (--) \\
+$\$P+^3$ & Datasets $\times$ Rates & 41.48 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .59 (L) && 20.9 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .45 (L) \\
+ & Datasets $\times$ Time & 0.95 & \textit{n.s.} & .03 (--) &&   0 &  \textit{n.s.} & 0 (--)\\
+$\$F$ & Datasets $\times$ Rates & 22.1 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .43 (L) && 8.45  &\cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .25 (L)   \\
+ & Datasets $\times$ Time & 0.93 & \textit{n.s.} & .03 (--) &&   0 &  \textit{n.s.} & 0 (--)\\
+$FH$ & Datasets $\times$ Rates & 22.48 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .44 (L) && 8.28   & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .25 (L)  \\
+ & Datasets $\times$ Time & 1.55 & \textit{n.s.} & .05 (--) &&   0 &  \textit{n.s.} & 0 (--)\\
+$R3D$ & Datasets $\times$ Rates & 3.64 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{**}$} & .11 (M) &&  0 &  \textit{n.s.} & 0 (--)\\
+ & Datasets $\times$ Time & 147.18 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .84 (L) && 357.48  &  \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{**}$} & .93 (L) \\
+$RS$ & Datasets $\times$ Rates & 6.07 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .17 (L) && .19  0 &  \textit{n.s.} & .01 (--)\\
+ & Datasets $\times$ Time &  89.39 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .76 (L) && 65.55  & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .72 (L)\\
+ \bottomrule
+\end{tabular}
+\end{adjustbox}
+  \label{tab:effect_dataset}
+  \vspace{-16pt}
+\end{table}
+  
+\subsubsection{Impact of Number of Templates and Sampling on Recognition Rate and Execution Time}
+Both  $T$ and  $N$ have a significant impact on the recognition rate and  execution time of most recognizers (Table~\ref{tab:effect_dataset2}):
+\begin{itemize}
+    \item Regarding the $\$P^3$, $\$Q^3$, $\$P+^3$, $\$F$, and $FH$, we observe a significant effect of both factors, with a large effect size in the two scenarios. The Games-Howell analyses revealed that the execution time is significantly slower as the number of points increases.
+    \item The $\$Q^3$ execution time is not significantly impacted by the number of templates in both scenarios. The effect of the number of templates on the execution time of $\$F$ is significant with a medium effect size, the Game-Howell post-hoc analysis revealed no significant difference between the execution times of each $T$ in the user-dependent scenario. 
+    \item As per $R3D$ and $RS$, only $T$ had a significant effect on the recognition rates with a large effect size. The Game-Howell confirms that the recognizers are more accurate with more templates.
+\end{itemize}
+
+\begin{table}[ht!]
+\vspace{-10px}
+\caption[The effect of number of templates and points on  the recognition rate and the execution time with the effect size]{The effect of number of templates and points on  the recognition rate and the execution time with the effect size ( (L)arge when $\eta^2{\geq}.14$,(M)edium $\eta^2{\geq}.06$, (S)mall $\eta^2{\geq}.01$, and (–) when null effect size).}
+ \begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{@{}llrcrcrcr@{}}
+\toprule
+%Recognizer & Effect & \textit{F} & \textit{p} & \eta \\ 
+\textbf{Recognizer} & \textbf{Effect} & \multicolumn{3}{c}{\textbf{User independent}} & \phantom{a} & \multicolumn{3}{c}{\textbf{User dependent}} \\ 
+\cmidrule{3-5} \cmidrule{7-9}
+           &        &  \multicolumn{1}{c}{$F_{4,145}$} & \multicolumn{1}{c}{$p$} & \multicolumn{1}{c}{$\eta^2$} && \multicolumn{1}{c}{$F_{3,76}$} & \multicolumn{1}{c}{$p$} & \multicolumn{1}{c}{$\eta^2$} \\
+\midrule
+$\$P^3$ & \cellcolor[HTML]{bebee6}{Templates $\times$ Rates} & 16.31 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .31 (L) &&   16.80 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .40 (L)\\
+ & \cellcolor[HTML]{bebee6}{Points $\times$ Rates} & 9.40 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .21 (L)  &&  5.98 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .24 (L) \\
+ & Templates $\times$ Time & 5.69 &  \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .14 (L) &&   4.04 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .14 (L) \\
+ & Points $\times$ Time & 25.27 &  \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .41 (L) &&   24.87 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .57 (L) \\
+$\$Q^3$ & \cellcolor[HTML]{bebee6}{Templates $\times$ Rates} & 15.31 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .30 (L) &&   15.44 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .38 (L)\\
+ & \cellcolor[HTML]{bebee6}{Points $\times$ Rates} & 9.90 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .21 (L) &&   6.22 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .25 (L) \\
+ & Templates $\times$ Time & 0.64 & \textit{n.s.} & .02 (--) &&   0.09 & \textit{n.s.} & 0 (--) \\
+ & Points $\times$ Time & 311.36 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .90 (L) &&   1587.00 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .99 (L) \\
+$\$P+^3$ & \cellcolor[HTML]{bebee6}{Templates $\times$ Rates} & 11.46 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .24 (L) &&   7.99 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .24 (L)\\
+ & \cellcolor[HTML]{bebee6}{Points $\times$ Rates} & 2.65 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{*}$} & .07 (M) &&   2.16 & \textit{n.s.} & .10 (-) \\
+ & Templates $\times$ Time & 6.26 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .15 (L) &&   3.51 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{*}$} & .12 (M) \\
+ & Points $\times$ Time & 33.96 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .48 (L) &&  36.02 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .66 (L)\\
+$\$F$ & \cellcolor[HTML]{bebee6}{Templates $\times$ Rates} & 16.77 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .32 (L) &&  13.89 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .36 (L)\\
+ & \cellcolor[HTML]{bebee6}{Points $\times$ Rates} & 8.66 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .19 (L) &&   6.88 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .27 (L) \\
+ & Templates $\times$ Time& 6.70 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .16 (L) &&   3.52 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{*}$} & .12 (M) \\
+ & Points $\times$ Time & 34.95 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .49 (L) &&   39.12 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .68 (L) \\
+$FH$ & \cellcolor[HTML]{bebee6}{Templates $\times$ Rates} & 16.25 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .31 (L) &&  13.83 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .35 (L)\\
+ & \cellcolor[HTML]{bebee6}{Points $\times$ Rates} & 8.79 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .20 (L) &&   7.26 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .28 (L) \\
+ & Templates $\times$ Time & 6.62 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .15 (L) &&   4.76 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{**}$} & .16 (L) \\
+ & Points $\times$ Time & 22.65 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .39 (L) &&   23.83 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .56 (L) \\
+$R3D$  & \cellcolor[HTML]{bebee6}{Templates $\times$ Rates} & 89.56 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .71 (L) &&   12047.47 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & 1 (L)\\
+ & \cellcolor[HTML]{bebee6}{Points $\times$ Rates} & 0 & \textit{n.s.} & 0 (--) &&   0 & \textit{n.s.} & 0 (--) \\
+ & Templates $\times$ Time & 0.42 & \textit{n.s.} & .01 (--) &&   0.13 & \textit{n.s.} & .01 (--) \\
+ & Points $\times$ Time & 0.14 & \textit{n.s.} &  0 (--) &&   0.1 & \textit{n.s.} & .01 (--) \\
+$RS$ & \cellcolor[HTML]{bebee6}{Templates $\times$ Rates} & 70.35 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .66 (L) &&   2258.11 & \cellcolor[HTML]{bebee6}{\color[HTML]{333333} $^{***}$} & .99 (L)\\
+ & \cellcolor[HTML]{bebee6}{Points $\times$ Rates} & 0 & \textit{n.s.} & 0 (--) &&   0.09 & \textit{n.s.} & 0 (--) \\
+ & Templates $\times$ Time & 1.21 & \textit{n.s.} & .03 (--) &&   0.37 & \textit{n.s.} & .01 (--) \\
+ & Points $\times$ Time & 0.19 & \textit{n.s.} & .01 (--) &&   0.10 & \textit{n.s.} & .01 (--) \\
+ \bottomrule
+\end{tabular}
+\end{adjustbox}
+  \label{tab:effect_dataset2}
+  \vspace{5pt}
+\end{table}
+
+
+
+% \begin{table}[b!]
+% \hspace{50pt}
+% \vspace{-8pt}
+% \begin{tabular}{@{}llclcl@{}}
+% \toprule
+% \multicolumn{2}{c}{\textbf{Recognizer}} & \phantom{a}        & \multicolumn{3}{c}{\textbf{Scenario}}                  \\
+% \cmidrule{1-2} \cmidrule{4-6}
+% \multicolumn{1}{c}{G1} & \multicolumn{1}{c}{G2} & & \multicolumn{1}{c}{UI} & \phantom{a}  & \multicolumn{1}{c}{UD}\\ \midrule
+% $\$P+^3$             & $\$F$                     & & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333} 21.18,***, S}            &  & \cellcolor[HTML]{C6E0B4}{\color[HTML]{C6E0B4}}{\color[HTML]{333333} 14.38,***, S}            \\ 
+%                          & $FH$                   & & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}21.30,***, --}           & & \cellcolor[HTML]{C6E0B4}{\color[HTML]{C6E0B4}}{\color[HTML]{333333} 13.62,***, S}            \\
+%                          & $\$Q^3$                & & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}22.89,***, --}           & & \cellcolor[HTML]{C6E0B4}{\color[HTML]{C6E0B4}}{\color[HTML]{333333} 16.13,***, S}              \\ 
+%                          & $\$P^3$                & & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}27.50,***, S }           & & \cellcolor[HTML]{C6E0B4}{\color[HTML]{C6E0B4}}{\color[HTML]{333333} 19.50,***, S}   \\ 
+%                          & $R3D$                     &  & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}37.75,***,  S}        &    &  \cellcolor[HTML]{C6E0B4}{\color[HTML]{C6E0B4}}{\color[HTML]{333333} 31.19,***, M} \\ 
+%                          & $RS$                   &   & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}61.51,***, M}       &     & \cellcolor[HTML]{C6E0B4}{\color[HTML]{C6E0B4}}{\color[HTML]{333333} 21.18,***, S}           \\ \midrule
+% $\$F$                    & $FH$                 &   & 0.11, \textit{n.s.}        &    & 0.76, \textit{n.s.}                                              \\ 
+%                          & $\$Q^3$                & & 1.70, \textit{n.s.}            &       & 1.75, \textit{n.s.}                  \\ 
+%                          & $\$P^3$                & & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}6.31,***, M}            &  & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}5.11,**, --}            \\ 
+%                          & $R3D$                     &  & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}16.56,***, L}         &   & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}16.81,***, S}            \\ 
+%                          & $RS$                  &    & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}40.32,***, L}         &   & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}41.48,***, L}           \\ \midrule
+% $FH$                  & $\$Q^3$                & & 1.58, \textit{n.s.}            &  & 2.51, \textit{n.s.}                                          \\ 
+%                          & $\$P^3$                & & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}6.19,***, M}          &   & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}5.87,***, --}             \\ 
+%                          & $R3D$                    &   & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}16.44,***, L}        &    & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}17.57,***, S}            \\ 
+%                          & $RS$                   &   & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}40.22,***, L}         &   & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}42.25,***, L}               \\ \midrule
+% $\$Q^3$                 & $\$P^3$                & & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}4.61,***, S}            &  & 3.36, \textit{n.s.}             \\ 
+%                          & $R3D$                    &   & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}14.86,***, L}         &   & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}15.06,***, S}          \\ 
+%                          & $RS$                 &    & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}36.61,***, L}       &     & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}39.73,***, L}           \\ \midrule
+% $\$P^3$                 & $R3D$                    &   & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}10.24,***, L}        &   & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}11.69,***, S}              \\ 
+%                          & $RS$                &    & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}34.01,***, L}         &   & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}36.37,***, M}          \\ \midrule
+% $R3D$                        & $RS$                   &   & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}23.75,***, L}         &   & \cellcolor[HTML]{C6E0B4}{\color[HTML]{333333}24.67,***, S}           \\ \bottomrule
+% \end{tabular}
+%   \caption{ANOVAs computed for the 7 \textsc{Recognizers} in the user-independent (UI) and user-dependent  (UD) scenarios: G1=group 1, G2=group 2. For each dataset, three data are provided: the $q$ value resulting from the ANOVA, the significance of the \textit{p} value if any (***$p{\leq}.001$), and Cohen's \textit{d} coefficient for effect size ((S)mall when $d{\geq}.02$, (M)edium when $d{\geq}.05$, (L)arge when $d{\geq}.08$,  and (--) when no significant effect size ($d{<}.02$)).}
+%   \label{tab:anova_ui_ud}
+% \end{table}
+
+
+
+
+
+
+ \newpage
+
+
+
+%The above conclusions are mainly exploiting the two quantitative measures,\textit{\ie,}, the recognition rate and the execution time. Other measures could be considered for assessing the overall performance of a recognizer, such as computational and statistical efficiency analyses. Computational or algorithmic efficiency  measures the amount of time or memory required for a given recognizer to perform all calculations for all steps, such as an evaluation of a log posterior or penalized likelihood. This efficiency is often measured in terms of order according to Landau's notation
+%: $\mathcal{O}(log{}n)$ for logarithmic order, $\mathcal{O}(n)$ for linear order, $\mathcal{O}(n log{}n)$ for linearithmic order, and so forth.
+
+%Statistical efficiency typically involves optimizing steps in the recognition algorithm by statistically formulating a better model --but this is very challenging-- or by changing parameters (\textit{\ie,}, by reparameterization) so that sampling algorithms mix better.
+
+%But all in all, we are more interested to maximize the recognition rate while minimizing the execution time, as most devices and platforms today offer acceptable computational resources to run these algorithms, especially in regard to machine-learning algorithms such as in learning-time optimization~\cite{Saito:2015}.
+
+%Therefore, we define a new performance measure, the \textit{ratio \enquote{rate/time}}, which is hereby defined as the recognition rate of a recognizer divided by its execution time. To compute this measure, we want to know the  time consumed for comparing a candidate with one template during classification. For this purpose, we remove the influential factors which differ depending on the recognizer and affect the execution time. We saw that  Rubine3D and Rubine-Sheng are influenced by the $C$, the number of gesture classes in a dataset.  $\$P^3$, $\$Q^3$, $\$P+^3$, $\$F$ and FreeHandUni are influenced by $N$, the number of sampling points, and by $T$, the number of templates for each class. In order to smooth these results, the ratio is normalized into a $[0,...,1]$ range.
+%We present four charts of this ratio \enquote{rate/time} applied to all the recognizers for SHREC2019 and 3DTCGS for the two minimal conditions $T{=}8$ (left parts of Figure~\ref{fig:Rate_Time_Shrec2019} and Figure~\ref{fig:Rate_Time_Sdtcgs}) and $T{=}16$ (right parts of Figure~\ref{fig:Rate_Time_Shrec2019} and Figure~\ref{fig:Rate_Time_Sdtcgs}).
+
+%We notice that the charts are quite similar in Figure~\ref{fig:Rate_Time_Shrec2019}. For a small number of points ($N{\leq}8$), the $\$P+^3$ has the greatest ratio for the two conditions $T{=}8$ and $T{=}16$  ($q{=}0.549$ and $q{=}0.665$) followed by the two recognizers $\$F$ and FH. Then, the ratio of $\$P+^3$ decreases to intersect with $\$F$ at $N{=}8$, the tendency of curves shows that the \$-recognizers' ratios decrease to approach zero.
+
+%Compared to the SHREC2019 results, the curves in Figure~\ref{fig:Rate_Time_Sdtcgs} show that the recognizers perform better for the 3DTCGS. In the same ways the  $\$P+^3$ has the best ratio then it drops like the \$-recognizers' ratios  to near zero.
+%We can see that Rubine3D and Rubine-Sheng keep the same ratio for the two datasets without being impacted by the number of points, even if their ratios are low, from $N{=}16$  their curves are above the \$-recognizers' curves.
+%From these results, the computed ratio indicates that the recognizers perform identically for the SHREC2019 and 3DTCGS datasets.
+
+% \begin{figure}[h]
+%  \centering
+% %    \includegraphics[width=1\textwidth,trim=0 0 -90 0cm]{Images/Rate_Time_Charts/Rate_Time_SHREC2019.pdf}
+% \includegraphics[width=\textwidth]{Images/Rate_Time_Charts/Rate_Time_SHREC2019.pdf}
+%     \vspace{-18pt}
+%     \caption{Normalized rate/time curve for the SHREC2019 dataset (left: $T{=}8$, right: $T{=}16$).}
+%     \label{fig:Rate_Time_Shrec2019}
+% \end{figure}
+
+% \begin{figure}[h]
+%  \centering
+%     \includegraphics[width=\textwidth]{Images/Rate_Time_Charts/Rate_Time_3DTCGS.pdf}
+%     \vspace{-18pt}
+%     \caption{Normalized rate/time curve for the 3DTCGS dataset (left: $T{=}8$, right: $T{=}16$). }
+%     \label{fig:Rate_Time_Sdtcgs}
+% \end{figure}
+
+
+% \begin{figure*}[t]
+%     \centering
+% %    \vspace{-24pt}
+%     \includegraphics[width=\textwidth]{Figures/Chap4/Multipath_Presentation1.pdf}
+%     \vspace{-18pt}
+%     \caption{A comparison of percentage in recognition rate for two 3D recognizers  \textsf{\$P\textsuperscript{3}+X} and  $\$P^3+$ on the SHREC2019 dataset~\cite{Caputo:2019}, for some number of joints A, and a number of points N=8, in a user independent scenario.}
+%     \label{fig:Rate_Multipaths}
+%     \vspace{-10pt}
+% \end{figure*}
+
+%\newpage
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.9\textwidth]{Figures/Chap4/Chap4_dollarFamily_Instantiation.pdf}
+    \vspace{-8pt}
+    \caption{The \$-like recognizers instantiation.}
+    \vspace{-8pt}
+   \label{fig:design-dollar}
+\end{figure}
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=.9\textwidth]{Figures/Chap4/Chap4_Rubine_Instantiation.pdf}
+    \vspace{-8pt}
+    \caption{The Rubine3D and Rubine-Sheng instantiation.}
+    \vspace{-8pt}
+   \label{fig:design-rubine}
+\end{figure}
+
+\section{Conclusion}
+This chapter focuses on the comparative testing of template-based hand gesture recognizers on \enquote{unipath dynamic} gestures, specifically on 3D trajectories. These gestures involve single-point movements performed in the air. The goal is to instantiate the comparative testing systematic procedure to evaluate the recognition rate and execution time of recognizing these 3D trajectories using different gesture recognizers in different scenarios. The scenarios include an \enquote{intra-device} scenario, where the gestures are recorded with the same device for different stages of the gesture recognition process. Additionally, there are user-independent and user-dependent scenarios. 
+
+To achieve the goal, four 2D stroke gesture recognizers ($\$P$, $\$P+$, $\$Q$, and Rubine) selected from the literature review are extended to the third dimension. The extended recognizers are: $\$P+^3$, $\$F$, FreeHandUni, $\$Q^3$, $\$P^3$, Rubine3D, and Rubine-Sheng.
+
+Significant differences were observed among the recognizers by comparing individual recognition rates and execution times on different datasets, as well as aggregated results across all datasets. $\$P+^3$ is the top performer among the tested 3D trajectory recognizers, consistently achieving the highest recognition rate in almost all conditions. This statistical significance is only diminished in a few cases, such as when the number of templates is very limited. In addition to its robustness in user-independent scenarios, $\$P+^3$ also boasts excellent execution time in almost all scenarios. As a result, it is the preferred choice for efficiently recognizing 3D trajectories, particularly when compared to alternative recognizers.
+After the $\$P+^3$ recognizer, there is a recurrent pattern in the ordering of subsequent recognizers both in terms of recognition rate and execution time: a first batch of other \$-like recognizers appears with $\$F$, $FH$, $\$Q^3$, and $\$P^3$ and a second batch containing the two feature-oriented algorithms, \textit{\ie}, $R3D$ and $RS$. We notice that the recognizers share two common instantiations. The first instantiation, represented in Figure~\ref{fig:design-rubine}, is shared by the Rubine recognizers (Rubine3D and Rubine-Sheng) and uses the \enquote{Feature vector} classification approach. The second instantiation, represented in Figure~\ref{fig:design-dollar}, shows the values covered by the other \$-like recognizers ($\$F$, FH, $\$Q^3$, $\$P^3$, and $\$P+^3$) and uses the \enquote{Between-points} classification approach.

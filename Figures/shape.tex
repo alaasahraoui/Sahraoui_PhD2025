@@ -1,0 +1,59 @@
+\begin{figure}[h!]
+    \centering
+    \subfigure[Initial representation of the shape $s(\ora{EF},\ora{FG})$]{
+        \begin{tikzpicture}
+            \node[draw,circle,inner sep=1pt,fill,blue] (P1) at (0,0) {};
+            \node[blue] (D) [left] at (0,0) {D};
+            \node[draw,circle,inner sep=1pt,fill,blue] (P2) at (0,1.5) {};
+            \node[blue] (C) [left] at (0,1.5) {C};
+            \node[draw,circle,inner sep=1pt,fill,blue] (P3) at (0,3) {};
+            \node[blue] (B) [left] at (0,3) {B};
+            \node[draw,circle,inner sep=1pt,fill,blue] (P4) at (0,4.5) {};
+            \node[blue] (A) [left] at (0,4.5) {A};
+            \node[draw,circle,inner sep=1pt,fill,orange] (PE) at (.5,4.5) {};
+            \node[orange] (E) [above right] at (.5,4.5) {E};
+            \node[draw,circle,inner sep=1pt,fill,orange] (PF) at (1.55,3.8) {};
+            \node[orange] (F) [above right] at (1.55,3.8) {F};
+            \node[draw,circle,inner sep=1pt,fill,orange] (PG) at (1.8,3) {};
+            \node[orange] (G) [right] at (1.8,3) {G};
+            \node[draw,circle,inner sep=1pt,fill,orange] (P5) at (.75,2.2) {};
+            \node[orange] (H) [right] at (.75,2.2) {H};
+            
+            \draw[-latex] (PE)--(PF);
+            \draw[-latex] (PF)--(PG);
+            \draw[-latex] (PG)--(PE);
+            \begin{scope}[on background layer]
+                \fill[gray!30] (PE.center)--(PF.center)--(PG.center)--cycle;
+            \end{scope}
+        \end{tikzpicture}\label{fig:shape_v1}}
+        \hspace{2.5cm}
+    \subfigure[\$C's representation of the shape $s(\ora{CdE},\ora{EF})$ with Cd, the centroid of the gesture sample.]{
+        \begin{tikzpicture}
+            \node[draw,circle,inner sep=1pt,fill,blue] (P1) at (0,0) {};
+            \node[blue] (D) [left] at (0,0) {D};
+            \node[draw,circle,inner sep=1pt,fill,blue] (P2) at (0,1.5) {};
+            \node[blue] (C) [left] at (0,1.5) {C};
+            \node[draw,circle,inner sep=1pt,fill,blue] (P3) at (0,3) {};
+            \node[blue] (B) [left] at (0,3) {B};
+            \node[draw,circle,inner sep=1pt,fill,blue] (P4) at (0,4.5) {};
+            \node[blue] (A) [left] at (0,4.5) {A};
+            \node[draw,circle,inner sep=1pt,fill,orange] (PE) at (.5,4.5) {};
+            \node[orange] (E) [above right] at (.5,4.5) {E};
+            \node[draw,circle,inner sep=1pt,fill,orange] (PF) at (1.55,3.8) {};
+            \node[orange] (F) [above right] at (1.55,3.8) {F};
+            \node[draw,circle,inner sep=1pt,fill,orange] (PG) at (1.8,3) {};
+            \node[orange] (G) [right] at (1.8,3) {G};
+            \node[draw,circle,inner sep=1pt,fill,orange] (P5) at (.75,2.2) {};
+            \node[orange] (H) [right] at (.75,2.2) {H};
+            \node[draw,circle,inner sep=1pt,fill,red] (Cd) at (.575,2.8125) {};
+            \node[red] (Centroid) [below left] at (.575,2.8125) {Cd};
+            
+            \draw[-latex] (Cd)--(PE);
+            \draw[-latex] (PE)--(PF);
+            \draw[-latex] (PF)--(Cd);
+            \begin{scope}[on background layer]
+                \fill[gray!30] (Cd.center)--(PE.center)--(PF.center)--cycle;
+            \end{scope}
+        \end{tikzpicture}\label{fig:shape_v2}}
+        \caption{Two representations of a shape in a gesture sample of the letter \enquote{P} that comprises 2 strokes of 4 points, respectively displayed in blue and orange.}
+\end{figure}

@@ -1,0 +1,82 @@
+\chapter{\textsc{QuantumLeap} Extension: Testing Module}\label{chap:QuantumLeapTesting}
+In the previous chapters, two separate experiments were carried out to evaluate the recognition rate and execution time of template-based 3D hand gesture recognizers. A reasonable range of datasets was used to ensure a robust evaluation, including various classes of gestures of different natures (\ie, \enquote{unipath dynamic} and \enquote{multipath dynamic} gestures). The selected recognizers' evaluation included user-dependent and user-independent scenarios for several gesture sets. The findings from these evaluations provide valuable insights for researchers and practitioners, enabling them to select the most suitable algorithm for their specific context of use while considering performance aspects. To accomplish this, there are few, if any, evaluation tools available that automate and support the systematic testing procedure of 3D hand gesture recognizers in multi-device configurations.
+
+However, no tool with complex evaluation functions currently includes multiple recognizers, datasets, scenarios, and parameters. For this reason, we have implemented a testing module, a support tool that automates the evaluation of 3D gesture recognizers on multiple gesture sets. This module can be customized with different parameters. The core of this testing module is inspired by a part of the software architecture of the QuantumLeap Framework~\cite{Sluyters:2022}. 
+It uses some essential components to create a pipeline for automating the evaluation of gesture recognizers. The QuantumLeap Framework is designed to facilitate the development of gestural user interfaces using the Leap Motion controller. It simplifies the development process by providing a software architecture with a pipeline for acquiring, segmenting, recognizing, and mapping gestures to application functions.
+
+\section{Evaluation Procedure}
+The comparative testing method use cases in this work are classified as an analytic method of evaluation~\cite{Whitefield:1991}. It indicates that the user interface (UI) and user are representational during the evaluation. Inspired by the gesture recognition testing procedure described in Section~\ref{sec:Testing_Procedure}, we have already described a concrete application of the gesture recognition procedure on \enquote{unipath dynamic} gestures in Subsection~\ref{subsec:Comparative_scenarios}. Two scenarios are defined: the user-dependent scenario and the user-independent scenario. In the user-dependent scenario, templates are randomly selected from each participant for testing, and a training set is created by randomly choosing templates from the same user. In the user-independent scenario, templates are randomly selected from a participant for testing, and a training set is created by randomly choosing templates from different users. The evaluation result is determined by calculating the execution time and the recognition rate of the gesture recognizers.
+\subsection{User-dependent Scenario}
+In this evaluation, a recognizer is trained and tested using gestures performed by the same user from the same dataset. The user-dependent evaluation introduces two important parameters: $T$, which represents the number of training samples used, and $R$, which represents the number of tests performed for each participant. The procedure randomly selects one sample per gesture class for testing and then selects $T$ samples per gesture class from the remaining samples for testing.
+
+\subsection{User-independent Scenario}
+In this evaluation, a recognizer is trained using gestures from one dataset performed by one or more users and then tested with gestures performed by a different user from the same dataset. This evaluation introduces a parameter, denoted as $P$, which represents the number of independent participants used to train the recognizer. The procedure randomly selects one participant and then randomly selects one sample from each gesture class for testing. It then randomly selects a group of $P$ independent participants to train the recognizer. For each participant in the training set, $T$ samples per gesture class are randomly selected for training from the same dataset.
+\\
+
+These scenarios are seen in this work and applied in the case of \enquote{intra-device } configuration. However, QuantumLeap's ability to handle multi-device configurations expands the number of possible scenarios. This includes using two datasets from two devices from the same input device family or leveraging QuantumLeap's extension capabilities to other input device categories.
+In addition to the mentioned parameters, we can introduce new parameters relevant to different contexts of use of gesture recognition. For example, as discussed in Chapter~\ref{chap:LMCmultipathComparative}, we can consider the articulation parameter $A$ or the number of points during gesture resampling in the pre-processing step $N$.
+
+The first main measure in these procedures is the accuracy of a gesture recognizer, which is represented by the average recognition rate of each recognizer, whether it is global (\ie, grouping all conditions) or specific to a particular condition. More detailed results are provided, such as the number of recognized gestures for each trial and the confusion matrix. The second measure is the efficiency of the recognizers, which is determined by the average execution time of each recognizer, whether it is global (\ie, grouping all conditions) or specific to a particular condition. The pre-processing time refers to the time it takes to preprocess the candidate before comparing it with the templates. The classification time refers to the time it takes to compare the candidate with all the templates. The execution time is the total time it takes for preprocessing and classification. All these times are measured in milliseconds (ms).
+
+\section{Testing Module Implementation}
+\label{sec:Implementation}
+To perform comparative testing on 3D gesture recognizers, a testing module has been implemented in JavaScript within a Node.js environment ~\url{https://github.com/Mehous/TestingFramework_QL_UI}. Node.js is a cross-platform environment that fulfills the testing requirements. The tool is a single-page application designed to launch testing and provide evaluators with several options for different parameters, gesture sets, and recognizers. Installing the framework requires basic knowledge of command-line interfaces and Node.js, while configuration involves modifying the configuration file.
+The application requires storing a set of recognizers, datasets, and a configuration file locally. The recognizers should be in JavaScript, while the datasets should be in JSON format. The results are saved as JSON files, with a defined structure for each evaluation scenario. A large amount of data is returned in the results. They can be global, such as the average recognition rate for a participant, the average execution time for a particular condition of $P$, or a confusion matrix. They can also be condition-specific, such as the classification time per class or the number of recognized gestures from a set of gestures for a specific condition of parameters $N$, $P$, and $T$.
+\subsection{Configuration}
+The tool comes with a configuration UI shown in Figure~\ref{fig:UI} that allows evaluators to easily set the initial evaluation conditions according to their requirements. Before selecting the evaluation condition values on the configuration page, the configuration file needs to be customized. It includes a list of available recognizers, datasets for each recognizer, and various parameters with their respective values.
+
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=.7\textwidth]{Figures/Chap6/App_Comparative_Testing_Module.pdf}
+    \vspace{-10pt}
+    \caption{The UI configuration page.}
+    \label{fig:UI}
+    \vspace{-12pt}
+\end{figure}
+\subsection{Recognizers}
+Recognizers are the fundamental components of the test module. They are responsible for assigning a gesture class to a candidate gesture. Like in QuantumLeap framework~\cite{Sluyters:2022}, recognizers implement three methods:
+\begin{itemize}
+\item \textsf{addGesture(name, sample, [parameters])}: it adds a gesture template to the training set of the recognizer.
+\item \textsf{convert(sample,[parameters])}: This function converts the loaded sample in memory into an array of sets of points.
+\item \textsf{recognize(sample,[parameters])}: designate the name of the gesture class that corresponds to the candidate sample provided as an argument.
+\end{itemize}
+These methods are primarily used in conjunction with segmenters (seen in Subsection~\ref{subsec:Gesture_Segmentation}), which detect dynamic gestures from a continuous stream of data.
+\subsection{Testing}
+The testing is the central element of the module, which contains the different evaluation functions. It calculates the different results and writes them to JSON files located in predefined folders created based on the values of the different variables. the test item allows the evaluator to adjust the values of the parameters under evaluation before initiating the procedure Moreover, the test records logs of the evaluated conditions and saves the gesture templates used for training and testing, allowing other recognizers to be evaluated on the same training and test sets.
+\subsection{Datasets}
+The testing module must have at least one dataset to evaluate gesture recognizers. This gesture set is stored as files in folders that must follow a standardized structure. This structure is necessary to enable the loader methods to load data from memory into another suitable structure for use in a specific evaluation scenario. The structure is such that each folder contains subfolders representing the participants who performed the gestures stored in JSON format.
+
+
+A gesture file stored in a dataset must adhere to a certain structure, to ensure optimum use of the data it contains. The gestures used in the testing module share a number of attributes, such as \enquote{$name$}, which designates the name of the gesture class of the sample. The \enquote{$subject$} field, indicates the name or identifier of the user who performed the gesture. the \enquote{$date$} the gesture was created by the user. The gesture file contains a set of paths. The attribute \enquote{$paths$} includes a set of paths that have names similar to the articulations provided by the  \enquote{multipath dynamic} hand gestures of the Leap Motion controller. These paths are named after the associated articulations and contain a list of strokes. A stroke is a set of coordinates  of points ordered chronologically ($x, y, z, alpha, beta, gamma$), along with another attribute \enquote{$timestamp$} and the \enquote{$stroke\_id$}. Finally, the sample defines an object named \enquote{$device$} with various properties related to the device's information. These properties include \enquote{$osBrowserInfo$}, \enquote{$resolutionHeight$}, \enquote{$resolutionWidth$} \enquote{$rwindowHeight$}, \enquote{$rwindowWidth$} ,\enquote{$rpixelRatio$}, \enquote{$mouse$}, \enquote{$pen$}, \enquote{$finger$}, \enquote{$acceleration$} and \enquote{$webcam$}.
+
+\subsection{Results}
+Once the tests are completed, the module generates multiple result files in JSON format. These files are stored in folders and subfolders, following a hierarchical structure of $scenario \rightarrow dataset \rightarrow recognizer$. In each recognizer folder, we decided to store the result files by aggregating the results according to the conditions under which the tests were performed, choosing a predefined order of importance for the parameters as shown in Figure~\ref{fig:UDResult}. We cite the measures that are calculated for aggregated data according to different variables.
+\begin{itemize}
+    \item Recognition Accuracy
+    \item Execution Time
+    \item pre-processing Time
+    \item Classification Time
+    \item Confusion Matrix
+    \item Execution Time per Class
+    \item pre-processing Time per Class
+    \item Classification Time per Class
+    \item Raw Recognition Rate
+    \item Raw Execution Time
+    \item Raw pre-processing Time
+    \item Raw Classification Time
+\end{itemize}
+\begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\textwidth]{Figures/Chap6/Result_Structure.pdf}
+    \vspace{-15pt}
+    \caption{The structure of a result file in user-dependent evaluation.}
+    \label{fig:UDResult}
+    \vspace{-12pt}
+\end{figure}
+
+\section{Conclusion}
+The testing module is a support tool for the comparative testing of 3D gesture recognizers. It is designed to help researchers and practitioners. The module is implemented in JavaScript. This tool supports two evaluation scenarios: user-independent and user-dependent. It requires the recognizers to be implemented in JavaScript and the datasets to be imported in JSON format.
+The testing module generates detailed test results that are written in multiple JSON files. These files are stored in automatically created folders that correspond to different testing conditions. The results contain information such as the overall recognition rate and the average pre-processing time for a set of gesture candidates.
+
+
+

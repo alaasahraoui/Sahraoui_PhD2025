@@ -1,0 +1,33 @@
+\begin{figure}[h!]
+    \centering
+    \subfigure[Basic gesture]{
+        \begin{tikzpicture}
+            \node[draw,circle,inner sep=1pt,fill] (PA) at (0,0) {};
+            \node (A) [left] at (0,0) {A};
+            \node[draw,circle,inner sep=1pt,fill] (PB) at (1,1.5) {};
+            \node (B) [above] at (1,1.5) {B};
+            \node[draw,circle,inner sep=1pt,fill] (PC) at (2.5,.75) {};
+            \node (C) [right] at (2.5,.75) {C};
+            
+            \draw[-latex] (PA)--(PB);
+            \draw[-latex] (PB)--(PC);
+        \end{tikzpicture}\label{fig:basic_gesture}}
+        \hspace{2.5cm}  
+        \subfigure[Lester' shape]{
+        \begin{tikzpicture}
+             \node[draw,circle,inner sep=1pt,fill] (PA) at (0,0) {};
+            \node (A) [left] at (0,0) {A};
+            \node[draw,circle,inner sep=1pt,fill] (PB) at (1,1.5) {};
+            \node (B) [above] at (1,1.5) {B};
+            \node[draw,circle,inner sep=1pt,fill] (PC) at (2.5,.75) {};
+            \node (C) [right] at (2.5,.75) {C};
+            
+            \draw[-latex] (PA)--(PB);
+            \draw[-latex] (PB)--(PC);
+            \draw[-latex,dashed] (PC)--(PA);
+            \begin{scope}[on background layer]
+                \fill[gray!30] (PA.center)--(PB.center)--(PC.center)--cycle;
+            \end{scope}
+        \end{tikzpicture}\label{fig:lester_shape}}
+        \caption{Illustration of a \enquote{basic gesture} $(\ora{u},\ora{v})$ and a \enquote{shape} $s(\ora{u},\ora{v})$ between 3 consecutive points A, B, and C.}
+\end{figure}

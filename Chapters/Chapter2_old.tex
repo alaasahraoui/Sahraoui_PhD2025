@@ -1,0 +1,549 @@
+\chapter{Related Work}\label{chap:Related}
+This chapter provides a three-level analysis to understand the existing state of the art in template-based gesture recognition. It commences with introducing elemental definitions for gestures, taxonomies, and classifications in \textbf{Section~\ref{sec:Gesture_Def}}, which also covers segmentation techniques. The following section, \textbf{Section~\ref{sec:Related_Work}}, briefly describes the details of recognizers used in 2D gesture recognition. Lastly, \textbf{Section~\ref{sec:Design_Space_Recognizers}} defines a design space for rapid-prototyping recognizers and explores their various features.
+
+In this chapter, we rely on the Generative Theories of Interaction model described by Beaudouin-Lafon et al.~\cite{BeaudouinLafon:2021}. This framework helps researchers understand current technology use and propose future interactive systems through three successive lenses: analytical, evaluative, and constructive. In this chapter, we will conduct a descriptive analysis of the most impactful rapid-prototyping template-based gesture recognizers for 3D gestures in \textbf{Section~\ref{sec:Descriptive_Analysis}}, which will be followed by a comparative analysis of these 3D recognizers in \textbf{Section~\ref{sec:Comparative_Analysis}}. Finally, \textbf{Section~\ref{sec:Generative_Analysis}} presents a generative analysis on multiple aspects.
+
+
+\section{Gesture} \label{sec:Gesture_Def}
+\begin{itemize}
+    \item \textit{\enquote{Gestures are expressive, meaningful body motions involving physical movements of the fingers, hands, arms, head, face, or body with the intent of 1) conveying meaningful information or 2) interacting with the environment.}}  is the definition given by Mitra for a gesture ~\cite{Mitra:2007}. 
+    \item In a more general explanation, Stam  \&  Ishino characterized gestures as \textit{\enquote{As all visible bodily actions employed intentionally and meaningfully}} ~\cite{Stam:2011}.
+\end{itemize}
+
+In the Human-Computer Interaction field, a gesture can be defined as any physical movement that a digital system can detect and respond to without the use of a traditional pointing device such as a mouse or stylus~\cite{Saffer:2008}. In the field of Human-Computer Interaction (HCI), there are two main types of interaction: 2D interaction and 3D interaction.
+\begin{itemize}
+    \item In 2D interaction, the focus is initially on stroke gestures. According to Li~\cite{Li:2010}, stroke gestures are defined as \textit{\enquote{2D trajectories drawn by users with their finger on a touch screen or with a pen so that a computer system can act based on recognition results}}. 
+    \item On the other hand, 3D spatial interaction~\cite{Laviola:2013} is defined as an interaction where users are tracked in space over time using different kinds of sensors, whether obtrusive or unobtrusive~\cite{Bowman:2001}. Thence, it allows the user to be immersed in a 3D virtual environment and provide commands as a virtual character. Additionally, it enables users to issue commands and perform activities by generating specific patterns over time recognized by the computer and defined as 3D gestures.
+\end{itemize}
+
+
+\subsection{Stroke Gesture}\label{subsec:Gesture_Stroke}
+\begin{itemize}
+    \item First, in the parametric recognizer developed by Rubine, a single-stroke gesture is defined as \textit{\enquote{hand markings entered with a stylus or a mouse, that indicate scope and commands: (1) the operation (\textit{\eg}, move text), (2) the operand (\textit{\eg}, the text to be moved), and (3)  additional parameters (\textit{\eg}, the new location of the text)}}~\cite{Rubine:1992}.
+    \item Vatavu defined a 2-dimensional stroke gesture as \textit{\enquote{any path traced onto a touch-sensitive surface by a user with a finger or a stylus}}~\cite{Vatavu:2018}.
+\end{itemize}
+Some interesting types of stroke gestures are defined in the literature:\begin{itemize}
+    \item~\cite{Rubine:1992} made a distinction between \enquote{single-path} and \enquote{multi-path} gestures. \enquote{Single-path} gestures involve articulating a single stroke, while \enquote{multi-path} gestures involve articulating several strokes simultaneously (\textit{\eg}, drawing with 2 or more fingers at the same time).
+    \item Finally,~\cite{Sezgin:2001} distinguished between \enquote{single-stroke} and \enquote{multi-stroke} gestures such that \textit{\enquote{each set of candidate points sampled between the time it contacts the surface (\eg, mouse, pen or finger down) and the time it breaks contact (\eg, mouse, pen or finger up) belongs to a stroke}}.
+\end{itemize} 
+
+\subsection{3D Gesture}
+\begin{itemize}
+    \item Liu defined a gesture in his personalized gesture recognition system. He identified a gesture as  \textit{\enquote{free-space hand movements that physically manipulate the interaction device. Such movements include not only gestures as we commonly know but also any physical manipulations like shaking and tapping of the device.}}~\cite{Liu:2009}.
+    \item La Viola gave a technical definition of a 3D gesture as \textit{\enquote {a specific pattern that can be extracted from a continuous data stream that contains 3D position, 3D orientation, and/or 3D motion information. In other words, a 3D gesture is a pattern that can be identified in space, whether it can be a device moving in the air, such as a mobile phone or game controller, or a user’s hand or whole body}}~\cite{Laviola:2013}.
+\end{itemize}
+Some interesting simple types of 3D gestures are presented:
+\begin{itemize}
+    \item~\cite{Mitra:2007} distinguished gestures into \textit{\enquote{hand and arm gestures}},\textit{\enquote{head and face gestures}}, \textit{\enquote{body gestures}}, based on the body parts used to perform them.
+    \item~\cite{Bachmann:2018} classified gestures into \enquote{Static} and \enquote{Dynamic}: \textit{\enquote{If the user adopts a certain pose, it is called a static gesture. Dynamic gestures are defined as tracked motions over time.}}
+\end{itemize} 
+
+\subsection{Gesture Taxonomies and Classifications}
+\label{subsec:Gesture_Taxonomy}
+  Many taxonomies are defined based on a set of dimensions that classify gestures and are domain-dependent. These taxonomies include various gesture variations and provide designers with a detailed view of the gesture space. Furthermore, a \textit{Gesture Elicitation Study} (GES)~\cite{Wobbrock:2009} is a process of understanding user preferences and behavior in relation to a new interactive technology. This study provides designers with valuable information for designing product features to improve usability.\\
+  Based on a taxonomy and a notation expressing 3D hand gestures captured with a Kinect, a Gesture Elicitation Study (GES) resulted in 43 user-defined gestures for 6 TV actions~\cite{Choi:2014}. These actions include turning the TV on/off, going to the previous/next channel, and opening/closing blinds. The fine-grained hand gestures are represented by six intrinsic properties: hand location, shape, movement, and orientation.\\
+  An ontology for Kinect gestures has already been devised to categorize such gestures ~\cite{DiazRodriguez:2013}, which also introduces a formal notation for reasoning on gestures. Other notations come from linguistics ~\cite{Gibbon:2009} or from multimodal interaction modeling ~\cite{Popescu:2014}. There are many taxonomies that exist and are briefly described:
+
+%
+%the face~\cite{Silpasuwanchai:2015},
+%the head~\cite{Dong:2015},
+%eye-based head gestures~\cite{Mardanbegi:2012},
+%the mouth~\cite{Dong:2015},
+%the torso~\cite{Silpasuwanchai:2015},
+%to name a few.
+%Belonging to the upper-body, the human arms are themselves subject to a gesture continuum: from fingers to shoulders.
+%fingers~\cite{Chan:2016},
+%wrists~\cite{Ruiz:2015}, 
+%hands~\cite{Piumsomboon:2013, Dong:2015, Bostan:2017},
+%forearms~\cite{Ruiz:2015},
+%arms~\cite{Liu:2015}, and
+%skin-based gestures~\cite{Havlucu:2017} in general,
+%and from hands to other parts of the body~\cite{Chen:2018}.
+%Lower-body gesture interaction is decomposed into sub-limbs:
+%feet and legs~\cite{Silpasuwanchai:2015},
+%until the whole-body gesture interaction~\cite{Connell:2013,DeSilva:2013,Silpasuwanchai:2015}
+%is reached.
+\bigbreak
+The first taxonomies were closely related to linguistics.
+\begin{itemize}
+    \item We cite Efron~\cite{Efron:1972}, who classified human gestures into \textit{\enquote{Objective}} gestures, which have a meaning independent of speech and multiple subcategories that are \textit{\enquote{Deictic}, \enquote{Physiographic}, \enquote{Emblematic}}. Also, in \textit{\enquote{Logical-discursive}} gestures, which go along with the speech, it regroups two sub-categories \textit{\enquote{Batons} and  \enquote{Ideographic}}.
+    \item Kendon~\cite{Kendon:1988} introduced a continuum of categories ranging from the least formal and most speech-related gestures (Gesticulation) to the formal and speech-independent gestures (Sign Languages).
+    
+    
+       \begin{small}
+    \hspace{-4em}
+       \textit{ Gesticulation } $\longrightarrow$ \textit{Language-like Gestures} $\longrightarrow$ \textit{Pantomimes} $\longrightarrow$ \textit{Emblems} $\longrightarrow$ \textit{Sign Languages}
+    \end{small}
+     \item Inspired by the precedent works, Mc Neill~\cite{McNeill:1992} provided a significant classification based on four types of gestures  \textit{\enquote{Deictic}, \enquote{Iconic}, \enquote{Metaphoric}, \enquote{Beat}}.
+\end{itemize} 
+\bigbreak
+Although the above classifications are effective, they are still limited, especially in an interaction context, because of their initial discourse-related purpose. For this reason, many taxonomies appeared to describe gestures for computer interactions:
+
+\begin{itemize}
+\item The categorization proposed by Karam and Schraefel~\cite{Karam:2005}  based on the work of Quek~\cite{Quek:2002} and the literature classifies gestures into five categories:  The \textit{\enquote{gesticulation}} (1) defined as coverbal gestures that support speech. The \textit{\enquote{manipulations}} (2)  are gestures that link the movement of the hand to the manipulated object. These gestures can take place in 2D or 3D by manipulating an object or using bare hands. The  \textit{\enquote{semaphores}} (3) are communicative gestures based on a dictionary of static or dynamic gestures and even stroke gestures. The \textit{\enquote{deictic}} (4) gestures point to identify an object or its position in space. The last ones are \textit{\enquote{language gestures}} (5), which have grammar and are self-sufficient as a communication tool. They are mainly used in sign languages.
+
+\item Vatavu, classified gesture commands within the context of interaction regarding their structural pattern, as given by the degree of posture or movement in the execution of the command~\cite{Vatavu:2008}, into four different types. \textit{Static Simple Gestures} (1) described as a posture (\textit{\ie, a set of values that describe the pose of the body or parts of the body at a given moment}) held for a period of time. \textit{Static Generalized Gestures} (2) described as gestures that are represented by a series of consecutive postures that are maintained for certain amounts of time. \textit{Dynamic Simple Gestures} (3) described as gestures where the primary information is the motion trajectory and not the posture. Finally, \textit{Dynamic Generalized Gestures} (4) described as gestures where both the trajectory and the posture have the same importance.
+
+\item The Guessability study conducted by~\cite{Ruiz:2011}  resulted in a taxonomy that divides gestures into two classes of taxonomy dimensions, the \textit{\enquote{Gestures mapping}} and \textit{\enquote{Physical Characterstics}} classes. The first group \textit{\enquote{Gestures mapping}} (1) contains several dimensions that detail the link that the user creates between the gestures motion and the controls of the device, encompasses three dimensions: the \textit{\enquote{Nature}} (a), which describes the correspondence of the gesture performed with the physical items. This link can be of the \textit{\enquote{Metaphor}}, \textit{\enquote{Physical}}, \textit{\enquote{Symbolic}}, or \textit{\enquote{Abstract}} type. The \textit{\enquote{temporal}} dimension (b) indicates whether the action performed on an object takes place at the same time as the gesture performed by the participant or describes the action that is triggered at the end of the gesture. The last dimension described is the  \textit{\enquote{context}} (c), which indicates whether the gesture needs a defined context or not. The second class of \enquote{physical characteristics} (2) is based on the kinematic properties of the gestures, such as \textit{\enquote{kinematic impulse}} (a), defined as the range that the jerk can have during the performance of the gesture. In addition, the second property is \textit{\enquote{dimension}} (b), which expresses the number of axes on which the movement is performed. Finally, the \textit{\enquote{complexity}} (c) defines whether a gesture is \textit{\enquote{simple}} or \textit{\enquote{complex}} if it is decomposed into \textit{\enquote{simple}} gestures.
+
+\item In their study~\cite{Aigner:2012} used a more extensive classification than that proposed by Karam and Schraefel~\cite{Karam:2005} by detailing some gesture types and by omitting sign languages. This improved classification separates the \textit{\enquote{gesticulation}} into two categories represented by \textit{\enquote{iconic}} (1) gestures, which transmit information about concepts or objects as letters, digits, symbols, drawings. Moreover, this type of gestures are divided into \textit{\enquote{static}} and \textit{\enquote{dynamic}}. The second category is \textit{\enquote{pantomimic}} gestures (2), which describe the performance of a task relying on a set of gestures. Another gesture type is \textit{\enquote{pointing}} (3), which is used to point out a specific object or indicate a direction using different parts of the hand. The \textit{\enquote{semaphoric}} gestures (4) are movements that communicate specific information and can be \textit{\enquote{static}} through defined hand poses, \textit{\enquote{dynamic}}, which are defined by taking into considerations of time and \textit{\enquote{strokes}}, which are dynamic hand gestures defined by a stroke motion. Finally, \textit{\enquote{manipulation}}  gestures (5) are performed by the actor and are linked to the movement of the object he is manipulating with a feedback loop.
+
+\item Choi's taxonomy~\cite{Choi:2014} classified three-dimensional hand gestures based on elements from the literature into three detailed categories and are composed of sub-elements providing more details : The  \textit{\enquote{gesture type}} (1), which defines the form of the mono or bimanual gesture. The category of  \textit{\enquote{static gesture}} (2) which are gestures defined with a single image consisting of four elements:  \textit{\enquote{Hand Location}},  \textit{\enquote{Hand Shape}},  \textit{\enquote{Hand Orientation}} and  \textit{\enquote{Arm Shape}}. The last category is  \textit{\enquote{dynamic gesture}} (3), which are gestures represented as a set of static gestures (\textit{\ie}, hand movements over time). This class contains three types of gestures  \textit{\enquote{Hand Shape Transition}},  \textit{\enquote{Hand Transition}} and  \textit{\enquote{Hand Shape Transition}}.
+\end{itemize} 
+
+
+\subsection{Gesture Segmentation}
+\label{subsec:Gesture_Segmentation}
+One of the main challenges of recognizing dynamic gestures is determining the beginning and end of an expressive gesture in the data stream recorded by a motion sensor. In particular, if the user cannot specify them by pressing a button or maintaining a specific posture. 
+In the context of human-computer interaction, this involves determining when a user is performing a command gesture. This problem is known as the Midas problem~\cite{Schwarz:2014} or as gesture segmentation, and sometimes it is cited as gesture spotting. There has been considerable work done to address it, based on many approaches.
+
+\subsubsection*{Zoning approach}
+An approach where the user performs gestures in front of a device, while delimited by a set of thresholds gesture space, defines the gesture record area. The gesture recognition process is triggered when the bounded area contains one or more points. Once the selected points have been recorded, the gestures are sent to the recognizer. Among the works that have used this approach is the hand gesture-based interface developed by~\cite{Kristensson:2012} with a Kinect sensor. They have segmented the data by defining an \enquote{input zone} where the movements are performed to segment the continuous gesture.
+
+\subsubsection*{Threshold approach} 
+This segmentation approach defines the start and end points of a gesture by determining whether the values of one or more characteristics of the gesture reach a defined condition, such as a change in acceleration, velocity, energy. Most of the time, the values of these conditions are determined empirically. An example is Pactolus~\cite{Chen:2016} where the authors segmented the real-time EMG signal provided by the sensor using two features, energy and root mean square (RMS).
+
+\subsubsection*{Window Segmenter} 
+Window segmentation is the simplest segmentation process that divides the motion stream into many equal-length segments called windows. Each time the sensor provides a new frame, it is added to the window(s) while the oldest one is deleted. When the window reaches the maximum number of frames, it sends the gesture data it contains to the recognizer.~\cite{Luzhnica:2016} used this approach in an algorithm that adapts the window size using training data from a data glove.
+\bigbreak
+Other more advanced segmentation methods exist such as the one used by~\cite{Vatavu:2010} to reject candidate gestures by designing rejection rules, and they use a scale-invariant method based on the absolute curvature integral for 2D gestures. There is also the Machete technique~\cite{Taranta:2021} which is a fast gesture segmenter based on continuous dynamic programming (CDP) with many feature improvements.
+
+\subsection{Gesture Representation and Notation}
+
+This subsection will develop some interesting gesture representations and notation methods used in different contexts to analyze gestures and facilitate their interpretation. These notation methods are dedicated for different parts of the body, such as for hand gestures~\cite{Choi:2014} from sign language notations, or used for the body in a dance context like the Labanotation or the Eshkol Wachman Movement Notation (EWMN).
+
+\subsection{Motion Sensors}
+
+In the field of HCI, interactive systems are composed of several parts that allow users to interact with the system naturally. Each part has a specific function as shown in Figure~\ref{fig:Interact_Syst}. The first part captures the user's data through an input device consisting of one or more sensors, the captured data is analyzed and processed, and then the results are presented to the user. In their review,~\cite{Bachmann:2018} summarize the evolution of interaction devices developed through time,  ranging from the \textit{keyboard} in the early systems that were first used with CLI (Command Line Interface) in (1952), this was followed by the invention of the \textit{light pen} in the same year. The development of \textit{mouse} device took place in 1965, due to the development of Graphical User Interfaces (GUI), but also at the same period, the first \textit{game controllers} appeared. In the 1980s, new natural interaction devices emerged, such as \textit{data gloves} that map the finger movements to GUI interactions, and new vision-based interaction systems with a \textit{camera}. The next decade saw the emergence of \textit{touch screen} technology with many devices such as \textit{multi-touch displays} and \textit{smartphones}. \textit{3D mice} came on during this period, while a few years later, an improved version appeared in the gaming context, with the \textit{Wii Remote} and \textit{PlayStation Move}, and in the VR/MR context with the \textit{Oculus Touch} and \textit{Playstation Move}. Since 2010 and the appearance of the \textit{Kinect} device with its two versions for the general public using a depth sensor to track full-body motion, many other depth-based devices appeared, for instance, the \textit{Intel Real Sense} or the \textit{Leap Motion controller} for finger and hand gestures. Finally, the \textit{Myo Armband}  is a device based on EMG and IMU sensors and is worn on the user's wrist.
+
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{Figures/Chap2/Interaction_Diagram.pdf}
+%    \vspace{-45pt}
+    \caption{A diagram that summarizes the various phases of gesture recognition in an interaction system.}
+    \label{fig:Interact_Syst}
+\end{figure}
+
+\section{Related Work}\label{sec:Related_Work}
+
+
+\vspace{-8pt}
+
+\subsection{ Gesture Recognition}
+The domain of gesture recognition has expanded quickly, resulting in a large body of work on gesture recognition. We conducted a Targeted Literature Review (TLR), which is a non-systematic, in-depth, and informative literature review that keeps only the references maximizing rigorousness and relevance while minimizing selection bias~\cite{Kysh:2013}. The 2D stroke gesture recognizers selected in the next subsection and resulting from the TLR will be extended to support 3D gesture recognition in a subsequent chapter, an extended description of these and other 2D stroke gesture recognizers are presented in the survey of ~\cite{Magrofuoco:2021}, and also in the extensive literature that covers this topic. As for the 3D recognizers, they will be discussed later in this chapter in a descriptive, comparative, and generative analysis based on the different defined criteria of the design space for hand gesture recognizers adapted to rapid prototyping.
+
+\bigbreak
+A gesture recognizer is a module that distinguishes the gestures expected by the system~\cite{Rubine:1992}. The gesture classes have labels that define the type of gesture. They constitute a set called a \enquote{gesture set}. Firstly, a gesture recognizer works in such a way that first, it has to be trained with provided gestures (\textit{\ie}, training examples). Then, it waits for the gestures provided by the users (\textit{\ie}, candidate gestures) in order to classify them into one of the predefined gesture classes~\cite{Herold:2012}. There are many metrics that exist to evaluate the performance of a gesture recognizer, but the recognition rate is the main metric to evaluate the ratio of successfully classified candidate gestures.
+
+\subsection{2D Stroke Gesture Recognizers}
+\label{subsec:2DRelated}
+Several algorithms recognize 2D stroke gestures~\cite{Zhai:2012} by \textit{template matching}~\cite{Brunelli:2009}: they compare a \textit{candidate gesture} against pre-recorded \textit{template gestures} gathered by \textit{gesture classes} in a \textit{training set} that was used to train the recognizer beforehand. This assumes calculating a (dis-)similarity distance between the candidate gesture and template classes. While formerly aimed at user interface prototyping, the \$-family initiated several applications and recognizers ~\cite{Caputo:2017,Herold:2012,Kristensson:2011,Kristensson:2004,Reaver:2011,Vatavu:2012c}.
+
+
+\subsubsection{\textsc{GrandMa} (1991)} \label{subsubsec:Rubine} Rubine's recognizer~\cite{Rubine:1991}, creates a vector of 13 geometric features for each template and candidate, which is classified with respect to gesture classes by a linear evaluation. This offers a high recognition accuracy for a low computational cost, manual opportunistic programming is no longer required, and its understanding is simple and facilitated by a geometric interpretation. These three advantages form a common motto for several other recognizers.
+
+\subsubsection{$\$1$ (2007)}
+The $\$1$ recognizer~\cite{Wobbrock:2007} recognizes 2D uni-stroke gestures  into four steps: resampling, rotation, scaling, and moving. The candidate gesture is resampled into a ﬁxed number of points that are evenly spaced along the path. Then the path is rotated so that the line from the centroid of the path to the ﬁrst point of the path is parallel to the x-axis. Non-uniform scaling is used to fit the path in a reference square. Finally, the path moves its centroid to the origin $(0,0)$. The mean value of the Euclidean distance between the corresponding points is computed as a similarity distance. 
+%An iterative method also ﬁne-tunes the rotation angle. 
+
+\subsubsection{\textsc{Protractor} (2010)}
+Instead of the Euclidean distance, \textsc{Protractor}~\cite{Li:2010} minimizes the cosine distance between two gestures by calculating the best rotation angle, but no scaling is performed.
+
+\subsubsection{$\$N$ (2010)}
+The $\$N$ recognizer~\cite{Anthony:2010} generalizes $\$1$ to 2D multi-stroke gestures. Each gesture sample is considered as a uni-stroke where part of the gesture is made away from the sensing surface (\textit{\ie}, by following the user's hand through the air), and the algorithm automatically generates all possible uni-stroke permutations of the gesture. %\$N-Protractor~\cite{Anthony:2012}  embeds the Protractor technique into \$N to slightly improve its recognition.
+
+\subsubsection{$\$P$ (2012)}
+The $\$P$ recognizer~\cite{Vatavu:2012b} overcomes the combinatorial explosion of $\$N$ by representing gestures as unordered point-clouds, therefore making them invariant to order, number, and direction. 
+
+\subsubsection{Penny Pincher (2015)}
+Penny Pincher~\cite{Taranta:2015} converts resampled gesture points into a series of between-point vectors and calculates the sum of the angles between their corresponding vectors. Penny Pincher, due to this simplicity, is reported as a super-fast algorithm with a high accuracy (>90\%). 
+
+\subsubsection{$\$P+$ (2017)}
+The $\$P+$ algorithm~\cite{Vatavu:2017} increases the \$P flexibility such that any point from the first cloud can be matched with any point from the second cloud. Although this recognizer was tested for low-vision users, it turns out to be the most accurate recognizer of the \$-family.
+
+\subsubsection{$\$Q$ (2018)}
+The $\$Q$ recognizer~\cite{Vatavu:2018} improves $\$P$ with several algorithmic revisions: the classification of multi-stroke gestures is faster when the size of the training set is large. Aligned with the accuracy of $\$P$, $\$Q$ is announced as the fastest recognizer of the \$-family.
+
+
+%Synthetic gestures can also be generated for learning rejection criteria, especially when efficient and precise synthetic gestures can be produced~\cite{Leiva:2018}.
+\subsubsection{!FTL (2018)}
+The !FTL recognizer~\cite{Vanderdonckt:2018} converts resampled gesture points into a series of pairs of vectors called \enquote{shapes} and computes the Local Shape Distance (LSD) between each pair of shapes in sequence to assess how two gestures are dissimilar.
+
+
+\subsection{3D Gesture Recognizers}
+\label{Subsec:Desc_Recognizers}
+3D gesture recognition is a large field of research and development, which considers several aspects such as the proliferation of devices, whether wearable or not, and the parts of the human body considered for the gesture; and finally the techniques used for the recognition. There exist many techniques that are used~\cite{Cheng:2016,Yasen:2019}:
+general purpose toolkits~\cite{Westeyn:2003}, Artificial Neural Networks (ANN), Convolutional Neural Network (CNN), Recurrent Neural Network (RNN), $k$-Nearest Neighbor~\cite{Duda:2000,Vatavu:2014}, Support Vector Machine (SVM), Hidden Markov Model (HMM), Dynamic Time Warping (DTW)~\cite{Taranta:2017}, Naive Bayes classifier, Principal Component Analysis (PCA), Deep Learning~\cite{Maghoumi:2019}.
+
+
+%%AdaBoost
+One such technique is the AdaBoost algorithm~\cite{Freund:1997}. In gesture recognition, Sheng~\cite{Sheng:2003} used the AdaBoost to solve a multi-class recognition problem for 3D hand gestures, using a Vicon motion tracking system to track body movement. The principle of a boosting algorithm is to focus on incorrectly classified data by increasing its importance each time the AdaBoost calls the weak classifier, resulting in a series of hypotheses that are combined into a single hypothesis at the end. The author used the AdaBoost.M1, an extension for solving multi-class classification problems, which only considers correctly labeled samples and maximizes the sum of their weights. For the data, instead of using 3D point sequences, the author extracted a set of 16 features similar to those selected in~\cite{Rubine:1991} but extended to 3D and following defined criteria. AdaBoost was tested against three weak classifiers (\textit{\ie}, 1NN, NaiveBayes and LDA) on a dataset composed of 6 gestures, and for each gesture, a total of 200 samples were recorded (\textit{\ie}, 120 were used for the training and 80 for the testing) showing good results although it was sensitive to noisy data, particularly for the NaiveBayes and LDA weak classifiers in comparison to the base classifiers.
+
+
+
+\bigbreak
+A common pattern identified in this portion of the literature is the overfitting in the data sets for artificial intelligence and machine learning algorithms: they exhibit an accuracy superior to 90\% and a performance inferior to 100 msec., a threshold for system response time~\cite{Nielsen:1994}, but they are entirely optimized for a given dataset, thus leaving little or no space for keeping the same performance if the dataset is changed. This occurs when samples and/or classes need to be modified, thus leading to a re-training of the algorithm, although this is now achievable in real-time.
+
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{Figures/Chap2/DesignSpace_Features.pdf}
+    \caption{A design space for hand gesture recognizer.}
+    \label{fig:Radar_chart_Global}
+\end{figure}
+
+
+\section{A Design Space for Hand Gesture Recognizers}
+\label{sec:Design_Space_Recognizers}
+From the references cited before, we determined common features between them independently of their domain, as long as rapid prototyping is involved to a certain degree. This resulted in the design space for hand gesture recognizers adapted to rapid prototyping. It is based on six dimensions represented in Figure~\ref{fig:Radar_chart_Global}: recognizer properties,  data type, device type, gesture nature, gesture type, and classification approach. Every dimension is arranged in a progressive degree of complexity: each step starts from the simplest value found to the most complex one.
+We have considered the radar diagram as the most appropriate to introduce the three main aspects to characterize a recognizer as a model that can be evaluated: \textit{descriptive} (the design space should be able to describe any 3D gesture recognizers based on these six features), \textit{comparative} (the design space should be able to compare two or more recognizers to catch their similarities and their differences); \textit{generative} (After doing a comparison the design space should be able to show unexplored possibilities and to propose new ideas and configurations).
+These six dimensions are not designed to be independent of each other. Instead, they aim to serve these three values. The Radar chart can be used to represent the values along the multiple dimensions formed by the features. The steps on each dimension are not intended to
+be aligned or to be corresponding by concentric level. Therefore, steps joined on the same circle are not necessarily dependent; they only represent some progression.
+
+\subsubsection{Properties}
+A recognizer compares two gestures in the form of data provided by devices. The data are subject to variations that make recognition more difficult. That's why the different recognizer (pre-)processing stages provide a set of insensitivities or invariances to the recognizers along one or multiple properties which are sorted from the most frequent to the least covered, as \textbf{1) scale} (\textit{by scaling gesture points to a unified scale, the \enquote{small} and \enquote{big} gestures are unified}), \textbf{2) position} (\textit{Gestures performed in different location of the space are moved to the same location by translating the gesture points to a defined point as the origin}), \textbf{3) rotation} (\textit{Gestures can be performed with different angles in the 3D space and can be adjusted to the same orientation by using angular adjustments techniques}) and \textbf{4) direction} (\textit{Gestures can be performed in different directions, the direction can be omitted by using points cloud representation}). From the literature, all the selected recognizers are sampling-invariant. That's why we didn't include the value as one of the property values.
+
+
+\subsubsection{Data Type}
+The data type is a characteristic inherent to the device, determining the dimensionality and format of the data transmitted by devices and received by the recognizer for processing. Gesture data can be continuous as provided by the sensor or segmented, as seen in (see Subsection~\ref{subsec:Gesture_Segmentation}). Moreover, it can be in 2-Dimensions when the gesture is performed on a surface. or a 2D 1/2 when gestures are performed in 3D space then it is projected in a 2D single plane where one of the coordinates is zero. Finally, gesture data also could be in 3-Dimensions provided by sensors from mid-air gestures. The values are ordered from the simplest to process (\textit{\ie}, 2D segmented) to the most complex (\textit{\ie}, 3D continuous).
+
+\subsubsection{Device Type}
+The device type is a feature that provides information on the number of devices that are used to evaluate the recognizer. Furthermore, this feature indicates if the used devices during the evaluation have the same type or are of different types~\cite{Buxton:1983}. The values are detailed along the axis, starting from the most basic configuration (\textit{\ie}, One of one type) to the most complex one (\textit{\ie}, several different types).
+
+\subsubsection{Gesture Nature}
+The gesture nature gives information about how a gesture is performed and its complexity. The values represented alongside the axis are taken from the taxonomy of~\cite{Vatavu:2008} which are described in Subsection~\ref{subsec:Gesture_Taxonomy}: \textbf{Simple static}, \textbf{Complex static}, \textbf{Simple dynamic} and \textbf{Complex dynamic}. However, we replaced the dynamic values with new values which are more accurate and correspond to the basic representation of gesture data, \textbf{Unipath dynamic} (The gesture is represented as a serie of points which represents the motion of articulation) and \textbf{Multipath dynamic} (The gesture is more complex, as it is represented as several series of points defining the movement of multiple articulations).
+
+\subsubsection{Gesture Type}
+The gesture type dimension provides information on the classification of gestures that have been evaluated by the recognizer based on the taxonomy that has been defined by Aigner \etal~\cite{Aigner:2012} and described in the Subsection~\ref{subsec:Gesture_Taxonomy}).
+the values are sorted in an ascendant way from the simplest, which is the \textit{pointing} class, to the most complex gesture class which is the \textit{Manipulation}.
+
+\subsubsection{Classification Technique}
+In order to classify the gestures, the recognition machine has to compare two gestures, the comparison of the gestures can be direct between the points that constitute the gesture, or converted and preprocessed into defined structures such as feature sets, vectors or bi-vectors. The classification approach values are ordered by the date of appearance of the approach, from oldest to most recent \textbf{a) Features vector:} Compute a feature vector from the points to describe the gesture and process the feature vector for the classification. \textbf{b) between-points:} The approach is based on the direct processing of points. \textbf{c) between-vectors:} The approach converts the set of points into a set of vectors by creating a vector between each pair of points, followed by direct processing of vectors.  \textbf{d) between-bivectors:}  the approach converts the set of points into a set of bivectors (\textit{\ie}, a bivector is created by two vectors resulting from the preprocessing of three consecutive points), followed by direct processing of the bivectors for classification. 
+
+\subsection{Rapid Prototyping Features}
+In this thesis, we focus mainly on template-based recognizers adapted to rapid prototyping and designed to retrieve the gesture class of a candidate gesture using several samples called templates. We present a summary of selected recognizers in Table~\ref{tbl:Rapid-recognizers-properties}that meet the three principal criteria for a rapid prototyping recognizer. The three criteria are:
+\begin{itemize}
+    \item \textbf{Easy to understand.} The recognizer is designed to be easy to understand, meaning that the concepts used are simple and require only basic knowledge of geometry and trigonometry.
+    \item \textbf{Easy to implement.} The deployment of the recognizer relies on small, comprehensible functions for the designer. The first function adds new templates to the training set, and the second function classifies gestures by relying on the training set. Some recognizers have a third function that allows the algorithm to be trained using the templates to recognize candidate gestures.
+    \item \textbf{Easy to use.} The use of the recognizer does not depend on a specific device and is easy to adapt. It only requires a small number of templates to achieve a high recognition rate.
+\end{itemize}
+
+\begin{table}[h]
+	\caption[Rapid prototyping properties of the 3D recognizers]{Rapid prototyping properties of the 3D recognizers (\textcolor{red}{\emptycirc}: criteria not satisfied, \textcolor{orange}{\halfcirc}: criteria partially satisfied, \textcolor{green}{\fullcirc}: criteria satisfied).}
+ \resizebox{\columnwidth}{!}{%
+	\begin{tabular}{cc|c|c}
+	    \toprule
+        \multirow{2}{*}{\textbf{Recognizer}}& \multicolumn{3}{c}{\textbf{Rapid prototyping criteria}} \\
+		& \tcbox{Easy to understand} & \tcbox{Easy to implement} & \tcbox{Easy to use} \\
+		\midrule
+        uWave & \textcolor{green}{\fullcirc} & \textcolor{green}{\fullcirc} & \textcolor{green}{\fullcirc} \\
+        Rubine3D & \textcolor{green}{\fullcirc} & \textcolor{green}{\fullcirc} & \textcolor{orange}{\halfcirc} \\
+        \$3 & \textcolor{orange}{\halfcirc} & \textcolor{green}{\fullcirc} & \textcolor{green}{\fullcirc} \\
+        Hoffman's Lin. clf. & \textcolor{green}{\fullcirc} & \textcolor{green}{\fullcirc} & \textcolor{orange}{\halfcirc} \\
+        Protractor3D & \textcolor{green}{\fullcirc} & \textcolor{green}{\fullcirc} & \textcolor{green}{\fullcirc} \\
+        \$P3D & \textcolor{orange}{\halfcirc} & \textcolor{green}{\fullcirc} & \textcolor{green}{\fullcirc} \\
+        3 Cent & \textcolor{green}{\fullcirc} & \textcolor{green}{\fullcirc} & \textcolor{green}{\fullcirc} \\
+        Jackknife & \textcolor{green}{\fullcirc} & \textcolor{orange}{\halfcirc} & \textcolor{green}{\fullcirc} \\
+        DeepGRU & \textcolor{red}{\emptycirc} & \textcolor{orange}{\halfcirc} & \textcolor{green}{\fullcirc} \\
+        \bottomrule
+	\end{tabular}
+}
+	\label{tbl:Rapid-recognizers-properties}
+	\vspace{-18px}
+\end{table}
+
+\section{Descriptive Analysis}\label{sec:Descriptive_Analysis}
+Next, we describe the main developed template-matching 3D hand gesture recognizers and focus on those suitable for rapid prototyping by instantiating the design space described above which relies on a set of features extracted from the different recognizers selected from the literature. Based on these features, other recognizers based on techniques other than template matching can be added, such as those based on statistical matching or deep learning.
+
+
+\subsection{uWave (2009)}
+In $2009$, Liu \etal raised the problem of the lack of a standard vocabulary in gesture recognition compared to other pattern recognition. Users should enter their gestures or customized gestures. Furthermore, with this type of gesture, it is hard to create a large training set to use statistical methods such as the Hidden Markov Model, as the platforms used for personalized gesture recognition are very limited in resources. They proposed a new recognizer, uWave~\cite{Liu:2009} is a template-matching recognizer that requires only one training sample per gesture, which is appropriate for resource-constrained platforms.
+\subsubsection{Design Space Instantiation}
+\begin{enumerate}
+    \item \textbf{The recognizer.} The uWave classifies gestures by first performing a two-stage quantization of the acceleration data to reduce the rapid changes in values resulting from noise and slight shake or tilt of the hand. Starting with a temporal compression by an averaging window that progresses at a time step. Next, the acceleration data are non-linearly quantized in one of $33$ levels, resulting in a set of discrete values.  
+    The recognition process relies on matching a quantized time series represented as points with another time series by Dynamic Time Warping (DTW), leading to Euclidean distance calculation as a cost function of the DTW. 
+    The basic assumption of the uWave author on gesture representation is that human gestures can be described as a time series of forces being applied to a handheld device. The raw data is represented as a set of temporal samples where each sample is a three-dimensional vector characterizing the acceleration along the three axes, this representation implies that the recognizer is position invariant.
+    Furthermore, to cope with sample variations of gestures performed by the same user after a number of days, uWave uses a template adaptation through the time following two schemes, by keeping two samples by gesture generated in different days by the same user, each time the user input a gesture is recognized or not well recognized it replaces the oldest template.   
+    \item \textbf{The device.} The recognizer was evaluated using only acceleration provided by a WiiRemote; the acceleration-based gestures were recorded as segmented gestures by pressing a button.  
+    \item \textbf{The gestures.} The evaluation of the recognizer was done on a user-dependent scenario only. The database, composed of iconic gestures, comprises $8$ dynamic gestures representing the paths of hand movement with more than $4000$ samples collected from $8$ users over several weeks using the WiiRemote.
+\end{enumerate}
+\subsubsection{Rapid Prototyping Criteria}
+ The uWave uses many concepts such as the quantization of the input values and the Dynamic Time Warping (DTW) for the matching which is a comparison between two time series to find the best alignment given a local cost function, as well as optional optimization like the rejection criteria applied on the input gesture and temporal adaptation which are not very intuitive for designers. The recognizer is easy to deploy with simple functions to start and end gesture recording and to detect the gesture. The recognizer requires only one training sample per gesture and the evaluation showed high accuracy.
+\subsubsection{Performance} 
+The uWave showed good results in terms of accuracy and recognition speed. It achieved an overall recognition rate of $93.5\%$ without template adaptation and increased to $98.6\%$ with the adaptation, using a single sample in the training set. While for the recognition speed of uWave, it was evaluated on multiple platforms. On a Lenovo $T60$ with $1.6$ GHz Core $2$ Duo, it took less than $2$ ms for a template library of eight gestures. On a T-Mobile MDA Pocket PC with Windows Mobile $5.0$ and $195$ MHz TI OMAP processor, it took about $4$ ms for the same vocabulary. It was also tested uWave on a $16$-bit micro-controller for which the delay was about $300$ ms.
+
+\begin{figure}[h!]
+    \hspace{50pt}
+    \includegraphics[scale=.35]{Figures/Chap2/uWave_Instantiation.pdf}
+    \caption{The space design instantiation for uWave.}
+    \label{fig:Radar_chart_uWave}
+\end{figure}
+
+\subsection{Rubine3D (2009)}
+\label{subsec:Related_Rubine3D}
+Rubine3D of iGesture~\cite{Puype:2010} is an extension of the framework iGesture~\cite{Signer:2007} developed to extend its capability to process 3D gestures, along the 2D gestures that are supported by the framework. The Rubine3D recognition process in iGesture is carried out by projecting the 3D gesture to the three 2D planes, \textit{\ie}, $XY$, $YZ$, and $ZX$, and applying the Rubine algorithm~\cite{Rubine:1991} on each plane with a weight. 
+\bigbreak
+\subsubsection{Design Space Instantiation}
+\begin{enumerate}
+    \item \textbf{The recognizer.} The Rubine algorithm~\cite{Rubine:1991} which is a statistical classifier based on examples as described in the description of 2D recognizers part.\ref{subsubsec:Rubine}. The captured 3D gestures are projected into three planes XY, YZ and ZX and the Rubine algorithm is applied using a linear evaluation of the feature vector defined by Rubine. The algorithm is trained with the templates of each class to determine the weights of the features for each class. Then the classifier return the corresponding class by computing the distance between the candidate gesture and the mean of each classes and return the class with the lowest distance. Each recognizer on each plane provides a result and they are put together knowing that each plane has its own weight factor which the sum gives $1$. These factors permit to configure the recognizer if some gesture are more significant on a particular plane than others that allows to increase the accuracy of the recognizer.
+    As for the 2D Rubine~\cite{Magrofuoco:2021} the trained 3D Rubine are position invariant but are scale and rotation sensitive, they are also direction sensitive. %details.
+    \item \textbf{The device.} In addition, a module was added to support 3D input devices such as the Wii Remote controller, which provides linear acceleration. The data are recorded using a trigger to delimit the start and the end of a gesture.
+    \item \textbf{The gestures.} An evaluation of the Rubine3D algorithm was made with two experiments on two gesture sets containing acceleration data that are converted to position data to create 3D gesture representation. The first one is composed of vertical gestures performed in a single plane in the air. The set included 7 gestures (\textit{\eg}, circle or an X), the test required 10 samples per class out of a total of 15 samples. Like for the first gesture set included 7 gesture classes  (\textit{\eg}, handshake, and tennis forehand), and the test set included 10 samples per class out of a total of 15 samples.
+\end{enumerate}
+\subsubsection{Rapid Prototyping Criteria}
+The Rubine 3D uses a feature vector of 13 mathematical features to describe the shape of the gesture on each of the 2D planes, which has a weight. The difficulty is to understand the statistical evaluation in the classification part. The recognizer relies on two main functions: one to train the recognizer on the loaded gesture set and the other to recognize the candidate gesture.
+\subsubsection{Performance} 
+ The average recognition accuracy for this test was 98.5\%. The second gesture set tested used \enquote{true} three-dimensional gestures with a lot of variations in the three planes. For this type of gesture, a higher weight is assigned to the plane in which the gesture is made. The recognition accuracy for this test is less significant (95.7\%). The configuration where the weights of the three planes are more or less equal provided the best results.
+ 
+ \begin{figure}[h!]
+    \hspace{50pt}
+    \includegraphics[scale=.35]{Figures/Chap2/Rubine3D_Instantiation.pdf}
+    \caption{The space design instantiation for Rubine3D.}
+    \label{fig:Radar_chart_Rubine3D}
+\end{figure}
+
+
+
+\subsection{\$3 (2010)}
+The emergence of mobile devices incorporating 3D acceleration sensors requires developing new methods adapted to the mobile platform. At the same time, gesture input for such devices can help address the limitation of miniature input devices and small screens, as the device's size does not limit the range of motion.
+Consequently,~\cite{Kratz:2010} developed \$3 A 3D gesture recognizer that works with 3D acceleration data as an extension of the \$1~\cite{Wobbrock:2007}.
+\bigbreak
+\subsubsection{Design Space Instantiation}
+\begin{enumerate}
+    \item \textbf{The recognizer.} As for \$1, the \$3 recognizer is based on template-matching method, \textit{\ie}, the challenge is to find for a an input gesture \textit{I}, the best matching gesture class \textit{G} in the training set \textit{L}. Recognition goes through the same pre-processing steps: (1) isometric resampling of the candidate and template gestures with the same number of points. The resampling uses a piece-wise linear interpolation with (N=150). The aim is to ensure an equal distance between points to guarantee the sampling invariance. Furthermore, the number of points affects the recognition precision and the computation time. (2) Rotation of the resampled gesture trace along the \enquote{indicative angle} which is the angle between the first gesture point and the centroid. The angle is calculated from the arcus cosine of the normalized scalar product of the two points. (3) Scaling the rotated gesture to overcome scale differences between gestures. The gestures are scaled to fit into a normalized $100:{3}$ units. Moreover, same as Wobbrock in \$1, the rotation-invariance of path distance in \$3 is ensured by the GSS approach but adapted to three dimensions, for the rotation around the three axes, a cut-off angle is defined to guarantee that the approximate minimum angle is found after a limited number of iterations (11 iterations). The preprocessing ensures the \$3 main invariances (\textit{\ie}, position, scale, rotation). For each training gesture, a score is computed against the candidate gesture by adapting the equation used by Wobbrock in \$1 to three dimensions, and the result is a score table grouping the scores between gestures. Finally, a heuristic is applied to reduce false positives, compared to the strategy of \$1, which consists of selecting the highest matching score as the recognized gesture.
+    \item \textbf{The device.} Some limitations of the \$3 recognizer are that it is only compatible with segmented gestures. Moreover, the imperfection of the WiiRemote device must be added to the limitations of the acceleration data, considered as lower quality data subject to noise, and to the drift generated by the integration of the gesture path. 
+    \item \textbf{The gestures.} The authors introduced a new representation of the raw data acceleration without modifying or preprocessing them. They defined a \textit{gesture trace} which is the total sum of the previous \textit{acceleration deltas} (\textit{\ie}, the current change in acceleration obtained by subtracting the current acceleration value from the previous one). There is also the complexity of gestures that are not simple 2D shapes but also \enquote{true} 3D gestures.
+\end{enumerate}
+\subsubsection{Rapid Prototyping Criteria}
+This recognizer extends the \$1~\cite{Wobbrock:2007}, a touchscreen-based 2D recognizer that follows the same motivation for rapid prototyping, which involves minimal parameter adjustment and minimal training and is based on simple geometric and trigonometric calculations. 
+\subsubsection{Performance} 
+ The \$3 recognizer evaluation gave a recognition rate of 80\% with 10 gesture classes with 12 participants. The recognizer was trained with 5 templates per gesture class. Results between subjects varied between 58\% and 98\%. Although the results are considered inferior to those obtained by~\cite{Schlomer:2008}, they are acceptable in view of the limitations.
+ 
+  \begin{figure}[h!]
+    \hspace{50pt}
+    \includegraphics[scale=.35]{Figures/Chap2/Dollar3_Instantiation.pdf}
+    \caption{The space design instantiation for \$3.}
+    \label{fig:Radar_chart_Dollar3}
+\end{figure}
+
+\subsection{Hoffman's Linear Classifier (2010)}
+With the advent of convenient spatial input devices, the possibility of using 3D gesture recognition in virtual environments has become widespread, particularly in the field of video games. These devices detect motion using accelerometers and angular rate gyroscopes instead of spatial positions and orientations. For this reason, Hoffman \etal~\cite{Hoffman:2010} used a linear classifier based on Rubine's algorithm~\cite{Rubine:1991}.
+
+\subsubsection{Design Space Instantiation}
+\begin{enumerate}
+    \item \textbf{The recognizer.}  The algorithm extracts a 29 features vector for the WiiRemote (\textit{\ie}, acceleration data) and 41 features for the WiiRemote coupled with the WiiMotionPlus (\textit{\ie}, acceleration data + angular velocity) from the candidate gesture. Both feature sets are extended from Rubine's feature set designed for 2D gestures, considering the acceleration and angular velocity data as position information in 3D space. This feature vector is used for classification via a linear machine similar to the Rubine algorithm and also used in Rubine3D, and the algorithm outputs the gesture class assigned to the candidate.
+    \item \textbf{The device.} The evaluation examined the performance of 3D gesture recognition using the WiiRemote, which is a common acceleration-based input device combined with the angular velocity-based WiiMotionPlus device.
+    \item \textbf{The gestures.} Classification accuracy was defined as the metric to be evaluated. A gesture database composed of 25 gestures was created, and 17 participants performed 8500 samples. The data generated by these devices can suffer from numerous cumulative errors caused by drift, lack of a reference frame, and impact of motion rate on gesture profile. These issues make the task of 3D gesture recognition with these devices even more difficult.
+\end{enumerate}
+\subsubsection{Rapid Prototyping Criteria}
+As with the Rubine3D recognizer, the classifier relies on a set of 29 and 41 features, each with a meaning; the classifier needs to be trained on a set of gestures with many samples.
+\subsubsection{Performance} 
+They explored the effect of different variables such as the number of gestures, the size of the training set, and the evaluation scenario's impact (\textit{\ie}, user-dependent or user-independent) on the recognition accuracy in comparison with another machine learning algorithm, the AdaBoost classifier, both of which were tested in user-dependent and user-independent scenarios using the WiiRemote and the pairing of the  WiiRemote and WiiMotionPlus. The evaluation of the Linear classifier indicates that its overall accuracy outperforms that of the AdaBoost classifier with a rate over 99\% in the user-dependent scenario for the coupled sensors. At the same time, it reaches 98\% for the user-independent scenario.
+
+ \begin{figure}[h!]
+    \hspace{50pt}
+    \includegraphics[scale=.35]{Figures/Chap2/Hoffman_Instantiation.pdf}
+    \caption{The space design instantiation for Hoffman's linear classifier.}
+    \label{fig:Radar_chart_Hoffman}
+\end{figure}
+
+\subsection{Protractor3D (2011)}
+Gesture recognition based on the template-matching approach is usually performed on a per-user basis by matching the user's gestures entered with the previously recorded templates. One of the main problems with recognition techniques is that the rotated input gesture cannot be matched accurately with training templates that were captured with a different posture of the device, which is referred to as the template-gesture rotation problem. In order to solve this problem~\cite{Kratz:2011} developed \textit{Protractor3D}, a gesture recognition algorithm based on the closed-form solution of the absolute orientation problem for measurements in two 3D coordinate systems.
+\bigbreak
+\subsubsection{Design Space Instantiation}
+\begin{enumerate}
+    \item \textbf{The recognizer.} The Protractor3D algorithm starts with a preprocessing of the gestures. First, the algorithm subsamples each input gesture to a fixed number of points (n=32). After that, it scales it to fit into a cube of a fixed side length. Lastly, it centers the gesture around the origin of the coordinate system. The input gesture is compared to every saved gesture template using a rotation correction to solve the gesture-template rotation problem. The recognizer uses Horn's technique~\cite{Horn:1988}, which can be summarised as the idea of finding the rotation \textit{R} that minimizes the sum of squares error between the input gesture and the template entered by the user, which is tantamount to maximize the dot product of the template and the rotated input gesture. Moreover, the technique uses Quaternions to find the optimal rotation, and the absolute rotation angle between the gestures decides whether the gesture template should be rejected as a possible candidate for recognition by setting a cut-off angle. The recognizer declares the recognized gesture class as the gesture class of the template with the smallest Euclidean distance to the entered gesture.
+    \item \textbf{The device.} The gestures were recorded using an accelerometer sensor, which let users record delimited gestures by holding a button.
+    \item \textbf{The gestures.} The authors evaluated the Protractor3D With 11 gestures recorded by ten subjects and a training set of 5 samples per gesture class.
+\end{enumerate}
+\subsubsection{Rapid Prototyping Criteria}
+As for $\$1$ and $\$3$ the protractor 3D is based on simple geometric notions, it doesn't require many samples to achieve great results.
+\subsubsection{Performance} 
+ The algorithm's accuracy varied between 83.3\% and 98.9\% for the different gesture classes. Finally, an evaluation showed the effect of rotational correction; Protractor3D has the same accuracy under different rotations compared to the unrotated matching using a mean square error, thus proving its rotation invariance.
+
+ \begin{figure}[h!]
+    \hspace{50pt}
+    \includegraphics[scale=.35]{Figures/Chap2/Protractor_Instantiation.pdf}
+    \caption{The space design instantiation for Protractor3D.}
+    \label{fig:Radar_chart_Protractor}
+\end{figure}
+
+\subsection{\$P3D (2016)}
+To achieve the objective of determining when a user performs a gesture, based on discrete and continuous gestures, to provide the user with a range of possibilities. Moreover, hand gesture interaction needs to be simple enough to be understood but distinct enough for the user to understand which gesture has been made. All this requires developing a customized gesture recognition system with the idea of achieving a maximum recognition rate while using a small dataset.
+\subsubsection{Design Space Instantiation}
+\begin{enumerate}
+    \item \textbf{The recognizer.} The main algorithm,\$P3D, is a 3D extension of the point-cloud based 2D recognizer \$P~\cite{Vatavu:2012b}. The \$P3D manages both 2D and 3D gesture recognition, so the algorithm changes the creation method to gather and assign points based on the data (\textit{\ie}, it takes the Z position of the set of points where it is appropriate). For preprocessing, the data points are first resampled with a fixed number of points (N=32) as in Protractor3D~\cite{Kratz:2011} using linear interpolation. Then, the algorithm translates the centroid of the data points at the origin of the coordinate system. 
+    In addition, the authors implemented \$P3D+, an improved version of the \$P3D recognizer, whose effectiveness depends on data. Its main improvements are (1) the addition of a set of classifiers to limit the complexity of searching for all gestures according to three criteria: a) the dimension of the space (2D or 3D gesture); b) the type of gesture (pose or dynamic gesture);  c) the handedness (gesture executed with the right or left hand). (2) Another improvement was to assign and order stroke IDs to the hand so that each joint from the palm to the fingertips has its stroke ID and order, in order to avoid very flexible cloud matching and to reduce inaccuracies (\textit{\ie}, to prevent matching of points from different strokes).
+    \$P3D is a 3-dimensional gesture recognizer based on the \$P, which is position-, scale-, and direction-invariant, but it is sensitive to rotation, which means that the gesture is not rotated when comparing point clouds. The authors compensated for this problem by adding gestures with different angles to the training set.
+    \item \textbf{The device.}  Therefore,~\cite{Cook:2016} has developed a system that includes new gesture algorithms to provide effective natural interaction at various distances and screen resolutions using the Leap Motion controller device. 
+    \item \textbf{The gestures.} The training dataset consists of 15 gestures using two sample databases. The first database contains all gestures (\textit{\ie}, Iconic shapes, 2D shapes, 3D poses and 3D gestures); it also includes many variations for each gesture. The second database focuses only on 3D gestures and poses and expands them with many variations but excludes 2D gestures. The developed system is expected to be fast and adapted to multi-stroke gesture recognition, which could handle multiple start and stop points while ignoring the stroke order.
+    For the evaluation scoring method, the scores were calculated using a polynomial formula and mapping the distance to defined percentage values.
+\end{enumerate}
+\subsubsection{Rapid Prototyping Criteria}
+The recognizer is easy to implement and understand; in particular, it extends the $\$P$ recognizer. However, the evaluation scoring method introduced in this recognizer is complicated to calculate. The recognizer achieves good results by requiring only a small number of templates per gesture.
+\subsubsection{Performance} 
+The evaluation showed numerous results for both datasets, mainly demonstrating the superiority of the \$P3D over the 2D recognizer \$P, with a recognition rate for the first dataset of 95\% (\$P3D) versus 91\% (\$P). For the second dataset, the recognition rates were great for the \$P3D for 3D gestures and the \$P for the 3D poses. The evaluation results between \$P3D and its enhanced version \$P3D+ showed a slight improvement for the latter.
+
+ \begin{figure}[h!]
+    \hspace{50pt}
+    \includegraphics[scale=.35]{Figures/Chap2/P3D_Instantiation.pdf}
+    \caption{The space design instantiation for \$P3D.}
+    \label{fig:Radar_chart_P3D}
+\end{figure}
+
+
+\subsection{3 Cent (2017)}
+Low-cost devices can provide pre-processed input data represented as 3D trajectories, which permit the reduction of the recognition task to a geometric problem. Also, this can provide tools to design custom gesture interfaces using a small amount of data, similar to popular 2D stroke recognizers such as \$1~\cite{Wobbrock:2007}.~\cite{Caputo:2017} designed a 3D gesture recognizer based solely on single 3D trajectories using sampled trajectories comparison but adopting different and simpler processing than the 3D adaptations of \$1 (\textit{\ie}, \$3 and Protractor3D). 
+
+\subsubsection{Design Space Instantiation}
+\begin{enumerate}
+    \item \textbf{The recognizer.}  The $3 Cent$ recognizer processes segmented gestures and first applies a three-step preprocessing: (1) resampling the gesture into a fixed number of equidistant points; (2) scaling the gesture uniformly to a standard unit length; (3) translating the centroid of the point cloud to the origin, (\textit{\ie}, (0,0,0)). The applied preprocessing ensures the position and scale invariance properties, but neither in rotation nor direction. To be recognized, each input gesture must be performed in the same way as the template gestures, with fixed direction and orientation, or all the variations must be represented in the training set. The recognizer calculates the distance between this gesture and each template as the sum of the squared distances of the corresponding points. It returns the template with the shortest distance.
+    
+    \item \textbf{The device.} To evaluate the recognizer, the authors used two datasets of segmented gestures, using a Leap Motion controller device. The second dataset is from the Shrec'17 track~\cite{DeSmedt:2017} recorded with an Intel RealSense Depth. 
+    \item \textbf{The gestures.} The first dataset is composed of 26 gestures representing command interface gestures and are 3D trajectories of the dominant forefinger performed by 14 subjects. While the second dataset consists of coarse gestures (\textit{\ie}, not characterized by finger movements) and fine gestures (\textit{\ie}, characterized by finger movements).
+\end{enumerate}
+\subsubsection{Rapid Prototyping Criteria}
+The $3 Cent$ recognizer is a rapid prototyping recognizer, particularly it extends the $\$1$ recognizer, it is easy to understand and doesn't require a lot of samples to train the recognizer and to achieve great results.
+\subsubsection{Performance} 
+ The evaluation was done using a K-nn classification (k=1,3,5) with the gestures of 5 users selected as a training set and tested with the gestures of the eight remaining users. For Shrec'17, the evaluation was separated into two tests. The first considered only the coarse gestures in the dataset, characterized by the palm trajectory. Then, the second dataset was composed of fine gestures. The results showed that the $3 Cent$ recognizer without rotation performed best for the different tests; the classification accuracy of $3 Cent$ on the 26 classes dataset ranged from 95.2\% to 96.9\%, while it varied less, ranging from 90.2\% to 92\% for the coarse gestures in the Shrec'17 dataset. Furthermore, the $3 Cent$ applied to the index finger for the fine gestures dataset reached almost 78\%.
+ 
+  \begin{figure}[h!]
+    \hspace{50pt}
+    \includegraphics[scale=.35]{Figures/Chap2/3Cent_Instantiation.pdf}
+    \caption{The space design instantiation for 3 Cent.}
+    \label{fig:Radar_chart_3Cent}
+\end{figure}
+ 
+\subsection{JackKnife (2017)}
+To solve the problem of designing a general rapid prototyping recognizer for dynamic gestures that can be trained with few samples, that not only works with segmented data but can also work with continuous data; and is modality-agnostic.~\cite{Taranta:2017} created Jackknife, a multitool recognizer composed of a number of techniques to achieve high recognition rates through different modalities.
+
+\subsubsection{Design Space Instantiation}
+\begin{enumerate}
+    \item \textbf{The recognizer.} The Jackknife recognition system relies on dynamic time warping (DTW) as a measure of dissimilarity based on the inner product of the direction vectors of the gesture trajectory, combined with a simple 1-NN pattern matching recognition algorithm. Besides, they apply a correction factor to the DTW to disambiguate some gestures and separate negative from positive samples.
+    They implemented a method that selects a rejection threshold using one training sample per class for continuous gestures. The threshold is determined by learning a per-template rejection threshold based on synthetically generated samples from the user gesture samples. Synthetic data are generated to obtain a sufficient number of training data to construct the distribution of scored negative (\textit{\ie}, non-gesture) and positive (\textit{\ie}, gesture) synthetic samples.
+    The evaluation was done on several rejection thresholds for continuous gestures using a Kinect and a Leap Motion. The gesture classification required segmentation using a sliding window segmenter. The excellent results for the different parameters tested suggest that JackKnife is suitable for continuous gestures.
+     The technique is neither direction- nor rotation-invariant, and the sampling rate for synthetic gestures must be defined manually.
+      It showed that the inner product is a better local cost function than the squared euclidean distance in almost all evaluations.
+    \item \textbf{The device.} The recognizer was evaluated on different modalities using different sensor datasets for segmented and continuous gestures. The evaluation of JackKnife with gestures made with a WiiRemote was done in a user-dependent scenario, and the data were integrated to obtain 3D position points.
+    \item \textbf{The gestures.} The authors consider the processed gestures as a temporal series of trajectories in a multidimensional space (\textit{\ie}, an ordered set of points, and represented as a set of direction vectors of unit length). Also, a limitation of JackKnife is that it does not consider static poses. The authors point out that the recognizer achieved competitive results in 2D and 3D gesture recognition and is a robust gesture recognizer.
+\end{enumerate}
+\subsubsection{Rapid Prototyping Criteria}
+For the evaluation of segmented gestures, the recognizer was evaluated on many public datasets using only one or two samples as the training set. While the Jackknife recognizer needs to be trained each time a new gesture is added to the training set, it also relies on some complex techniques to improve its recognition rate.
+\subsubsection{Performance} 
+In terms of accuracy for gestures produced with a WiiRemote, JackKnife achieved high results compared to other popular recognizers (\textit{\ie}, \$3 and Protractor3D), but its performance was lower than the uWave recognizer (\textit{\ie}, DTW with quantization). The evaluation of Kinect gestures also showed great results with one sample in user-dependent and user-independent scenarios (\textit{\ie}, 99\% and 96\% respectively).
+
+ \begin{figure}[h!]
+    \hspace{50pt}
+    \includegraphics[scale=.35]{Figures/Chap2/Jackknife_Instantiation.pdf}
+    \caption{The space design instantiation for JackKnife.}
+    \label{fig:Radar_chart_JackKnife}
+\end{figure}
+
+\subsection{DeepGRU (2019)}
+
+Recognition methods that can handle multiple devices, and, in particular, those that can effectively capture and distinguish between different gestures, are needed. At the same time, rapid prototyping requires that these methods can be easily integrated into the recognition process, even though they are generally more complex and less flexible to work with different devices.
+Therefore, Maghoumi \etal~\cite{Maghoumi:2019} introduced a general gesture recognition utility relying on a deep learning model that takes as input different types of data. 
+\subsubsection{Design Space Instantiation}
+\begin{enumerate}
+    \item \textbf{The recognizer.} The model relies on gate recurrent units (GRU) as the principal block to build the network. The latter is composed of three parts: the encoder network, which compresses the input gesture sample; the attention module to refine the set of features; and finally, the two layers that classify the gesture based on the probability distribution of the class labels.
+    Numerous experiments were conducted to evaluate the DeepGRU and measure its recognition accuracy with different segmented gesture datasets of various sizes that cover many configurations (\textit{\eg, } gesture interactions, number of actors, view-point variations and input devices.).
+    The model supports invariances in a limited way by creating synthetic samples of real samples. The generated samples are characterized by limited variations (position, scale, rotation) to train the model on them.
+    \item \textbf{The device.} Two small datasets of segmented gestures were tested to show the usefulness of the utility for a limited amount of data in rapid prototyping with two hand gesture datasets, one containing acoustic data and the other containing the Wii Remote data. The DeepGRU was evaluated with 2 and 4 training samples per gesture class, respectively, in a user-dependent scenario. 
+    \item \textbf{The gestures.} The raw data provided to the model is heterogeneous as a temporal sequence, raw 3D skeleton composed of multiple articulations, pose or other vector features (\eg acceleration, angular velocity, etc) and doesn't depend on a specific device, they were tested with existing datasets~\cite{Cheema:2013,Pittman:2017} composed of dynamic semaphoric and iconic gestures.
+\end{enumerate}
+\subsubsection{Rapid Prototyping Criteria}
+The authors assert that DeepGRU is a compact network achieving excellent results, comparable to state-of-the-art recognition accuracy on both small and large datasets. Its suitability for rapid prototyping is particularly noteworthy, given the impressive results with just four training samples per class and a reasonable training time using only the CPU. However, the code model provided is difficult to adapt and seems rather non-obvious. Despite the authors' claims about its suitability for rapid prototyping, understanding and implementing the model does require prior knowledge of the deep learning field for developers and practitioners.
+\subsubsection{Performance} 
+The evaluation results on small datasets showed that the DeepGRU performed well (\textit{\ie}, $>90\%$), and showed a higher accuracy compared to other existing recognizers   (\textit{\eg, } Protractor3D~\cite{Kratz:2011};\$3~\cite{Kratz:2010} and Jackknife for $4$ training samples) this results concern the Wii Remote dataset, while Jackknife~\cite{Taranta:2017}) was better for $2$ training samples. The model training times were small compared to larger datasets, but still quite high (\textit{\ie}, $6.9$ minutes with a $12$-thread CPU device for the Wii Remote dataset with $4$ samples per gesture class).
+
+
+ \begin{figure}[h]
+    \hspace{50pt}
+    \includegraphics[scale=.35]{Figures/Chap2/DeepGRU_Instantiation.pdf}
+    \caption{The space design instantiation for DeepGRU.}
+    \label{fig:Radar_chart_DeepGRU}
+\end{figure}
+
+\begin{figure}[h!]
+    \hspace{-0pt}
+%    \includegraphics[scale=.45]{Figures/Chap2/Comparative_Instantiation.pdf}
+    \includegraphics[width=\textwidth]{Figures/Chap2/Comparative_Instantiation.pdf}
+    \caption{The space design instantiation for all the selected recognizers.}
+    \label{fig:Radar_chart_All}
+\end{figure}
+
+
+\section{Comparative Analysis}\label{sec:Comparative_Analysis}
+%\input{Tables/comparative_analysis.tex}
+The Figure~\ref{fig:Radar_chart_All} gives an overview of the instantiation of all the selected recognizers that meet or are very close to the rapid-prototyping criteria, the radar diagram shows interesting features of the 3D gesture recognizers described in the subsection \ref{Subsec:Desc_Recognizers}. At the same time, they show the area covered by these different recognition systems, which lets us distinguish the similarities and differences between recognizers. Not in order to designate the best recognizer, but to display the usefulness of the representation of design space in the comparative aspect between recognizers along different features. 
+\begin{itemize}
+    \item The \textbf{DeepGRU} and \textbf{JackKnife} recognizers cover more complex values on different axes, in particular along the \enquote{Gesture Nature} and the \enquote{Number of devices}.
+    \item The \enquote{uWave} and \enquote{Rubine3D} cover the same area on almost all dimensions except for the classification approach where \enquote{uWave} cover a more complex value than Rubin3D.
+    \item The \enquote{Rubine3D} and \enquote{Hoffman's classifier} also have the same characteristics on all dimensions except for the number of devices where the later one cover an advanced value as an evaluation of the recognizer with \enquote{Two devices of different types}.
+    \item the \enquote{\$3} and \enquote{Protractor3D} covers the same design space area.
+    
+\end{itemize}
+
+\section{Generative Analysis}\label{sec:Generative_Analysis}
+The above analysis that resulted in the creation of the figure illustrating the design space of all recognizers indicates that certain dimensions are adequately covered. This analysis will summarize and highlight the main features addressed by 3D hand gesture recognizers adapted to rapid prototyping, which mainly use the template-based technique. The third level of analysis, known as generative analysis, helps create diverse and enriched design spaces for innovative solutions. This level is particularly useful in fostering new ideas as opposed to criticism~\cite{BeaudouinLafon:2004}. It also highlights unexplored areas that could improve the design of future gesture recognizers for rapid prototyping.
+
+
+\subsection{Classification Approaches}
+Several recognizers, particularly those belonging to the \$-family, have employed the between-point approach to assess the similarity between gestures. The parametric approach was used by Rubine3D and Hoffman's classifier, which are adaptations of the classifier originally developed by Rubine for stroke gestures~\cite{Rubine:1991}.
+\bigbreak
+
+\textbf{Between-point classification is the most commonly used approach, while parametric classification has been tested in Rubine3D and Hoffman's classifier using accelerations and angular velocities. The between-vector approach has only been used in Jackknife, and between-bivector approaches have not been utilized in rapid-prototyping 3D gesture recognizers. It would be valuable to study these approaches to demonstrate their advantages and highlight their effects on the 3D gesture recognition process.}
+
+\subsection{Invariance Properties}
+The invariance properties of rapid prototyping recognizers vary between different recognizers. All of the recognizers studied have position invariance in common. The scale-invariance property is also widespread, except for the uWave and Hoffman classifier. On the other hand, rotation-invariance is not very common and is only found in 3D extensions of the \$-family recognizer \$1, as well as the two recognizers \$3 and Protractor 3D. The same applies to direction-invariance, where only the \$P3D recognizer has preserved it through the implementation of the cloud of points.
+
+\begin{itemize}
+    \item First, all the recognizers provide \enquote{position-invariance}, which means that a recognizer is independent of the place where a gesture is performed in the air (\textit{\eg}, a swipe left at the head is equivalent to a swipe left at the chest). 
+    \item The \enquote{scale-invariance}  property describes the recognizer's independence from the scale and the size of gestures (\textit{\eg}, a large gesture performed is equivalent to a smaller one). All the recognizers share this property except the uWave~\cite{Liu:2009} and Hoffman's classifier~\cite{Hoffman:2010}.
+    \item Then, the property of \enquote{rotation-invariance} refers to the independence of a recognizer towards the rotation of a gesture (\textit{\eg}, if we consider the cardinal points as a reference, a smash to the north-east cannot be distinguished from a smash gesture to the north-west). The recognizers that support this rotation-invariance property are \$3 and Protractor3D.
+    \item Finally, \$P3D~\cite{Cook:2016} provides \enquote{direction-invariance} by using clouds of points to recognize a gesture. It refers to the independence of a recognizer towards the direction where the gestures are articulated.
+\end{itemize}
+
+\bigbreak
+
+\textbf{The invariance properties of 3D gesture recognizers vary greatly.  These properties depend mainly on the characteristics of the 2D recognizers they are inspired by and the requirements these recognizers need to fulfill. Most 3D rapid prototyping gesture recognizers maintain strict scale-, position-invariance but only a few are rotation-, direction-invariant.}
+
+\subsection{Data Type}
+The JackKnife recognizer~\cite{Taranta:2017} demonstrated the importance of having a recognizer that can recognize gestures using different types of devices. However, this recent recognizer has only focused on the uni-device recognition scenario, by using segmented and continuous gestures (\ie, recognition accuracy $>90\%$).
+\begin{itemize}
+    \item The recognizers primarily processed segmented gestures, and many of them used pre-segmented gestures, while the devices provided continuous data. The JackKnife recognizer demonstrated impressive performance when evaluated on both segmented and continuous gestures.
+    \item Among the mentioned recognizers, most of them classified various classes of 3D gestures, with a focus on segmented gestures ranging from uWave to DeepGRU. It is worth noting that very few recognizers have successfully recognized 2D gestures~\cite{Cook:2016,Taranta:2017}.
+\end{itemize}
+
+\subsection{Gesture Type}
+The most common type of gesture is the dynamic iconic gesture, which represents a shape or path. The second most common type is the stroke semaphoric gesture. However, we observe that the other types are poorly integrated and could benefit from further study.
+Furthermore, based on \textit{Aigner's taxonomy}~\cite{Aigner:2012}, all the recognizers described were used to classify mainly iconic dynamic gestures, followed by the semaphoric stroke gestures.
+\bigbreak
+\textbf{The latest studied 3D gesture recognizers primarily classify dynamic iconic gestures and stroke semaphoric gestures.}
+
+
+\subsection{Gesture Nature}
+Based on the comparative analysis, it is evident that \enquote{unipath dynamic} gestures have been extensively studied in the analysis of recognizers. However, \enquote{multipath dynamic} gestures have not been thoroughly investigated, and static gestures have not been widely used.
+
+Furthermore, unipath dynamic gestures, which can be represented as a set of measurements, are the most recognized gestures. However, only a small number of recognizers, namely~\cite{Caputo:2017,Cook:2016,Taranta:2017}, have explored the multipath dynamic gestures~\cite{Rubine:1991} (\textit{\ie}, movements where each finger has its trajectory).  These gestures are more interesting and convey more detail. However, the lack of recognition of the static gesture is remarkable, except for $\$P3D$, which was tested with this type of gesture.
+\bigbreak
+\textbf{The latest 3D gesture recognizers studied can classify both unipath and multipath dynamic gestures.}
+
+\subsection{Device Type}
+The evaluation of template-based 3D gesture recognizers has been conducted using different types and numbers of devices: 
+\begin{itemize}
+    \item First, as we have described, there are many types of devices that provide gesture data. We can study the impact of these different types on the recognizer.
+    \item All the recognizers were primarily evaluated using 3D devices. They provided measurements of various physical quantities, including position in Cartesian space, accelerations, and angular velocities. However, the \$P3D and the JackKnife recognizers were also assessed using 2D data.
+    \item The number of devices used in the evaluation varies depending on the recognizer. Most recognizers that track only the hand use a single type of device. However, Hoffman's classifier uses two different types of devices that provide acceleration and angular velocity values. The $3 Cent$ recognizer is trained on multiple devices of the same type. Finally, in JackKnife, the recognizer is trained on data from several different types of devices, including both hand and full-body gestures.
+    \item Finally, we can introduce multi-device testing, which involves training the recognizer with examples from one device and testing it with candidate gestures produced on another device. It is well detailed in the Chapter~\ref{chap:Concepts}. This additional testing configuration expands the number of testing scenarios that can be considered when evaluating a recognizer. We can now distinguish four basic configurations: (1) user-dependent uni-device, (2) user-dependent uni-device, (3) user-independent multi-device, and (4) user-independent multi-device.
+\end{itemize}
+
+\textbf{The template-based gesture recognizers, adapted to rapid prototyping, have been extensively evaluated with one type of 3D device for hand gestures using segmented data. However, some recognizers have also been evaluated with different types of devices using continuous data.}
+ 
+\section[Motivations for Multi-context gesture recognizers]{\large Motivations for Multi-context gesture recognizers}
+The three-level analysis in this chapter demonstrated the necessity of investigating diverse dimensions of the defined design space for hand gesture recognizers. It emphasized the importance of exploring multi-context 3D hand gesture recognizers. The focus should be on those using template-based recognition algorithms that are adapted to rapid prototyping.
+
+This work aims to explore various aspects that have not been extensively researched. Our primary focus will be on two dimensions: the \enquote{Classification} and the \enquote{Device}. The \enquote{Classification approach} feature has been under-explored because it currently focuses mainly on one approach per recognizer. By exploring new values for \enquote{Classification Approach} and comparing them, we can explore the use of recognizers in multiple contexts of use, such as with multiple devices. This exploration also necessitates new testing scenarios that specifically focus on device independence and the ability to test gestures.
+
+

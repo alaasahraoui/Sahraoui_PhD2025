@@ -1,0 +1,310 @@
+\chapter[Use Case 2: Comparative Testing on Multipath Dynamic Gestures]{Use Case 2: Comparative Testing of Recognizers on Multipath Dynamic Gestures}\label{chap:LMCmultipathComparative}
+
+\vspace{-12pt}
+The work discussed in this chapter was originally published in \textit{HCI International 2022 - Late Breaking Papers. Multimodality in Advanced Interaction Environments.} Published in 2022 by Cham: Springer Nature Switzerland AG \cite{Ousmer:2022}. It is reproduced with permission from Springer Nature.
+
+In the comparative testing of the \enquote{unipath dynamic} gestures, we observed the effectiveness of using comparative testing to evaluate recognizers in a \textit{uni-device configuration}. The gesture sets used were created from different input device categories, including \enquote{Leap Motion controller} for SHREC2019 and 3DTCGS, and \enquote{SoftKinetic DepthSense DS325} for the 3DMadLabSD. This highlights the capabilities of the comparative testing method for template-based hand gesture recognizers. We further investigate this method by extending the exploration of the design space for hand gesture recognizer adapted to rapid prototyping (Section~\ref{sec:Design_Space_Recognizers}). 
+
+In this chapter, we will instantiate the procedure for comparative testing of a set of template-based gesture recognizers on \enquote{multipath dynamic} hand gestures recorded with a Leap Motion controller grouped into two gesture sets. We selected two recognizers from the set of recognizers we evaluated in Chapter~\ref{chap:Unipath_Comparative} on \enquote{unipath dynamic} gestures, $\$P^3+$ (The same as in Section~\ref{sec:dollarpplus}), $\$F$ (Section~\ref{sec:dollarf}), we also selected two recognizers from the targeted literature review Jackknife~\cite{Taranta:2017} and $3~Cent$~\cite{Caputo:2017}. Jackknife has been also successfully used for dynamic gestures captured by a radar~\cite{Sluyters:2022:IUI,Sluyters:2023}, thus making it an eligible candidate for challenging gestures. In addition to two new state-of-the-art recognizers: $\$P^3+$X and PennyPincher3D, a recognizer with a \enquote{Between-Vectors} classification approach. 
+
+To ensure consistent comparison of gesture recognizers under identical conditions (\textit{\ie}, parameter values), comparative testing should examine the impact of various factors on performance. These factors include the number of templates, the number of sampling points, the number of fingers, and their configuration with other hand parameters such as hand joints, palm, and fingertips. The procedure's results identify the configurations in which each recognizer is most accurate or fastest. Specifically, we focus on identifying the best gesture recognizers that have both high accuracy and low response time. We then define a method to determine the optimal conditions for designating these recognizers.
+\vspace{-5pt}
+\section{Recognizers}
+\vspace{-5pt}
+In this comparative evaluation procedure, we used template-based gesture recognizers, among them, 2 recognizers used in the comparative tests performed in Chapter~\ref{chap:Unipath_Comparative}: $\$P^3+$ ($\$P+^3$ adapted to multipath dynamic gestures), $\$F$, We added two recognizers from the targeted literature review in Chapter~\ref{chap:Related}, Jackknife~\cite{Taranta:2017} and $3~Cent$~\cite{Caputo:2017}. Finally, we added two new state-of-the-art recognizers: \$P\textsuperscript{3}+X and PennyPincher3D.
+\vspace{-5pt}
+\subsection{ \texorpdfstring{\$P\textsuperscript{3}+X}{\$P3+X} Recognizer}
+A variant of \textit{\$P\textsuperscript{3}+}~\cite{Vatavu:2017} that takes into account the direction-invariance by tracking conflicting templates (\textit{\ie}, templates of the same gesture but performed in different directions). If a gesture matches with a conflicting template, its direction is compared with the direction of each conflicting template, and the nearest one is chosen.
+\vspace{-5pt}
+\subsection{PennyPincher3D Recognizer}  
+\textit{PennyPincher3D} is an adaptation of the 2D recognizer \textit{PennyPincher} ~\cite{Taranta:2015}. The gestures are represented as a set of $N-1$ vectors linking between $N$ equidistant points. The recognizer matches the candidate gesture with the template that maximizes a dissimilarity score, computed as the sum of the angles between the vectors. The computation relies on basic mathematical operations such as additions and multiplications. The gestures require just a resampling as prepossessing. This recognizer is scale- and position-invariant as most of the \$-recognizers.
+\section{Datasets} \label{sec:MulComp_Datasets}
+\subsection{SHREC2019}
+The \textbf{SHREC2019} dataset~\cite{Caputo:2019} includes a sequence of 3D points and a sequence of quaternions for each hand joint. However, we ignored the quaternions in our experiments. The provided gestures represent one of five different gesture classes (Figure~\ref{fig:SHREC2019-Gestures}): \enquote{Cross}(X), \enquote{Circle}(O), \enquote{V-mark}(V), \enquote{Caret}(/\textbackslash), and \enquote{Square}([])). It served in (SHREC) track, a contest on online gesture recognition to detect command gestures from hands' movements in a virtual reality context. The proposed dataset consists of 195 3D  movements performed by 13 participants with the whole hand. The dataset contains unsegmented gestures. The training set and the testing set were merged to create a unique dataset in which, unnecessary hand movements were removed from the gestures.
+
+\label{fig:SHREC2019_datasets}
+\begin{figure}[ht]
+    \vspace{-10pt}
+	\centering
+	\captionsetup{justification=centering}
+	\includegraphics[width=1\linewidth]{Figures/Chap5/Datasets/SHREC2019.pdf}
+    \vspace{-10pt}
+	\caption{The SHREC2019 gesture classes and samples.~\cite{Caputo:2019}}
+	\label{fig:SHREC2019-Gestures}
+\end{figure}
+\vspace{-12pt}
+\subsection{Jackknife-LM} 
+
+The \textbf{Jackknife-LM (Jackknife-LeapMotion)} dataset ~\cite{Taranta:2017}  contains 3D complex gestures of the hand and saved as 3D skeleton which is provided by the Leap Motion controller device.
+We used the segmented gestures composed of 360 samples of 9 different gesture classes, for example, \enquote{Fist Circles}, \enquote{Snip Snip}, \enquote{Explode}(Figure~\ref{fig:Jackknife-Gestures}). It was used to test a rejection method of non-gesture sequences from a continuous data stream. While segmented gestures make up the training set, authors employ unsegmented sessions of samples in the test~\cite{Taranta:2017}.
+
+
+\vspace{-12pt}
+\begin{figure}[h!]
+	\centering
+	\captionsetup{justification=centering}
+	\includegraphics[width=0.85\linewidth]{Figures/Chap5/Datasets/JackknifeLM.pdf}
+	\caption{The Jackknife-LM gesture classes.~\cite{Taranta:2017}}
+	\label{fig:Jackknife-Gestures}
+\end{figure}
+\vspace{-2pt}
+\section{Design}
+\label{sec:Multipath_Comparative_evaluation}
+The comparative testing performed aims at filling this gap in the literature. As such, we selected two available gesture sets for a number of reasons, including reproducibility. We evaluated the described recognizers following the typical method used in the literature to evaluate gesture recognizers ~\cite{Anthony:2010,Anthony:2012,Ousmer:2020,Vatavu:2012b,Vatavu:2018,Wobbrock:2007} in a user-independent scenario. We tested them on full hand gestures provided by the LMC skeletal hand model (Figure~\ref{fig:LMC-HandModel}) to show the efficiency of these recognizers under different conditions.
+
+\vspace{-8pt}
+\begin{figure}[!ht]
+\captionsetup{justification=centering}
+\vspace{-12pt}
+\subfigure[LMC~hand~model.~\cite{LeapMotionBlog:2014}]{\label{fig:LMC-HandModel}\includegraphics[width=.50\textwidth,trim= 0 -30 0 -20, clip]{Figures/Chap5/LMC_Hand_hierarchy.pdf}}
+\subfigure[The hand joints selected for the testing.]{\label{fig:LMC-joints}\includegraphics[width=0.75\textwidth,trim= 0 0 0 0, clip]{Figures/Chap5/LMC_Hand_Joints.pdf}}
+  \centering
+  \caption{Overview of the LMC Hand model and joints.}
+   \vspace{-15pt}
+   \label{LMC Hand Joints}
+\end{figure}
+
+\subsection{Experiment}
+Our evaluation was within factors with five independent variables:
+\begin{enumerate}
+    \item \textsc{Recognizer}: nominal variable with 6 conditions, representing the various recognizers implemented for recognizing 3D gestures $\$P^3+$, $\$F$, Jackknife~\cite{Taranta:2017} and $3~Cent$~\cite{Caputo:2017}. And the two new recognizers which are  described above:  $\$P^3+X$ and \textit{PennyPincher3D}.
+    \item \textsc{Dataset}: nominal variable with 2 condition, representing the datasets considered, \textit{\ie}, SHREC2019~\cite{Caputo:2019} and Jackknife-LM~\cite{Taranta:2017} described in Section~\ref{sec:MulComp_Datasets}.
+    \item \textsc{Joints}: Nominal variable with 8 conditions, representing the hand joints used. Since the fingers contain several joints, we decided to use the information provided by the tips of the fingers (Figure ~\ref{fig:LMC-joints}): \textbf{\enquote{1(P)}} = \{Palm\}, \textbf{\enquote{2(P+I)}} = \{Palm, Index\},  \textbf{\enquote{2(T+I)}}=\{Thumb, Index\}, \textbf{\enquote{2(I+M)}} = \{Index, Middle\} , \textbf{\enquote{3(P+I+M)}} =\{Palm, Index, Middle\} , \textbf{\enquote{3(T+I+M)}} =\{Thumb, Index, Middle\}, \textbf{\enquote{5(AF)}} = \{Thumb, Index, Middle, Ring, Pinky\},  \textbf{\enquote{6(P+AF)}} = \{Palm, Thumb, Index, Middle, Ring, Pinky\}.
+    \item \textsc{Number of Templates}: numerical variable with 5 conditions, representing the number of templates per gesture for training: $T{=}\{1,2,4,8,16\}$.
+    \item \textsc{Sampling}: numerical variable with 5 values representing the number of points per gesture: $N{=}\{4,8,16,32,64\}$.
+\end{enumerate}
+\vspace{-12pt}
+\subsubsection{Apparatus} We used a hexa-core Intel Core i7 2.20 GHz CPU and a Windows 10 Home Edition operating system. The RAM was 16 GB DDR4  memory with 2400 MHz.\vspace{-12pt}
+
+\subsection{Procedure and Quantitative Measures}
+We compute the \textit{recognition rate} (computed as the ratio of positive recognitions divided by the total number of trials) for the 6 (\textsc{Recognizer}) $\times$ 2 (\textsc{Dataset}) = 12 basic configurations in the \textit{user-independent scenario}. This scenario evaluates the recognition of gestures produced by users who are different from those used for training the recognizer. In this scenario, the basic configurations are refined depending on $A$, the number of joints, on  $T$, the number of templates, and depending on $N$, the number of resampling points to train the recognizer.
+For each gesture class, a template is randomly selected from all participants and saved for testing. Then, a training set is created by randomly choosing $T$ templates for each gesture class from the remaining users. These templates should be different from the ones previously selected for testing. The recognizer is then trained using this training set. This task is repeated $R{=}$100 times for each template in the $T$ set.
+\section{Results}
+\label{sec:results}
+ Overall, we conducted 2 (\textsc{Dataset}) $\times$ 8 (\textsc{Joints}) $\times$ 5 (\textsc{Sampling}) $\times$ 5 (\textsc{Number of Templates}) $\times$ 100 (repetitions) $\times$ 6 (\textsc{Recognizer}) = 240,000 recognition trials for each dataset. 
+Finally, the number of recognized gestures is averaged to calculate the recognition rate, which is then formatted as a percentage. Statistical computations are performed using GraphPad Prism.
+%\vspace{-0.25cm}
+
+\begin{figure}[ht!]
+    \vspace{-5pt}
+	\captionsetup{justification=centering}
+\hspace{0cm}
+	\includegraphics[width=\linewidth]{Figures/Chap5/SHREC2019/Rate_AllCond_Overall_ByGesture.pdf}
+	\vspace{-14pt}
+	\caption{Recognition rates of all recognizers for the SHREC2019 for all conditions. Error bars show a confidence interval of $95\%$.}
+	\label{fig:SHREC2019-Overall}
+	\vspace{-12pt}
+\end{figure}
+\vspace{-12pt}
+\subsection{SHREC2019 Dataset}
+\subsubsection{\textbf{Overall Recognition Rate}}\label{sub:All-Cond}
+Figure~\ref{fig:SHREC2019-Overall} displays the average recognition rate for all tests under all conditions, with the recognizers listed in descending order. The $\$P^3+$ has the highest average recognition rate ($M{=}85.90\%$, $SD{=}15.44\%$), followed by $\$P^3+X$ and Jackknife with ($M{=}84.90\%$, $SD{=}16.45\%$) and ($M{=}82.11\%$, $SD{=}14.06\%$), respectively. The average recognition rate of \textit{PennyPincher3D} is ($M{=}80.02\%$, $SD{=}12.38\%$). For the last two recognizers, the average rates do not exceed $80\%$: $3~Cent$ has an average recognition rate of ($M{=}78.09\%$, $SD{=}18.12\%$) and $\$F$ has an average recognition rate of ($M{=}77.36\%$, $SD{=}19.27\%$).
+
+
+We performed four normality tests on the \textsc{Recognizer} variable: the Anderson-Darling K-sample test, D'Agostino's K2 test and Kolmogorov-Smirnov's KS. None of the recognition rates followed a normal distribution. Due to the large number of samples, the Shapiro-Wilk test could not be used to assess normality. Then, we performed a Kruskal-Wallis test with Dunn's multiple comparisons on the measures. The overall difference between the recognizers is very highly significant ($p{<}.001^{***}$). Figure~\ref{fig:SHREC2019-Overall} shows that $\$P^3+$ is the most accurate Recognizer, significantly outperforming all other recognizers. $\$P^3+$ is better than $\$F$ with a highly significant difference ($Z{=}48.84,p{<}.001^{***}$) and significantly better than Jackknife ($Z{=}27.86$, $p{<}.001^{***}$). Also, $\$P^3+$ significantly outperforms $\$P^3+X$ ($Z{=}5.247,p{<}.001^{***}$). However, $\$F$ is not significantly different from $3~Cent$ ($Z{=}1.928,{n.s.}$), while this later is significantly outperformed by \textit{PennnyPincher3D} ($Z{=}3.055,p{<}.05^{*}$).
+
+
+Furthermore, the overall recognition rate per gesture class indicates that:
+\begin{itemize}
+    \item The gestures \enquote{Caret}(/\textbackslash) and \enquote{V-mark}(V) have average rates greater than or equal to $90\%$. However, similarly to the average recognition rates of the other classes, these rates vary among the different recognizers.
+    \item  The \enquote{Cross} (X) gesture is better recognized than the \enquote{Square} ([]) and the \enquote{Circle} (O) by the $\$F$, $\$P^3+$ and $\$P^3+X$ recognizers.
+    \item The best average recognition rate for \enquote{Cross} (X) gesture class is achieved by Jackknife ($M{=}93. 98\%$); this value goes down respectively to ($M{=}83.35\%$) for $\$P^3+$ and to ($M{=}67.75\%$) for $\$F$ with a difference of $10.53\%$ and $26.45\%$.     
+    \item For the Jackknife and \textit{PennyPincher3D} recognizers,  the \enquote{Square}([])) and \enquote{Cross}(X) classes  have similar average recognition rates. 
+    \item On the contrary, the gesture class \enquote{Circle}(O) has a very low average recognition rate for Jackknife ($M{=}34.43\%$), \textit{PennyPincher3D} ($M{=}21.91\%$) and $3~Cent$ ($M{=}46.50\%$). 
+\end{itemize} 
+
+
+From the detailed recognition rate for each condition, some recognizers have low or almost non-existent recognition rates that meet the expectation of end users ($\tau{\geq}90\%$)~\cite{Marin:2016,Wang:2015}. These include \textit{PennyPincher3D}, $3~Cent$, and $\$F$. On the other hand, $\$P^3+$ and $\$P^3+X$ consistently achieve recognition rates of $\tau{\geq}90\%$. Since the goal is to conduct a comparative test of recognizers using the SHREC2019 dataset, we relaxed the aforementioned constraint and refined the results to require a recognition rate of $\tau{\geq}80\%$.
+
+
+
+\subsubsection{\textbf{Recognition Rates by Number of Joints}}
+Figure~\ref{fig:plot-Recog-by-Joint-SHREC2019} illustrates the average recognition rates for each value of condition \textsc{Joints} (A). Each recognition rate represents the average of the recognition rates of all conditions (T) and (N). The values range from $M{=}75.58\%$ for $\$F$ in \textsc{$A=2\:(I + M)$} to $M{=}87.04\%$ for $\$P^3+$ in \textsc{$A= 3\:(P + I +T)$}. Generally, the recognition rates do not vary significantly across different values of (A). $\$P^3+$ achieves the highest average recognition rate for \textsc{$A=3\ :(P + I + T)$} ($M{=}87.04\%$) while $\$F$ has the lowest average rate for \textsc{$A=2\ :(M + I)$} ($M{=}75.58\%$). 
+
+\begin{figure}[ht]
+	\centering
+	\captionsetup{justification=centering}
+	\includegraphics[width=\linewidth]{Figures/Chap5/SHREC2019/Rate_Avg_per_Joints.pdf}
+	\vspace{-18pt}
+	\caption{Recognition rates of all recognizers for the SHREC2019 dataset~\cite{Caputo:2019}, the plot shows average rates by joint $A=\{1\:(P), ... ,6\:(P + AF)\}$.}
+	\label{fig:plot-Recog-by-Joint-SHREC2019}
+	\vspace{-12pt}
+\end{figure}
+
+Although, there are some conditions such as \textsc{$A=2\:(I + M)$} and \textsc{$A=3\:(P + I + T)$}, where the average rate of $\$P^3+X$ exceeds that of $\$P^3+$ (\eg   \textsc{$A=2\:( I  + M)$} and  \textsc{$A= 3\:(P + I +M)$}). Similarly, for some values of (A), $3~Cent$ has lower recognition rates than $\$F$ (\eg  \textsc{$A=1\:(P)$} and \textsc{$A=2\:(T + I)$}).
+
+
+As a way to help understand the behavior of the recognizer with respect to both the number of points as well as the number of joints. Figure~\ref{fig:SHREC2019-rank-Overall} is an overview of recognizers ranked by recognition rate. This ranking is presented along two axes, the number of joints (A) and the number of sampling points (N). It shows which recognizers are better than the others for each pair of conditions $(A, N)$. To respect the restriction on the recognition rate that we have defined above, all recognizers in this figure comply with two criteria:
+ \begin{enumerate}
+     \item The recognizer must achieve a recognition rate $>80\%$. 
+     \item The recognition rate must be the highest value among the conditions of (T).
+ \end{enumerate}
+ Globally, the position of the recognizers varies a lot according to the defined conditions, and few recognizers keep a constant ranking by varying the number of joints or the number of points (\eg, \textit{PennyPincher3D} for $N{=}16$ and $N{=}32$). For $N{=}4$, we observe that some recognizers do not appear, because of the first criterion defined, except for $3~Cent$, which has at least a recognition rate that respects the criterion. We notice that for several conditions, the $\$P^3+$ recognizer takes the first place, except for the condition where \textsc{$A=2 \:(P + I)$} and \textsc{$A=2 \:(I + M)$} where $\$P^3+X$ is designated as the best recognizer. In contrast to $\$P^3+$, the \textit{PennyPincher3D} often achieves the lowest recognition rate and is ranked last.
+\vspace{-0.25cm}
+
+
+\clearpage
+
+\begin{figure}[ht!]
+\hspace{0.5cm}
+\centering
+    \vspace{-0.5cm}
+	\captionsetup{justification=centering}
+	\hspace{-0.5cm}
+	\includegraphics[width=\linewidth]{Figures/Chap5/SHREC2019/Rate_Ranking_Sup80_A_N_Cond.pdf}
+	%\vspace{-0.75cm}
+	\caption{Ranking of the best individual recognition rates above 80\% by the number of joints (A) and the number of points (N) for the SHREC2019 dataset.}
+	\label{fig:SHREC2019-rank-Overall}
+\end{figure}
+
+\subsubsection{\textbf{Recognition Rate for the Optimal Conditions}}
+To evaluate the efficiency of the recognizers, we planned to test them in a precise scenario where the conditions are well-defined. For this reason, we determine which values of the variables \textsc{Joints} (A), \textsc{Sampling} (N), and \textsc{Number of templates} (T) allow an optimal comparison of the different recognizers in the recognition rate measure. We completed a de Borda ranking of all combinations of conditions for each recognizer, and the result is reported in Table~\ref{tab:SHREC2019-Borda}. The de Borda ranking selects the best combination of conditions, the one with the highest overall Borda score. This implies that the elected combination of values has a high recognition rate with many recognizers. Furthermore, we notice that many conditions share the same rank and score in the ranking for each recognizer. This situation is due to a defined sensitivity value of $2\%$ in the recognition rate. We determine the case of a tie between the last ranked combination of conditions and the following combination to be ranked on a specific recognizer, if the difference between their recognition rates is less than the defined sensitivity value. According to Table~\ref{tab:SHREC2019-Borda}, the result of the Borda ranking gives this combination of conditions (\textsc{$A=2\:(T + I)$}/ $N{=}32$/ $T{=}16$) as the best.
+\begin{table}[ht]
+\centering
+\captionsetup{justification=centering}
+\caption{Global position of the recognizers for each condition and overall, according to de Borda method across all recognizers (the higher, the better).}
+\vspace{1pt}
+\resizebox{1.25\columnwidth}{!}{%
+\hspace{10px}
+
+\begin{tabular}{|l|c|c|c|cccccc|llllllllll}
+\cline{1-10}
+\multicolumn{3}{c}{\textbf{Condition}} & \multicolumn{1}{l}{\textbf{}} & \multicolumn{6}{c}{\textbf{Recognizer   (\#Rank, Score)}} & \multicolumn{2}{c}{\textbf{}} &  &  & \multicolumn{2}{c}{\textbf{}} &  &  & \multicolumn{2}{c}{\textbf{}} \\  \cline{1-3} \cline{5-10}
+\multicolumn{1}{|c|}{A} & N & T & \textbf{Overall} & $\$P^3+$  & $\$F$ & \textit{PP3D} & Jackknife & $\$P^3+X$  & $3~Cent$ &  &  &  &  &  &  &  &  &  &  \\  \cline{1-3} \cline{5-10}
+2 (T + I) & 32 & 16 & \cellcolor[HTML]{bebee6}{\#1, 1187} & \#1, 200 & \#1, 200 & \#2, 196 & \#1, 200 & \#1, 200 & \#2, 191 &  & \multicolumn{8}{l}{} &  \\
+3 (P + I +M) & 32 & 16 & \cellcolor[HTML]{bebee6}{\#2, 1180} & \#1, 200 & \#3, 184 & \#2, 196 & \#1, 200 & \#1, 200 & \#1, 200 &  &  &  &  &  &  &  &  &  &  \\
+2 (P + I) & 32 & 16 & \cellcolor[HTML]{bebee6}{\#3, 1177} & \#1, 200 & \#2, 197 & \#2, 196 & \#2, 193 & \#1, 200 & \#2, 191 &  &  &  &  &  &  &  &  &  &  \\
+3 (P + I +M) & 16 & 16 & \cellcolor[HTML]{bebee6}{\#4, 1175} & \#1, 200 & \#3, 184 & \#1, 200 & \#1, 200 & \#1, 200 & \#2, 191 &  &  &  &  &  &  &  &  &  &  \\
+2 (I + M) & 32 & 16 & \cellcolor[HTML]{bebee6}{\#5, 1166} & \#2, 186 & \#1, 200 & \#2, 196 & \#2, 193 & \#1, 200 & \#2, 191 &  &  &  &  &  &  &  &  &  &  \\
+1 (P) & 64 & 16 & \cellcolor[HTML]{bebee6}{\#6, 1161} & \#2, 186 & \#2, 197 & \#3, 185 & \#2, 193 & \#1, 200 & \#1, 200 &  &  &  &  &  &  &  &  &  &  \\
+2 (T + I) & 16 & 16 & \cellcolor[HTML]{bebee6}{\#7, 1158} & \#1, 200 & \#1, 200 & \#3, 185 & \#1, 200 & \#2, 182 & \#2, 191 &  &  &  &  &  &  &  &  &  &  \\
+5 (AF) & 32 & 16 & \cellcolor[HTML]{bebee6}{\#8, 1157} & \#1, 200 & \#2, 197 & \#2, 196 & \#2, 193 & \#1,200 & \#3, 171 &  &  &  &  &  &  &  &  &  &  \\
+6 (P + AF) & 32 & 16 & \cellcolor[HTML]{bebee6}{\#9, 1153} & \#1, 200 & \#3, 184 & \#3, 185 & \#2, 193 & \#1, 200 & \#2, 191 &  &  &  &  &  &  &  &  &  &  \\
+3 (P + I + T) & 32 & 16 & \cellcolor[HTML]{bebee6}{\#10, 1148} & \#1, 200 & \#2, 197 & \#3, 185 & \#2, 193 & \#2, 182 & \#2, 191 &  &  &  &  &  &  &  &  &  &  \\
+... & ... & ... & \cellcolor[HTML]{bebee6}{...} & ... & ... & ... & ... & ... & ... \\  \cline{1-3} \cline{5-10}
+\end{tabular}
+}
+\label{tab:SHREC2019-Borda}
+
+\end{table}
+
+
+Based on de Borda's results, we evaluate the recognizers on the SHREC2019 dataset under the elected conditions. The upper part (a) of Figure~\ref{fig:SHREC2019-best-cond}  shows the average recognition rate for the defined conditions. According to these results, the $\$P^3+$ has the best average recognition rate ($M{=}97.00\%$, $SD{=}7.18\%$), followed by the $\$P^3+X$ ($M{=}95.20\%$, $SD{=}8.59\%$) and the $\$F$ ($M{=}94.20\%$, $SD{=}9. 55\%$), while \textit{PennyPincher3D} is the least accurate recognizer ($M{=}87.80\%$, $SD{=}13.30\%$), for the other two recognizers, the average rate of Jackknife ($M{=}93.2\%$, $SD{=}10.34\%$) and $3~Cent$ ($M{=}90.80\%, SD{=}13.16\%$). 
+
+
+As for the overall recognition rate on all conditions in part~\ref{sub:All-Cond}, we calculated the four normality tests: K sample's Anderson-Darling test, Shapiro-Wilk W test, D'Agostino's K2 test and Kolmogorov-Smirnov's KS.
+
+None of the recognition rates followed a normal distribution. Then, we calculated a Kruskal-Wallis test with Dunn's multiple comparisons. The high difference between the recognizer $\$P^3+$  and  \textit{PennyPincher3D} ($10\%$)  is statistically highly significant ($Z{=}5.736$, $p{<}.001^{***}$). Same thing for $\$P^3+X$ that is significantly better than \textit{PennyPincher3D}  ($Z{=}4.420$, $p{<}.001^{***}$). Moreover,  $\$P^3+$ is significantly more accurate than $3~Cent$ by $6.2\%$ ($Z{=}3.699$, $p{<}.01^{**}$). $\$F$ is superior by  $6.4\%$ to \textit{PennyPincher3D} with a highly significant difference  ($Z{=}3.788$, $p{<}.01^{**}$). However, $\$P^3+$ is not significantly better than Jackknife ($Z{=}2.581$, \textit{n.s.}), while this later is significantly better than \textit{PennnyPincher3D} ($Z{=}3.156$, $p{<}.05^{*}$).
+
+
+\begin{figure}[ht]
+	\centering
+	\vspace{-16pt}
+	\captionsetup{justification=centering}.
+%    \hspace{-1pt}
+	\includegraphics[width=0.95\linewidth]{Figures/Chap5/SHREC2019/Rate_BestCond_Overall_ByGesture.pdf}
+	\vspace{-6pt}
+	\caption{Recognition rate  (a) and the number of recognized gestures per class over 100 trials (b) of all recognizers for the user-independent scenario,  for the optimal conditions defined by the de Borda ranking: \textsc{$A{=}2\:(T + I)$}, $N{=}32$, $T{=}16$. Error bars show a confidence interval of $95\%$.}
+	\label{fig:SHREC2019-best-cond}
+\end{figure}
+
+In the bottom part of the same figure (Figure~\ref{fig:SHREC2019-best-cond}(b)), the bar chart shows the number of recognized gestures per gesture class on 100 repetitions, noting that all recognizers achieve a perfect score for at least one gesture class. Among the gesture classes in question, there is  the \enquote{Caret}(/\textbackslash) for \textit{PennyPincher3D} and $3~Cent$ recognizers, and also the \enquote{V-mark}(V) gesture class for $\$P^3+X$, $\$F$ recognizers. While $\$P^3+$ achieves an accuracy rate of ($\frac{100}{100}$) for two gesture classes  :  the\enquote{V-mark}(V)  and the \enquote{Cross}(X). Although Jackknife achieves a flawless recognition for three gesture classes: \enquote{Caret}(/\textbackslash) , \enquote{Cross}(X)  and  \enquote{V-mark}(V), its recognition of the \enquote{Circle}(O)  gesture class is weak  ($\frac{75}{100}$). This difficulty is also encountered by \textit{PennyPincher3D}  for the same gesture class ($\frac{59}{100}$) as for $3~Cent$.  However, the latter achieves the best accuracy rate for the \enquote{Square}([]) gesture class ($\frac{99}{100}$) which means that \textit{PennyPincher3D} is well designed to recognize this gesture class, especially when the other recognizers perform less well in recognizing it.
+
+\subsubsection{\textbf{Overall Conditions Execution Time}}
+ In Figure~\ref{fig:SHREC2019-Avg-ExecTime}, the average execution times of the different recognizers for all conditions varied between ($M{=}0.047$ ms, $SD{=}0.060$ ms) for the \textit{PennyPincher3D} and ($M{=}1.611$ ms, $SD{=}3.328$ ms) for the $\$P^3+$. The execution times do not follow a normal distribution. We calculated a Kruskal-Wallis test which indicates a significant difference in the execution times of the recognizers. After that, the Dunn's multiple comparisons test shows significant differences for all pairs of recognizers except between $3~Cent$ and $\$P^3+X$. The  \textit{PennyPincher3D} ($M{=}0.047 $ms, $SD{=}0.060 $ms) is significantly faster than other recognizers; It is significantly better than Jackknife ($M{=}0.195$ ms, $SD{=}0.2457$ ms) with a difference of $148 \mu s$ ($Z{=}73.62$, $p{<}.001^{***}$), and outperforms significantly  the slowest recognizer $\$P^3+$ ($Z{=}147.7$, $p{<}.001^{***}$).
+
+
+\begin{figure}[ht]
+\captionsetup{justification=centering}
+  \subfigure[Execution times for all conditions.]{\label{fig:SHREC2019-Avg-ExecTime}\includegraphics[width=0.75\linewidth, trim= -25 0 0 0 ]{Figures/Chap5/SHREC2019/Time_Avg_AllCond_SHREC2019.pdf}}
+  \centering
+   \subfigure[Exec. times for the optimal conditions.]{\label{fig:SHREC2019-BestCond-ExecTime}\includegraphics[width=0.75\linewidth, trim= -25 0 0 0 ]{Figures/Chap5/SHREC2019/Time_BestCond_SHREC2019.pdf}}
+  \caption{\centering Average execution times by recognizer. Error bars show a confidence interval of 95\%. }
+    \vspace{-20pt}
+\end{figure}
+\clearpage
+\subsubsection{\textbf{Overall Execution Time by Number of Joints}} The graphs in Figure~\ref{fig:SHREC2019-Avg-Time-Joints} shows the execution times according to the values of the variable \textsc{Joints} (A). The smallest value in the graphic is the averaged execution time of \textit{PennyPincher3D} for the condition \textsc{$A=1\:(P)$} ($M{=}0.017$ ms, $SD{=}0.020$ ms), while the longest execution time is achieved by $\$P^3+$ for  \textsc{$A=6\:(P+AF)$} ($M{=}3.204$ ms, $SD{=}5.936$ ms). The \textit{PennyPincher3D} is the fastest recognizer and is ahead of the Jackknife. According to the results, we distinguish two groups of recognizers with regard to their execution times. The one formed by Jackknife ($M{=}0.195$ ms, $SD{=}0.246$ ms) and \textit{PennyPincher3D}, with a small slope, are not much affected by the variation in the number of articulations. The second group consisting of $3~Cent$($M{=}1.130$ ms, $SD{=}0.683$ ms), $\$F$ ($M{=}1.170$ ms, $SD{=}3.328$ ms), $\$P^3+X$($M{=}1.298$ ms, $SD{=}2.731$ ms) and $\$P^3+$ in order from fastest to slowest recognizer; All the recognizers are significantly impacted by the variation of Number of Joints ($p{<}.001^{***}$).
+
+\begin{figure}[ht]
+	\centering
+	\vspace{-16pt}
+	\captionsetup{justification=centering}.
+	\includegraphics[width=\linewidth]{Figures/Chap5/SHREC2019/Time_Avg_per_Joints.pdf}
+	\vspace{-16pt}
+	\caption{Average execution times by recognizer per number of joints (A).}
+	\label{fig:SHREC2019-Avg-Time-Joints}
+%	 \vspace{-16pt}
+\end{figure}
+
+\subsubsection{\textbf{Execution Time for the Best Condition}} Figure~\ref{fig:SHREC2019-BestCond-ExecTime} shows the execution time of the recognizers for the best condition defined by the de Borda method. The recognizers appear in the same order as in the Figure~\ref{fig:SHREC2019-Avg-ExecTime}. \textit{PennyPincher3D} remains the fastest ($M{=}0.069$ ms, $SD{=}0.005$ ms) and $\$P^3+$ the slowest ($M{=}2.371$ ms, $SD{=}0.213$ ms). The Kruskal-Wallis shows  significant differences between all the recognizers except between the $\$P^3+$ and $\$P^3+X$ ($Z{=}1.910, {n.s.}$).
+
+\vspace{-8pt}
+\subsection{Jackknife-LM Dataset}
+\subsubsection{\textbf{Overall Recognition Rate}}
+The Jackknife-LM dataset has more gesture classes than SHREC2019, mainly complex gestures where different joints can move independently of the hand movement. Figure~\ref{fig:Jackknife-rate-Overall}  sums up the averaged recognition results of each of the recognizers for all tests under all conditions. The results give an overview of the recognition with this dataset which are different from the results obtained for the SHREC2019. In general, none of the recognizers went beyond $80\%$. The Jackknife recognizer ($M{=}73.60\%$, $SD{=}19.75\%$) takes the lead and outperforms significantly other recognizers, followed by the $\$P^3+$ ($M{=}68.75\%$, $SD{=}19.73\%$), which is slightly better than $\$P^3+X$ ($M{=}68.15\%$, $SD{=}20.51\%$) by ($0.60\%$). They are followed by  $3~Cent$ and $\$F$ with respectfully ($M{=}63.66\%$, $SD{=}18.29\%$) and ($M{=}62.96\%$, $SD{=}20.12\%$) which are significantly better than \textit{PennyPincher3D}  the least efficient of the recognizers ($M{=}56.87\%$, $SD{=}19.99\%$).
+
+\begin{figure}[ht!]
+    \vspace{-25px}
+    \subfigure[Recognition rates for all conditions.]{\label{fig:Jackknife-rate-Overall} \includegraphics[width=0.487\textwidth,trim= 0 -20 0 -20]{Figures/Chap5/JackKnife/Rate_AllCond_Overall.pdf}}
+    \hfill 
+    \subfigure[Execution times for all conditions.]{\label{fig:Jackknife-time-Overall} \includegraphics[width=0.48\textwidth,trim= 0 -20 0 -20]{Figures/Chap5/JackKnife/Time_AllCond_Overall.pdf}}
+  \hfill  \newline
+      \subfigure[Overall recognition rates for all conditions by gesture class.]{\label{fig:Jackknife-rate-Byclass}\hspace{20px}\includegraphics[width=0.9\textwidth]{Figures/Chap5/JackKnife/Rate_AllCond_ByGestures.pdf}}
+\label{fig:JN-LM}
+\caption{Execution times of all recognizers for the Jackknife-LM for the user-independent scenario. Error bars show a confidence interval of $95\%$.}
+\end{figure}
+
+Three gesture classes (\enquote{FistCircles}, \enquote{Knock} and \enquote{Sideways}) are well recognized for all the recognizers (\textit{\ie}, $\tau{\geq}80\%$ - Figure~\ref{fig:Jackknife-rate-Byclass}, bottom). An exception to this is  \textit{PennyPincher3D} where the \enquote{Knock} gesture has an average recognition rate of ($M{=}62.77\%$). However, the \enquote{Love}, \enquote{BendIndex}, \enquote{DevilHorns}, and \enquote{SnipSnip} have the worst average recognition rates for most recognizers (\textit{\ie}, $\tau{\leq}60\%$),  except for Jackknife, where the \enquote{SnipSnip} and \enquote{BendIndex} are above $70\%$. These results indicate that for many recognizers, many conditions perform very well with gestures where the fingers remain static, regardless of hand movements. Whereas the recognition rate drops for many conditions with gestures that include finger movements.
+%From the table in the Appendix~\ref{app:reco-ui-JK-LM} which details the average recognition rates for the different conditions, the orange cells are the predominant ones in the table for the majority of the recognizers, which express a low recognition rate for many conditions $\tau{\leq}80\%$ (\eg \textit{PennyPincher3D}, $3Cent$ and $\$F$). For \textit{PennyPincher3D}, $3Cent$, no single condition achieves a $90\%$ recognition rate. While for other recognizers, many conditions reach rates above $90\%$ with \textsc{$A=5\:(AF)$} and \textsc{$A=6\:(P+AF)$}, which denotes the ability to handle complex gestures under certain conditions.
+
+\subsubsection{\textbf{Recognition Rates by Number of Joints}}
+With regard to the average recognition rates by articulation in Figure~\ref{fig:plot-Recog-by-Joint-Jk-LM}, the lowest recognition rate is $M{=}39.78\%$ for $\$F$ in \textsc{$A=1\:(P)$},  while the highest recognition rate is $M{=}87.78\%$ for $\$P^3+X$ in \textsc{$A= 6\:(P +AF)$}. The Jackknife performs better than other recognizers for the conditions with a reduced number of articulations ($A{\leq}3$), and it is joined by $\$P^3+$ and $\$P^3+X$ at \textsc{$A= 5\:(AF)$}. The average recognition rate increases as the number of joints increases for all of the recognizers, except for some specific cases, such as for $3~Cent$, \textit{PennyPincher3D}, and $\$P^3+$, whose rate drops between \textsc{$A=5\:(AF)$} and \textsc{$A=6\:(P + AF)$} (\eg a drop of $2.6\%$ for $3~Cent$). However, the recognition rates of $\$P^3+X$, $\$P^3+$, and $\$F$ under conditions with the same number of joints vary depending on how the joints are configured (\eg,  \textsc{$A{=}2 (P+I)$}, \textsc{$ A{=}2(T+I)$}, \textsc{$A{=}2 (I+M)$}). Therefore, some joints are more relevant than others as they carry more information about gestures.
+
+\begin{figure}[ht]
+	\centering
+	\captionsetup{justification=centering}
+	\includegraphics[width=\linewidth]{Figures/Chap5/JackKnife/Rate_Avg_per_Joints.pdf}
+	\vspace{-16pt}
+	\caption{Recognition rates of all recognizers for the Jackknife-LM dataset~\cite{Taranta:2017}, the plot shows average rates by joint $A=\{1\:(P), ... ,6\:(P + AF)\}$.}
+	\label{fig:plot-Recog-by-Joint-Jk-LM}
+	\vspace{-12pt}
+\end{figure}
+
+\subsubsection{\textbf{Overall Conditions Execution Time}}
+Figure~\ref{fig:Jackknife-time-Overall} shows the average execution times for all conditions, representing the execution time for the different recognizers. The execution time of \textit{PennyPincher3D} ($M{=}0.079$ ms, $SD{=}0.108$ ms) differs significantly from that of $3~Cent$ ($M{=}10.585$ ms, $SD{=}5.911$ ms). The execution time includes both pre-processing and recognition time. In the case of $3~Cent$, the excessive execution time is attributed to the resampling function that uses the Cubic Spline interpolation method. The execution times of the other recognizers, $\$P^3+$ ($M{=}2.587$ ms, $SD{=}4.371$ ms), $\$F$ ($M{=}2.097$ ms, $SD{=}4.184$ ms), and $\$P^3+X$ ($M{=}2.107$ ms, $SD{=}4.371$ ms), are similar, with no significant difference between the latter two ($Z{=}1.772, {n.s.}$). Jackknife, which has the highest recognition rate, is also a fast recognizer ($M{=}0.351$ ms, $SD{=}0.508$ ms), making it suitable for this dataset.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.9\textwidth]{Figures/Chap5/Chap5_DollarFamily_Instantiation.pdf}
+    \vspace{-8pt}
+    \caption{The \$-like recognizers instantiation.}
+    \vspace{-8pt}
+   \label{fig:design-dollar2}
+\end{figure}
+
+\section{Conclusion}
+The purpose of this use case is to compare template-based hand gesture recognizers on the \enquote{multipath dynamic} gestures, specifically focusing on the LMC-based gestures. These gestures are represented as a set of hand joint trajectories. The goal is to evaluate six gesture recognizers on two LMC-based datasets, which consist of simple and complex gestures (\ie, SHREC2019 and Jackknife-LM). The evaluation is done in a user-independent scenario and similar to the comparative testing in Chapter~\ref{chap:Unipath_Comparative} in an \enquote{intra-device} configuration where the gestures are recorded with the same device for different stages of the gesture recognition procedure. 
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=.9\textwidth]{Figures/Chap5/Chap5_PennyPincher3D_Instantiation.pdf}
+    \vspace{-8pt}
+    \caption{The JackKnife and PennyPincher3D instantiation.}
+    \vspace{-8pt}
+   \label{fig:design-BetweenVectors}
+\end{figure}
+Based on the design space defined in Section~\ref{sec:Design_Space_Recognizers}, we observe that for this comparative testing, the recognizers have two common instantiations. The first instantiation, shown in Figure~\ref{fig:design-BetweenVectors}, is shared by the JackKnife and PennyPincher3D recognizers, which are based on the  \enquote{Between-Vectors} classification approach. The second instantiation, shown  in Figure~\ref{fig:design-dollar2}, shows the values covered by the other \$-like recognizers ($\$F$,$\$P^3+$, \textit{3 Cent}, and $\$P^3+X$), which rely  on the \enquote{Between-points} classification approach.
+
+For the SHREC2019 dataset, $\$P^3+$ achieved the best recognition rate and outperformed the other recognizers. This was confirmed under particular optimal conditions. However, $\$F$ is the worst for this dataset. It was also observed that certain recognizers are better suited for recognizing specific gestures compared to others. 
+
+For the Jackknife-LM dataset, the Jackknife recognizer achieved good overall recognition rates under certain conditions but failed to meet the high accuracy requirement for many other conditions. The performance of recognizers was found to be influenced by the nature of the gesture being performed. Additionally, some recognizers were slower in processing longer gestures, making them less interesting.
+
+
+Interestingly, the recognizer using the \enquote{Between-vectors} classification approach, PennyPincher3D, did not perform better than some other recognizers using the \enquote{Between-points} classification approach such as  $\$P^3+$ or the other recognizer relying on \enquote{Between-vectors}, Jackknife, in terms of recognition rate. However, PennyPincher3D was the fastest recognizer among those evaluated.
+
+This comparative testing demonstrates the potential benefits of the systematic procedure for the comparative testing method and provides valuable insights for designers and researchers seeking a reliable and efficient recognizer to meet their needs.
+
+   
+
+
+

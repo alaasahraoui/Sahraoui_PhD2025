@@ -1,0 +1,48 @@
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}[scale=.7]
+        \begin{axis}[
+            xlabel={\large{Training participants}},
+            ylabel={\large{Recognition rates [\%]}},
+            xmin=0, xmax=6,
+            ymin=70, ymax=100,
+            xtick pos=bottom,
+            ytick pos=left,
+            xtick={1,2,3,4,5},
+            ytick={70,75,80,85,90,95,100},
+            legend pos=south east,
+            ymajorgrids=true
+        ]
+            \addplot[color=orange,mark=square*]
+                coordinates {(1, 74.16) (2, 82.66) (3, 86.21) (4, 88.27) (5, 89.83)};
+            \addplot[color=blue,mark=*]
+                coordinates {(1, 76.37) (2, 83.34) (3, 86.29) (4, 88.26) (5, 89.05)};
+            \legend{\$P (T=4), \$C (T=4)}
+        \end{axis}
+    \end{tikzpicture}%
+    \begin{tikzpicture}[scale=.7]
+        \begin{axis}[
+            xlabel={\large{Training participants}},
+            ylabel={\large{Execution times [ms]}},
+            xmin=0, xmax=6,
+            ymin=0, ymax=1.6,
+            xtick pos=bottom,
+            ytick pos=left,
+            xtick={1,2,3,4},
+            ytick={0.2,0.4,0.6,0.8,1,1.2,1.4},
+            legend pos=south east,
+            ymajorgrids=true,
+            y tick label style={
+                /pgf/number format/.cd,fixed,fixed zerofill,precision=2,/tikz/.cd
+            }
+        ]
+            \addplot[color=orange,mark=square*]
+                coordinates {(1, 0.28) (2, 0.56) (3, 0.85) (4, 1.13) (5, 1.41)};
+            \addplot[color=blue,mark=*]
+                coordinates {(1, 0.28) (2, 0.52) (3, 0.75) (4, 0.96) (5, 1.16)};
+            \legend{\$P (T=4), \$C (T=4)}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{User-independent platform-dependent testing of \$P and \$C in terms of recognition rates [\%] and execution times [ms], and using gestures performed on a tablet.}
+    \label{fig:cdollar_ui_pd_t}
+\end{figure}

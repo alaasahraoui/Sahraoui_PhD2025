@@ -1,0 +1,79 @@
+\chapter{Conclusion} \label{chap:thesisconclusion}
+Developers and practitioners face numerous challenges when developing interactive solutions incorporating hand gesture recognition. This is especially true with the rise and widespread use of mobile devices equipped with various sensors, opening up countless interaction possibilities. The design, testing, and validation of interactive systems are becoming increasingly complex, mainly due to the growing popularity of complex machine learning models in gesture recognition.
+
+This work focuses on the definition and application of a comparative testing systematic procedure for template-based 3D hand gesture recognizers in multiple contexts of use, that permits developers and practitioners to choose a recognizer effectively for developing a gesture interface using rapid prototyping during the design stage. This systematic procedure allows for the comparison of gesture recognizers in multiple contexts of use, which is precisely tailored to 3D hand gesture recognizers adapted for the multi-device.
+
+\begin{itemize}
+    \item First, we introduced the existing state-of-the-art 3D template-based gesture recognizers adapted for rapid prototyping. We also described and compared the most impactful recognizers based on various dimensions defined for rapid prototyping hand gesture recognizers derived from observations, such as gesture natures, data types, device types, classification approaches, gesture types, and invariance properties. At the end of the chapter, we concluded that there is a need for an extended exploration of classification and device dimensions.
+    \item Second, we have introduced the terminology and defined the fundamental concepts for conducting gesture recognition comparative testing in multi-device configuration. This includes the design of a model determining the main stages of gesture recognition testing, identifying the main elements of the comparative testing method, and featuring the systematic nature of the testing procedure.
+    \item We have implemented the systematic procedure of the comparative testing method to evaluate the accuracy and efficiency of 7 state-of-the-art recognizers on\enquote{unipath dynamic} gestures. To achieve this, four 2D stroke gesture recognizers ($\$P$, $\$P+$, $\$Q$, and Rubine) from the literature review were extended to 3D: $\$P+^3$, $\$F$, FreeHandUni, $\$Q^3$, $\$P^3$, Rubine3D, and Rubine-Sheng. Significant differences were observed among these recognizers regarding recognition rates and execution times on three datasets (\ie, SHREC2019, 3DTCGS and MadLabSD). $\$P+^3$ consistently achieved the highest recognition rate and excellent execution time in most scenarios, making it the preferred choice for efficiently recognizing 3D trajectories. After $\$P+^3$, we observe that the subsequent recognizers, including $\$F$, $FH$, $\$Q^3$, $\$P^3$, have similar recognition rates except for $R3D$ and $RS$ which have low recognition rates. There is a significant difference when transitioning from the user-dependent to the user-independent scenario. The number of templates has a significant effect on the recognition rates of all the recognizers, and the number of points has a significant effect on the \$-like recognizers. Similarly, the datasets have a significant impact on the recognition rates of all the recognizers in the user-independent scenario.
+    \item  We have implemented the systematic procedure for the comparative testing method to evaluate the accuracy and efficiency of 6 recognizers on\enquote{multipath dynamic} gestures. This study compared six 3D template-based gesture recognizers from the literature. Our focus was on their recognition rate and execution time. We conducted experiments on two LMC-based datasets: SHREC2019 and Jackknife-LM. We defined independent variables with a limited selection of eight joint combinations. The SHREC2019 results indicated that $\$P^3+$ achieved the highest performance, followed by $\$P^3+X$ and Jackknife. The \$-like recognizers also demonstrated good performance for the same classes of gestures.
+    In addition, all of the recognizers exhibited low response times, making them suitable for template matching. We used the de Borda ranking to select the best conditions among the gesture recognizers. Among the recognizers tested on the Jackknife-LM dataset, the Jackknife recognizer was the best, while PennyPincher3D and 3 Cent should be avoided.
+    \item Finally, we have implemented and described the testing module, which is a tool that facilitates the integration of the systematic procedure for comparative testing of 3D hand gesture recognizers in multiple contexts of use. This offline tool extends the QuantumLeap Framework to evaluate 3D gesture recognizers using different datasets. The testing procedures assess the accuracy and efficiency of the recognizers in two evaluation scenarios: user-dependent and user-independent, and in the intra-device configuration.
+\end{itemize}
+
+\section{Advantages and Limitations}
+Several advantages are to be considered in this work:
+
+\begin{itemize}
+%\item Introduction of terminology and definitions that take into account multi-device, that could enrich the knowledge domain of gesture recognition.
+\item Introduction of terminology and extended definitions that consider the multi-device in the gesture recognition procedure.
+
+\item The work allows developers and practitioners to view the problem of gestural interface design from a perspective where the systematic procedure for the comparative testing can precisely meet their needs. This systematic procedure reduces time costs and workload, helping with rapid prototyping and easing the burden of the development process by designating the suitable recognizer in multiple contexts of use.
+\item The systematic procedure's ability to cover many possibilities enables it to evolve into more complex comparative testing methods, adding new recognizers, datasets, scenarios, and parameters. However, it is essential to note that we have only tested a limited number of instantiations for template-based 3D gesture recognizers.
+
+\item The testing module, which extends the QuantumLeap framework, is primarily dedicated to the Leap Motion controller. However, it can also integrate other data sets and devices for comparative testing in single and multi-device configurations. Its proven ability to support this comparative procedure is a key feature to ensure reproducibility in experiments. Moreover, the systematic nature of the comparative testing ensures consistency across different experimental conditions for different dimensions, by altering one component of the comparative testing while keeping all others constant. This method is frequently used in competitions and contests for evaluating the performances of new machine-learning models or algorithms as the SHREC contest series is organized every year~\cite{Caputo:2019,Caputo:2021,DeSmedt:2017}.
+
+\end{itemize}
+
+However, there are some limitations and shortcomings in this work:
+
+\begin{itemize}
+
+\item The exploration is limited only to template-based recognizers, disregarding complex recognizers based on more complex machine learning techniques~\cite{Cheng:2016, Yasen:2019}.
+
+\item The conducted experiments within the two use cases do not include the entire values of the different dimensions of the design space, such as \enquote{Simple static} and \enquote{Complex static}, as well as the \enquote{Between-vectors} classification approach implemented in many gesture recognizers such as $\mu_V$~\cite{Magrofuoco:2022}. Given the abundance of datasets that are often flawed and take time to process, I'm building upon the work presented in Chapter~\ref{chap:LMCmultipathComparative}. My focus is on processing seven out of the twelve available Leap-motion-based datasets, and evaluating the results of hundreds of thousands of tests.
+
+\item The application of comparative testing in this work is part of the analytic methods evaluation class that relies on theoretical representations of the user and computer.  However, this method is limited because it is not a user-based evaluation because there is no real end-user, which is consistent with the desire to use the systematic procedure for rapid prototyping~\cite{Macleod:1992}. This classification results from the choice of conducting only the training and testing stages of the gesture recognition procedure.
+
+\item The experiments carried out involved only the \enquote{intra-device} configuration. Furthermore, the data used in the experiments are all of the same type, specifically Segmented3D, as outlined in the design space of the gesture recognizer defined in Chapter~\ref{chap:Related}. While the datasets primarily provide gestures as sets of 3D positions, devices can provide a variety of data types, such as rotations and accelerations. However, due to a lack of sufficient publicly available datasets, these 3D hand gesture recognizers were not tested.
+
+\end{itemize}
+\section{Future Work}
+Potential avenues for future research could be explored across a variety of dimensions.
+\begin{itemize}
+    \item  Along the support tool: The development of the testing module, a tool that extended the QuantumLeap framework~\cite{Sluyters:2022}, encounters the limitations of QuantumLeap. Its primary limitation is that it is confined to the Leap Motion controller or a specific device family and does not support other multi-device gesture recognition configurations. To address its issues, we are currently working on a new framework named \textit{zeroG}, which is a tool that helps users with different levels of expertise with the development of gesture-based applications (Figure~\ref{fig:zeroG_framework_Mockups}). The framework also includes a testing tool for users who need to perform comparative testing or benchmarking to explore various configurations of gesture recognizers. The aim is to help them make informed decisions that best suit their needs. It allows the evaluation of one or more recognizers on different datasets and using different parameters in automated sessions, with control over the testing procedure execution(Figure~\ref{fig:zeroGMockups_TestingDashboard}. The tool works by creating data dataflows for gesture recognition, which involves linking different standardized modules that can be customized, as shown in Figure~\ref{fig:zeroGMockups_LaunchedTesting}. The testing configuration GUI will provide numerous opportunities to integrate various devices in multi-device configurations. It should allow gesture recording, acquisition of entire datasets, and their management. The GUI should also provide the ability to create new datasets by assembling gestures from different existing datasets stored in the framework's database. Furthermore, it should allow users to publish and share their own datasets and results, which could be used to provide new datasets and centralize them to create competition on gesture recognition. The results of the testing will be available for download or will be viewable using the results visualization tool (refer to Figure~\ref{fig:zeroGMockups_TestingResults}). This tool will allow the generation of common charts, such as a confusion matrix, and will offer users the ability to manipulate these results. Users will be able to aggregate data based on a specific variable or filter results to show a particular testing configuration. This will provide the opportunity for preliminary analysis of various measures, such as recognition rate and execution time.
+
+      \item Along the scope of the experiments: The shortcomings mentioned above suggest extending the systematic procedure to include more datasets and exploring new gestures that are relevant to specific application fields or performed with different parts of the human body, especially those used for gesture elicitation studies~\cite{Vanderdonckt:2019}. Additionally, more recognizers (such as DeepGRU~\cite{Maghoumi:2019}) and different conditions, such as more or fewer classes or templates per gesture class, could be considered. This would allow for a direct comparison of other recognizers to the best competitor emerging from the previously completed systematic procedure on a common dataset. Like in a competition. Generally, the practice of varying one aspect of comparative testing while keeping the rest constant is often seen in competition~\cite{Caputo:2019,Caputo:2021,DeSmedt:2017,Ruffieux:2013}. There are many possible configurations at the first level. After that, parameters can also be varied, opening up countless possibilities:
+     \begin{itemize}
+\item \textbf{Vary}: Recognizer. \textbf{Fixed}: Dataset; Method; Scenario; Parameters; Technique
+\item \textbf{Vary}: Dataset, \textbf{Fixed}: Recognizer; Method; Scenario; Parameters; Technique
+\item \textbf{Vary}: Method, \textbf{Fixed}: Recognizer; Dataset; Scenario; Parameters; Technique
+\end{itemize}
+
+
+ \begin{figure}[ht!] 
+
+\vspace{-0.4cm}
+\centering
+    \subfigure[zeroG Testing dashboard.]{\label{fig:zeroGMockups_TestingDashboard} \includegraphics[width=0.75\textwidth]{Figures/Chap7/zeroGMockups_TestingDashboard.pdf}}
+  
+    \subfigure[zeroG Testing session and configuration.]{\label{fig:zeroGMockups_LaunchedTesting} \includegraphics[width=0.75\textwidth]{Figures/Chap7/zeroGMockups_LaunchedTesting.pdf}}
+
+      \subfigure[zeroG Testing results.]{\label{fig:zeroGMockups_TestingResults}\includegraphics[width=0.75\textwidth]{Figures/Chap7/ZeroGMockups_TestingResults.pdf}}
+\vspace{-0.4cm}
+\caption{ZeroG testing tool mockups UI.}
+\label{fig:zeroG_framework_Mockups}
+\end{figure}
+\clearpage
+
+     \begin{itemize}
+\item \textbf{Vary}: Scenario, \textbf{Fixed}: Recognizer; Dataset; Method; Parameters; Technique
+\item \textbf{Vary}: Parameters, \textbf{Fixed}: Recognizer; Dataset; Method; Scenario; Technique
+  \item \textbf{Vary}: Technique, Fixed: Recognizer; Dataset; Parmeters; Method; Scenario;
+\end{itemize}
+
+      \item Along the hypothesis to be tested: The method defined in this work can be applied to other contexts of use, including different multi-device configurations. The hypothesis put forward in this respect is supportable and deserves to be explored further.
+       \item Along the design guidance: The systematic procedure could help to define a process for prototyping a gesture-based user interface using the comparative testing method. Once a dataset is decided, the systematic procedure for comparative testing could automatically determine which recognizer is the most suitable depending on the conditions imposed. We envision an automatic generation of a decision tree that guides the practitioner on which recognizer to select for one or several datasets by asking questions at each decision tree node, such as: Do you want to maximize the recognition rate? The execution speed? Under which circumstances? The framework could be designed to integrate a complete testing system and allow for the direct integration of the recognizer resulting from the systematic procedure for comparative testing into a real-time application.
+\end{itemize}
+
