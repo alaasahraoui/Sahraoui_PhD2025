@@ -1,6 +1,6 @@
 \chapter{A Design Space for Extra-User Interfaces}
 \label{chap:design}
-%%#comment should i keep this ? 
+
 Initially, an extra-UI covers the set of functions and their respective UI required to enable the end user to configure, control, and evaluate the state of the current UI in the domain, such as in ambient interactive~\cite{Coutaz:2007}. Like any digital service, an extra-UI:
 \begin{enumerate}
 \item allows objects to be manipulated,
@@ -10,18 +10,20 @@ and
 \end{enumerate}
 
 Figure~\ref{fig:circle} sets out these three aspects with the object, power and quality dials, which we refine into six non-oriented axes:
-- For the manipulated objects dial: nature of objects and type of object visualization,
-- For the power quadrant: services offered and extensibility of the interaction language,
-- For the qualities quadrant: level of categorization and level of user control.
+\begin{itemize}
+    \item For the manipulated objects dial: nature of objects and type of object visualization,
+    \item For the power quadrant: services offered and extensibility of the interaction language,
+    \item For the qualities quadrant: level of categorization and level of user control.
+\end{itemize}
 In the following sections, we present each of these axes in detail.
  
 \section{A Problem Space for Engineering User Interface Adaptation}
 \label{sec:operation}
 
-In the context of UI adaptation, there are many design spaces \cite{Alvarez:2009,Bouzit:2017:PDA,Vanderdonckt:2020}, taxonomies \cite{Kuhme:1992,Dieterich:1994}, and frameworks \cite{Calvary:2002,Lopez:2007,Nivethika:2013,Dubiel:2022}, each shedding light on different perspectives based on the authors' concerns. Here, we adopt a comprehensive approach for the specification of UI adaptation, while also considering the quality of adaptation. We propose a dual problem space model called \textsc{Hemispheres} \cite{Calvary:2007}, designed for the engineering of ``plastic`` interactive systems \cite{Sottet:2007,Sottet:2008,Vanderdonckt:2008,Vanderdonckt:2008:multi}, i.e. systems whose adaptation preserves quality in use over the evolution of the context of use. This problem space separates concerns into two areas:
+In the context of UI adaptation, there are many design spaces \cite{Alvarez:2009,Bouzit:2017:PDA,Vanderdonckt:2020}, taxonomies \cite{Kuhme:1992,Dieterich:1994}, and frameworks \cite{Calvary:2002,Lopez:2007,Nivethika:2013,Dubiel:2022}, each shedding light on different perspectives based on the authors' concerns. Here, we adopt a comprehensive approach for the specification of UI adaptation, while also considering the quality of adaptation. We propose a dual problem space model called \textsc{Hemispheres} \cite{Calvary:2007}, designed for the engineering of ``plastic'' interactive systems \cite{Sottet:2007,Sottet:2008,Vanderdonckt:2008,Vanderdonckt:2008:multi}, i.e. systems whose adaptation preserves quality in use over the evolution of the context of use. This problem space separates concerns into two areas:
 
 \begin{itemize}
-    \item The specification of the adaptation operation (\eg ``If the battery gets low, then migrate the UI to the nearest platform``);
+    \item The specification of the adaptation operation (\eg ``If the battery gets low, then migrate the UI to the nearest platform'');
     \item The specification of the adaptation implementation (\eg including when and how to adapt).
 \end{itemize}
 
@@ -36,11 +38,11 @@ The right hemisphere (Adaptation operation) and left hemisphere (Life cycle) are
 %    \vspace{-32pt}
 \end{figure}
 \subsection{The Right Hemisphere for the Specification of Adaptation Operations}
-The right hemisphere examines the specification of \textit{adaptation operations}, which under condition associate a response to a change in the context of use, aiming to preserve a certain set of values, such as quality factors, altogether contributing to the system's worth. The overall format of an adaptation operation is: \textsc{On Event, If Condition, Then Action for Value(s)}. For example, in the adaptation operation ``If the laptop battery gets low, when a smartphone becomes available around, then propose migrating the UI from the laptop to the smartphone``:
+The right hemisphere examines the specification of \textit{adaptation operations}, which under condition associate a response to a change in the context of use, aiming to preserve a certain set of values, such as quality factors, altogether contributing to the system's worth. The overall format of an adaptation operation is: \textsc{On Event, If Condition, Then Action for Value(s)}. For example, in the adaptation operation ``If the laptop battery gets low, when a smartphone becomes available around, then propose migrating the UI from the laptop to the smartphone'':
 \begin{itemize}
-    \item The \textsc{Condition} concerns the battery state of the laptop: ``If the battery gets low``;
-    \item The \textsc{Event} occurs when the context of use changes with the arrival of the smartphone: ``when a smartphone becomes available around``;
-    \item The \textsc{Action} proposed in response to this contextual change response is a UI migration: ``then propose migrating the UI from the laptop to the smartphone");
+    \item The \textsc{Condition} concerns the battery state of the laptop: ``If the battery gets low'';
+    \item The \textsc{Event} occurs when the context of use changes with the arrival of the smartphone: ``when a smartphone becomes available around'';
+    \item The \textsc{Action} proposed in response to this contextual change response is a UI migration: ``then propose migrating the UI from the laptop to the smartphone'';
     \item The \textsc{Value} is implicit: the interaction continuity should be preserved.
 \end{itemize}
 Note that UI migration~\cite{Grolaux:2004,Frosini:2014} consists of transferring a particular UI from one platform to another while preserving its interaction state.
@@ -53,7 +55,7 @@ The key concepts of \textsc{Condition}, \textsc{Event}, \textsc{Action}, and \te
 %    \vspace{-12pt}
 \end{figure}
 \subsubsection{Condition}
-The \textsc{Condition} relates to any observable aspect of the interactive ecosystem, which encompasses any variable of the context of use (\eg, user and task, platform/device, and environment)~\cite{Calvary:2002,Calvary:2003}. If the condition is not met, the adaptation operation cannot be triggered. The \textsc{Condition} is expressed as either \textit{atomic} when it consists of only one term or \textit{compound} when it is composed of several terms (\autoref{fig:condition}). Examples of atomic conditions include: ``if the user is color-blind'', ``if there is no ongoing task'', ``if the PC battery gets low'', ``if there is a mobile device near the user'', ``if the computing platform is a public display``, ``if the physical environment is shaky'', ``if the organisational environment is hierarchical''.
+The \textsc{Condition} relates to any observable aspect of the interactive ecosystem, which encompasses any variable of the context of use (\eg, user and task, platform/device, and environment)~\cite{Calvary:2002,Calvary:2003}. If the condition is not met, the adaptation operation cannot be triggered. The \textsc{Condition} is expressed as either \textit{atomic} when it consists of only one term or \textit{compound} when it is composed of several terms (\autoref{fig:condition}). Examples of atomic conditions include: ``if the user is color-blind'', ``if there is no ongoing task'', ``if the PC battery gets low'', ``if there is a mobile device near the user'', ``if the computing platform is a public display'', ``if the physical environment is shaky'', ``if the organisational environment is hierarchical''.
 
 
 An atomic condition concerns an observable (its subject) that can belong to the interactive system in its business domain of application (\eg adapt the UI on business processes~\cite{Sousa:2008}) or adaptation parts, the context of use with its components \textsc{User}, \textsc{Platform}, and \textsc{Environment}, or the deployment of the interactive system in its context of use. The condition is expressed as a formula of the first-order logic \textsc{Predicate} evaluated with potential arguments and their names, such as \textsc{isLow(battery)} or \textsc{isNear(user)}. The expression can involve quantifiers (\eg ``For all'', ``There exists'') that may be positive or negative.
@@ -82,8 +84,8 @@ An \textsc{Event} identifies what has changed in the context of use and justifie
     \item The \textsc{initiator} of the variation: here, it is the user.
 \end{itemize}
 
-The \textsc{Event} can also have properties such as the confidence level in perception, the actor of perception, or the frequency of the event. Reasoning can be applied to these properties. For example, the adaptation operation ``If the user is in front of the PC and the confidence factor for this event is 100\%, then...``.
-The variables identify what has changed in the context of use. According to the ontology of Crowley \etal (Crowley:2002), four types of changes can occur depending on whether they affect \textsc{entities}, \textsc{roles}, \textsc{relations}, or \textsc{associations} between entities, roles, and relations:
+The \textsc{Event} can also have properties such as the confidence level in perception, the actor of perception, or the frequency of the event. Reasoning can be applied to these properties. For example, the adaptation operation ``If the user is in front of the PC and the confidence factor for this event is 100\%, then...''.
+The variables identify what has changed in the context of use. According to the ontology of Crowley \etal \cite{Crowley:2002}, four types of changes can occur depending on whether they affect \textsc{entities}, \textsc{roles}, \textsc{relations}, or \textsc{associations} between entities, roles, and relations:
 \begin{figure}
         \centering
         \includegraphics[width=0.6\linewidth]{Images/HandMenu.png}
@@ -95,7 +97,7 @@ The variables identify what has changed in the context of use. According to the 
     \item \textsc{Entities:} they pertain to the living or inanimate physical world. An entity is a grouping of observables. By measuring observables, the application can detect the presence of physical world entities, recognize them (\eg by gesture recognition through surfaces~\cite{Sluyters:2024}), track them, and determine the value of their attributes and relationships. We generalize this to all observable components of the context of use: user, platform, and environment (\textsc{Type}).
     \item \textsc{Roles:} they are the functions held by these entities. The roles of input and output devices are predominant. In the past, these roles were assigned to the traditional screen with the keyboard and mouse trio. Today, they are replaced by any physical entity that has the right properties and is observable by the system. For example, a hand, traditionally used as a pointing device, becomes a display surface \cite{Antoniac:2002}. Its proximity to the user and the elongated shape of the fingers make it suitable for menu display (\autoref{fig:hand}). A single entity can have multiple roles. In contrast, a role can be held by several entities simultaneously.
     
-    \item \textsc{Relations:} they pertain to a set of entities. They can be spatial (\eg ``the user is near the platform''), temporal (\eg ``the device will be available during 5 minutes''), functional (\eg ``the sun illuminates the plant''. Identifying the variables means locating the change in terms of entities (\ie state, roles, or relations) as well as the set of roles and relations held.
+    \item \textsc{Relations:} they pertain to a set of entities. They can be spatial (\eg ``the user is near the platform''), temporal (\eg ``the device will be available during 5 minutes''), functional (\eg ``the sun illuminates the plant''). Identifying the variables means locating the change in terms of entities (\ie state, roles, or relations) as well as the set of roles and relations held.
         
     \item \textsc{Variation:} it characterizes the type of change. According to Crowley's ontology \cite{Crowley:2002}, the notions of context of use (or usage context) and situation are distinguished. A \textsc{context of use} is defined by a set of roles and relations held by a set of entities. A context change occurs when a role or relation appears (\textsc{Create}), is modified (\textsc{Modify}), or disappears (\textsc{Delete}). A \textsc{situation} is characterized by a mapping between entities, roles, and relations. A situation change occurs when these mappings change (\textsc{Create} or \textsc{Delete}  associations between entities and roles/relations) or when entities appear (\textsc{Create}) or disappear (\textsc{Delete}). \textsc{Modify} is planned to integrate changes in the state of entities into the reflection if necessary.
              This ontology allows the establishment of a graph of contexts and situations. An event is implicitly defined as an arc of this graph. There are two types of events depending on whether they are \textit{intra-context} (\ie between situations within the same context) or \textit{inter-contexts} (\ie between situations of different contexts).
@@ -140,7 +142,7 @@ Interventions in the UI can be explored from the perspective of software archite
 
 Research in plasticity~\cite{Calvary:2002} began studying remodeling on various abstraction levels such as the task level (user tasks \cite{Mezhoudi:2021} and concepts~\cite{Vanderdonckt:2008}), the abstract UI level, the concrete UI level, and the final UI level.
 
-The \textsc{task level} describes the user's task and domain concepts independently of any representation and implementation. ConcurTaskTree and its language \cite{Paterno:2009}, UML class diagrams of OWL ontologies, are usually considered for task and domain modeling, respectively. They can be decorated with properties such as frequency, iteration, and optionality. For example, \autoref{fig:home} ~ illustrates task modeling for a home automation application. The user controls the home temperature (``Manage home temperature'') by iteratively (\ie decoration ``*'') handling the different rooms of the house. Handling a room involves specifying a command (``Specify command'') and optionally checking the feedback (``Check feedback'' with its optionality decoration). Specifying a command involves specifying the room of interest (``Specify room'') and the action to apply: either check its temperature (``Check temperature'') or change its temperature (``Set temperature''). User Interface Description Languages (UIDLs), such as UsiXML \cite{Limbourg:2004} or MariaXML~\cite{Paterno:2009} capture these aspects in a Domain Specific Language.
+The \textsc{task level} describes the user's task and domain concepts independently of any representation and implementation. ConcurTaskTree and its language \cite{Paterno:2009}, UML class diagrams of OWL ontologies, are usually considered for task and domain modeling, respectively. They can be decorated with properties such as frequency, iteration, and optionality. For example, \autoref{fig:home}~illustrates task modeling for a home automation application. The user controls the home temperature (``Manage home temperature'') by iteratively (\ie decoration ``*'') handling the different rooms of the house. Handling a room involves specifying a command (``Specify command'') and optionally checking the feedback (``Check feedback'' with its optionality decoration). Specifying a command involves specifying the room of interest (``Specify room'') and the action to apply: either check its temperature (``Check temperature'') or change its temperature (``Set temperature''). User Interface Description Languages (UIDLs), such as UsiXML \cite{Limbourg:2004} or MariaXML~\cite{Paterno:2009} capture these aspects in a Domain Specific Language.
  
 
 
@@ -202,12 +204,12 @@ We detail them in the next sub-sections.
 These operations adjust the properties of the interface without replacing or splitting elements, allowing for smooth transitions between different states of a UI based on real-time conditions. Property-changing operations are essential for dynamically modifying the presentation and behavior of UI elements in response to changes in context or user interactions. A common example of a property-changing operation can be observed in the calculator interface on a smartphone, which dynamically adjusts based on the device's orientation property.
 
 \textbf{Example: smartphone calculator.}
-When a smartphone is held vertically in portrait mode, the calculator default configuration displays only simple arithmetic operations (\autoref{fig:portrait}). When the smartphone is turned horizontally in landscape mode, it provides more space to display sophisticated scientific functions, such as trigonometric functions (\autoref{fig:landscape}). The underlying components remain the same, but the orientation affects how they are displayed and arranged. This modification is a representative example of an adaptation operation that modifies a property. In contrast, \textsc{MiniAba}~\cite{Schlee:2004} enables the end users to (un)select any subset of arithmetic, trigonometric, or advanced functions they want and to recompile the project to get an adapted version.
+When a smartphone is held vertically in portrait mode, the calculator default configuration displays only simple arithmetic operations (\autoref{fig:calculatorModes}a). When the smartphone is turned horizontally in landscape mode, it provides more space to display sophisticated scientific functions, such as trigonometric functions (\autoref{fig:calculatorModes}b). The underlying components remain the same, but the orientation affects how they are displayed and arranged. This modification is a representative example of an adaptation operation that modifies a property. In contrast, \textsc{MiniAba}~\cite{Schlee:2004} enables the end users to (un)select any subset of arithmetic, trigonometric, or advanced functions they want and to recompile the project to get an adapted version.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Images/Calculator.png}
-    \caption{Comparison of smartphone calculator in different modes: (a) portrait and (b) landscape (Source: \url{https://dribbble.com/shots/6851610-Calculator-light-mode}.}
+    \caption{Comparison of smartphone calculator in different modes: (a) portrait and (b) landscape (Source: \url{https://dribbble.com/shots/6851610-Calculator-light-mode}).}
     \label{fig:calculatorModes}
 \end{figure}
 %https://dribbble.com/shots/6851610-Calculator-light-mode
@@ -223,12 +225,12 @@ This adaptation operation can be represented as follows:
 
 \textsc{For Supporting expert mode}.
 
-\begin{enumerate}
+\begin{itemize}
 \item \textsc{Event:} the user rotates the smartphone from portrait to landscape mode, where the rotation sensor in the device detects that the phone has been turned.
 \item \textsc{Condition:} the device orientation changes from vertical (portrait) to horizontal (landscape). The rotation must be 90° to transition the screen from portrait to landscape.
 \item \textsc{Action:} the calculator UI reveals advanced functions (scientific mode), modifying the layout and visibility of the interface elements and dynamically adjusting its layout to display more advanced functions like trigonometric operators, exponential functions, and memory functions. In this case, the UI structure remains the same, but its presentation properties (such as visible elements and screen space allocation) are modified to accommodate the additional functions. 
 \item \textsc{Value:} to enhance user interaction by dynamically displaying advanced functions, improving efficiency for expert users who need scientific calculations.
-\end{enumerate}
+\end{itemize}
 
 %\textbf{Additional Examples of Property-Changing Operations:}
 
@@ -265,7 +267,7 @@ Splitting operations divide a UI into smaller, manageable components, elements, 
     \label{fig:combined_splitting_rules}
 \end{figure}
 \textbf{Example: Book a hotel room.}
-A form used to book a hotel room usually consists of specifying three parts: the \textit{location} with the arrival and departure dates and the number of guests, the selection of the hotel \textit{category}, and a selection of hotel \textit{preferences}. This form can be split into three independent windows (Class 3) as illustrated in  \autoref{fig:splitting_rules16a} or collected in a tabbed dialog box (Class 4)) as reproduced in \autoref{fig:splitting_rules16b}.
+A form used to book a hotel room usually consists of specifying three parts: the \textit{location} with the arrival and departure dates and the number of guests, the selection of the hotel \textit{category}, and a selection of hotel \textit{preferences}. This form can be split into three independent windows (Class 3) as illustrated in~\autoref{fig:splitting_rules16a} or collected in a tabbed dialog box (Class 4) as reproduced in~\autoref{fig:splitting_rules16b}.
 When the first task related to user information (\eg user identification) is completed, the subsequent task of specifying booking details, as represented above, and payment information can be represented as follows:
 
 \textsc{On Change(Screen.Size)}
@@ -305,14 +307,14 @@ This adaptation operation ensures that the optional task "Special Requests" is d
 To address the needs of users with disabilities, replacement operations entail switching out certain types of UI elements with others. By offering alternate modes of interaction for the same task or action, the expected value concerns accessibility. For example, motor or visually impaired users who need to interact with push buttons, perform text input, and select options in a list, could experience trouble. Replacing these elements or enriching them with voice commands or audio feedback should support a better user experience for them \cite{Minon:2016}.
 \autoref{fig:Fig13} shows the hierarchy of UI elements for entering personal data through such buttons, text fields, and radio buttons to support graphical interaction. \autoref{fig:Fig14} shows the adapted UI hierarchy where graphical elements have been replaced by speech recognition, vocal textual input and selection with audio prompts to support vocal interaction. This adaptation operation can be represented as follows:
 
-\textsc{On Detect(User.Disability)=true} |
+\textsc{On Detect(User.Disability)=true}
 This event triggers the operation whenever a user’s disability is detected, such as when the user logs in or the context changes.
 
-\textsc{If UI.Elements=graphical} |
+\textsc{If UI.Elements=graphical}
 The condition checks if the current UI elements are graphical. This means the user interface contains some elements like buttons, text fields, or icons that may not be accessible to users with certain disabilities.
 
 \textsc{Then Replace(UI.Elements, graphical, vocal)}
-\textsc{And Create(AudioCommands)} |
+\textsc{And Create(AudioCommands)}
 This action replaces the graphical UI elements with vocal elements and audio commands. The user can now interact with the interface using voice commands and receive audio feedback instead of visual prompts.
 
 \textsc{For Accessibility}
@@ -332,7 +334,7 @@ This action replaces the graphical UI elements with vocal elements and audio com
         \caption{For vocal interaction.}
         \label{fig:Fig14}
     \end{subfigure}
-    \caption{Hierarchy of UI elements to input personal data ~\cite{Paterno:2011}: (a) before adaptation, (b) after adaptation.}
+    \caption{Hierarchy of UI elements to input personal data~\cite{Paterno:2011}: (a) before adaptation, (b) after adaptation.}
     \label{fig:combinedFigure}
 \end{figure}
 
@@ -422,6 +424,13 @@ Evaluation can be carried out in the very true context of use or controlled in a
 
 \begin{figure}
     \centering
+    \includegraphics[width=\textwidth]{Images/Evaluation.PNG}
+    \caption{Evaluation of an adaptation operation.}
+    \label{fig:evaluation}
+\end{figure}
+
+\begin{figure}
+    \centering
     \includegraphics[width=\textwidth]{Images/Transition.png}
     \caption{Animated transition showing the various stages of adaptivity \cite{Dessart:2011}.}
     \label{fig:transition}
@@ -435,7 +444,7 @@ Consolidation requires software mechanisms (\textit{How?}), \eg ML/DL/RL tools~\
 
 
 \section{Practical Lessons from Experience}
-Existing methods for designing UIs of interactive systems (\eg \cite{Cockton:1987,Gulliksen:2003}) still apply to AUIs, but with the need to pay attention to the context of use and the quality of the use. For both of them, it must be understood that they may result either from user-centered requirements elicited during the \textsf{Analysis} phase (see the \textsf{Problem} part of the design process in \autoref{fig:Gulliksen}) or from design choices made by the practitioner (see the \textsf{Solution} part of the design process in \autoref{fig:Gulliksen}). Several lessons can be drawn from experience. \textbf{Lesson n°1} recommends considering explicitly both the context of use and the quality in use, together with their rationale. User-centered requirements ``must`` be satisfied, while practitioner's decisions ``should`` be preserved for interaction continuity.
+Existing methods for designing UIs of interactive systems (\eg \cite{Cockton:1987,Gulliksen:2003}) still apply to AUIs, but with the need to pay attention to the context of use and the quality of the use. For both of them, it must be understood that they may result either from user-centered requirements elicited during the \textsf{Analysis} phase (see the \textsf{Problem} part of the design process in \autoref{fig:Gulliksen}) or from design choices made by the practitioner (see the \textsf{Solution} part of the design process in \autoref{fig:Gulliksen}). Several lessons can be drawn from experience. \textbf{Lesson n°1} recommends considering explicitly both the context of use and the quality in use, together with their rationale. User-centered requirements ``must'' be satisfied, while practitioner's decisions ``should'' be preserved for interaction continuity.
 \begin{figure}[b]
     \centering
     \vspace{-16pt}
@@ -444,7 +453,7 @@ Existing methods for designing UIs of interactive systems (\eg \cite{Cockton:198
     \caption{Gulliksen's method for designing UIs, adapted from \cite{Gulliksen:2003} (Illustration by courtesy of Jan Gulliksen and Bengt Göransson).}
     \label{fig:Gulliksen}
 \end{figure}
-Once the context of use is determined and the quality in use is decided accordingly, \textbf{lesson from experience n°2} recommends reasoning for the transitions, considering the change from one context of use to another. The \textbf{lesson from experience n°3} recommends designing a UI first for the most constrained context of use, \ie the one combining the most constrained user, platform, and environment. This ``reference UI`` could then be considered for designing UIs for other contexts of use by progressively relaxing, which is referred to as \textit{progressive enhancement}, the inverse of \textit{graceful degradation}~\cite{Florins:2004}. Serna \etal ~\cite{Serna:2010} demonstrates that this improves the quality of use of the resulting UIs. Consequently, \textbf{lesson from experience n°4} consists of using the AUIs as a means for quality, \ie to consider very constrained contexts of use, even if they are not targeted, just for quality.
+Once the context of use is determined and the quality in use is decided accordingly, \textbf{lesson from experience n°2} recommends reasoning for the transitions, considering the change from one context of use to another. The \textbf{lesson from experience n°3} recommends designing a UI first for the most constrained context of use, \ie the one combining the most constrained user, platform, and environment. This ``reference UI'' could then be considered for designing UIs for other contexts of use by progressively relaxing, which is referred to as \textit{progressive enhancement}, the inverse of \textit{graceful degradation}~\cite{Florins:2004}. Serna \etal~\cite{Serna:2010} demonstrates that this improves the quality of use of the resulting UIs. Consequently, \textbf{lesson from experience n°4} consists of using the AUIs as a means for quality, \ie to consider very constrained contexts of use, even if they are not targeted, just for quality.
 
 \section{Conclusion and Perspectives}
 \label{sec:conclusion}
