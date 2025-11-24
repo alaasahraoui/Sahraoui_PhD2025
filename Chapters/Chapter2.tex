@@ -1,237 +1,499 @@
-\chapter{Related Work}
-\label{chap:Related}
-% Insert here the chapter along with remaining entries
-Adapting UIs to their contexts of use aims at meeting both evolving requirements, such as the needs, desires, and preferences of individual users or user groups, and evolving resources, such as the available interaction devices in the surroundings, that all may be dependent on the current situation. There are two categories of adaptation, whether the end user or the application is responsible for the modification~\cite{Gajos:2017}. \textit{Adaptability} refers to the end user's ability to adjust the UI, while \textit{adaptivity} or \textit{self-adaptation} denotes the application's ability to perform UI adjustments \cite{Browne:1990}. AUIs refer to user interfaces benefiting from adaptivity.
-\textit{Personalization} or \textit{customization}, a subset of adaptivity, focuses on adapting the UI contents, presentation, and behavior based solely on end-user data, such as personal traits~\cite{Gajos:2017}. When data comes from external sources, like other user groups, it results in \textit{recommendations} instead. \textit{Mixed-initiative adaptation} occurs when both the end user and the application collaborate to make adaptations~\cite{Horvitz:1999}.
+\chapter{A Design Space for Extra-User Interfaces}
+\label{chap:design}
 
-The ultimate goal of any UI adaptation is to make the UI better from the end user perspective to satisfy him/her as much as possible, by optimizing factors such as efficiency (\eg reducing the task execution time and error rates or improving the learning curve), effectiveness (\eg by ensuring full task completion), and subjective user satisfaction. This goal is commendable, but it carries some risk because adaptation is multifactorial and not all its impacts have been thoroughly researched.
-Benefiting from the adaptation resulting from the improvement of certain factors comes at the price of suffering the resulting disadvantages (\eg user disruption~\cite{Hui:2009}), which may have an impact on factors other than those initially considered.
+\section{Introduction}\label{sec:Introduction}
+Research on user interface evolution has long emphasized that adaptation mechanisms require dedicated conceptual tools to describe and reason about the malleability of interactive systems. Prior to the emergence of \textit{Extra-User Interfaces} (Extra-UIs) as a clearly identified class of interfaces supporting user control over adaptation, several efforts attempted to map the design space of UI plasticity.
 
-The challenge lies in suggesting and/or executing the appropriate adaptation at the right time and place to provide value to the end user~\cite{Alvarez:2009}. Otherwise, adaptation may encounter limitations that hinder expected benefits~\cite{Lavie:2010}, including the risk of misfit, user cognitive disruption, lack of prediction, lack of explanation, lack of user involvement, and privacy risks \cite{Dwork:2014}. Therefore, adapting UIs means responding adequately to the following questions of the Quintilian hexameter~\cite{Motti:2013}:
-
-\begin{figure}
+A seminal precursor is the \textit{pStars} problem space proposed by Calvary et al.~\cite{Calvary:2011}, which characterizes the dimensions involved in user interface plasticity across interaction style, task structure, distribution, context of use, and adaptation behavior. Although this model was not intended as a design space for meta-UIs or Extra-UIs, it demonstrated that reasoning about UI evolution requires its own representational space. Figure~\ref{fig:pstars} reproduces this early attempt to structure the problem.
+\begin{figure}[h!]
     \centering
-    \includegraphics[width=\textwidth]{Images/Content.pdf}
-    \caption{Example of contents adaptation: before \textcircled{1} and after \textcircled{2}.}
-    \label{fig:content}
+    \includegraphics[width=0.9\linewidth]{Images/pstars.png}
+    \caption{The \textit{pStars} plasticity problem space~\cite{Calvary:2011}.}
+    \label{fig:pstars}
 \end{figure}
+Building on this lineage, we define the notion of Extra-UI as follows:
+\begin{quote}
+\textbf{An Extra-UI is any user interface whose purpose is to support the software evolution of another user interface.}
+\end{quote}
+
+In the context of this thesis, we focus on a specific form of software evolution: \textbf{user interface adaptation occurring after the deployment} of an interactive system. This restriction imposes a practical constraint: \textbf{the Extra-UI must be shipped together with the interactive system it supervises}. It is therefore not an external developer tool, but a runtime component supporting end users.
+
+To situate this notion within the broader family of “*-UIs,” we extend the classical list (meta-UI, mega-UI ) with the \textbf{supra-UI}. 
+
+The supra-UI refers to a user interface that operates above multiple user interfaces, coordinating several target UIs or several adaptation mechanisms at a higher orchestration level \cite{Calvary:1997}. Unlike the meta-UI, which supervises a single UI, the supra-UI provides control across UI ensembles or multi-layer adaptation processes.
+, as originally defined alongside the others in prior literature.
+
+Extra-UIs provide a set of services whose nature depends on the type of UI they supervise. These include, among others, observation of adaptation decisions, configuration of rules, execution control, and evaluation of adaptation outcomes. Their scope is inherently dependent on the supervised UI. For instance, when the UI is \textit{distributed}, the Extra-UI must also expose services supporting distribution, which constitutes a particular form of adaptation.
+
+Recent work further illustrates the diversity of Extra-UIs. For example,    \cite{dutronc:2025}, who designed a meta-user interface woven directly inside a web-based PLM system to allow workers to personalize their environment at runtime. Their approach, implemented through JavaScript injection, illustrates how an Extra-UI can be shipped with an interactive system and provide end users with direct adaptation control.
+
+Building on these foundations, this chapter introduces a complete design space for Extra-User Interfaces, articulating the functions, structures, and interaction techniques required for users to observe, configure, and control UI adaptation in a transparent and intelligible manner.
+
+%%%%
+Initially, an extra-UI covers the set of functions and their respective UI required to enable the end user to configure, control, and evaluate the state of the current UI in the domain, such as in ambient interactive~\cite{Coutaz:2007}. Like any digital service, an extra-UI:
+\begin{enumerate}
+\item allows objects to be manipulated,
+\item offers functions whose power is intended to cover the required utility,
+and
+\item has qualities in response to usability requirements.
+\end{enumerate}
+
+Figure~\ref{fig:circle} sets out these three aspects with the object, power and quality dials, which we refine into six non-oriented axes:
+\begin{itemize}
+    \item For the manipulated objects dial: nature of objects and type of object visualization,
+    \item For the power quadrant: services offered and extensibility of the interaction language,
+    \item For the qualities quadrant: level of categorization and level of user control.
+\end{itemize}
+In the following sections, we present each of these axes in detail.
+ 
+\section{A Problem Space for Engineering User Interface Adaptation}
+\label{sec:operation}
+
+In the context of UI adaptation, there are many design spaces \cite{Alvarez:2009,Bouzit:2017:PDA,Vanderdonckt:2020}, taxonomies \cite{Kuhme:1992,Dieterich:1994}, and frameworks \cite{Calvary:2002,Lopez:2007,Nivethika:2013,Dubiel:2022}, each shedding light on different perspectives based on the authors' concerns. Here, we adopt a comprehensive approach for the specification of UI adaptation, while also considering the quality of adaptation. We propose a dual problem space model called \textsc{Hemispheres} \cite{Calvary:2007}, designed for the engineering of ``plastic'' interactive systems \cite{Sottet:2007,Sottet:2008,Vanderdonckt:2008,Vanderdonckt:2008:multi}, i.e. systems whose adaptation preserves quality in use over the evolution of the context of use. This problem space separates concerns into two areas:
 
 \begin{itemize}
-\item \textit{What to adapt?} Specifies the type of resource or aspect that is subject to adaptation: contents (\eg text, images, videos), presentation (\eg format of UI elements, position, size, arrangement), or behavior (\eg navigational flow, activation, and deactivation of features, promotion or demotion of widgets~\cite{Bouzit:2019} - see \autoref{fig:promotion}). For example, \autoref{fig:content} shows an adaptation of a weather forecast application \textcircled{1} with more data depending on the user's location \textcircled{2}. \autoref{fig:presentation} shows an adaptation of the presentation where the background color is adapted from daytime \textcircled{1} to nighttime \textcircled{2}. \autoref{fig:behavior} shows three examples of behavior adaptation depending on desktop \textcircled{1}, tablet \textcircled{2}, and smartphone \textcircled{3}.
-
-\item \textit{Why to adapt?} Specifies the main goals that the adaptation should reach and satisfy, preferably expressed as software qualities (\eg support the transition from a novice user to an expert user, maximize the learnability) and explains how the adaptation can contribute to achieving these goals (\eg this adaptation is expected to reduce the cognitive load). 
-
-\item \textit{How to adapt?} Specifies according to which method, technique, algorithm, or strategy the adaptation will be performed (\eg a technique of changing the video quality, a decision tree to select the most preferred widget or menu type). This chapter will define an adaptation operation to specify how an adaptation action could be operationalized based on its event and condition for a certain value.
-
-\item \textit{With regard to what?} Specifies contextual information related to the user (\eg preferences, skills, level of experience) and interactive tasks (\eg what type of task is subject to adaptation), to the computing platform (\eg device characteristics, platform features, screen resolution, interaction capabilities), and to the environment (\eg location, level of light, noise, stress) with regard to which the adaptation is justified and performed. For example, adapt the UI to color-blind users, to a set of devices, or to a noisy environment.
-
-\item \textit{Who is controlling the adaptation?} Specifies the actor that initiates, triggers, or is in charge of each stage of the adaptation (\eg the end user, the application, the UI, a third party such as a proxy, or any combination). This chapter addresses this question by referring to the seven stages of the life cycle.
-
-\item \textit{When to adapt?} Specifies the temporal state in which the adaptation is performed (\eg at design time, run time, or compilation time). For example, the adaptation moment is at run-time whether it is for adaptability or adaptivity.
-
-\item \textit{Where to adapt?} Specifies the physical location where the adaptation is computed (\eg based on the software architecture at the client, at the proxy, or on the server). For example, an adaptation can be performed on the server side when its logic is computationally demanding and cannot be operated at the UI level. 
+    \item The specification of the adaptation operation (\eg ``If the battery gets low, then migrate the UI to the nearest platform'');
+    \item The specification of the adaptation implementation (\eg including when and how to adapt).
 \end{itemize}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{Images/Presentation.pdf}
-    \caption{Example of Presentation adaptation: daylight \textcircled{1} and nightlight \textcircled{2}.}
-    \label{fig:presentation}
-\end{figure}
+The right hemisphere (Adaptation operation) and left hemisphere (Life cycle) are responsible for these concerns.
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{Images/Behavior.pdf}
-    \caption{Example of behavior adaptation: desktop \textcircled{1}, tablet \textcircled{2}, and smartphone \textcircled{3}.}
-    \label{fig:behavior}
+%    \vspace{-8pt}
+    \includegraphics[width=.4\textwidth]{Images/Circle.pdf}
+    \caption{The four quadrants of an adaptation operation: \textsc{condition}, \textsc{event}, \textsc{action}, and \textsc{value}.}
+    \label{fig:circle}
+%    \vspace{-32pt}
 \end{figure}
+\subsection{The Right Hemisphere for the Specification of Adaptation Operations}
+The right hemisphere examines the specification of \textit{adaptation operations}, which under condition associate a response to a change in the context of use, aiming to preserve a certain set of values, such as quality factors, altogether contributing to the system's worth. The overall format of an adaptation operation is: \textsc{On Event, If Condition, Then Action for Value(s)}. For example, in the adaptation operation ``If the laptop battery gets low, when a smartphone becomes available around, then propose migrating the UI from the laptop to the smartphone'':
+\begin{itemize}
+    \item The \textsc{Condition} concerns the battery state of the laptop: ``If the battery gets low'';
+    \item The \textsc{Event} occurs when the context of use changes with the arrival of the smartphone: ``when a smartphone becomes available around'';
+    \item The \textsc{Action} proposed in response to this contextual change response is a UI migration: ``then propose migrating the UI from the laptop to the smartphone'';
+    \item The \textsc{Value} is implicit: the interaction continuity should be preserved.
+\end{itemize}
+Note that UI migration~\cite{Grolaux:2004,Frosini:2014} consists of transferring a particular UI from one platform to another while preserving its interaction state.
+The key concepts of \textsc{Condition}, \textsc{Event}, \textsc{Action}, and \textsc{Value} (\autoref{fig:circle}) are classical \textsc{Event-Condition-Action} (ECA) rules enhanced with the notion of \textsc{Value}. We will now further examine, define, and develop the four quadrants of \autoref{fig:circle}.
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{Images/Condition.pdf}
+    \caption{The \textsc{Condition} quadrant of our design space for adaptation.}
+    \label{fig:condition}
+%    \vspace{-12pt}
+\end{figure}
+\subsubsection{Condition}
+The \textsc{Condition} relates to any observable aspect of the interactive ecosystem, which encompasses any variable of the context of use (\eg, user and task, platform/device, and environment)~\cite{Calvary:2002,Calvary:2003}. If the condition is not met, the adaptation operation cannot be triggered. The \textsc{Condition} is expressed as either \textit{atomic} when it consists of only one term or \textit{compound} when it is composed of several terms (\autoref{fig:condition}). Examples of atomic conditions include: ``if the user is color-blind'', ``if there is no ongoing task'', ``if the PC battery gets low'', ``if there is a mobile device near the user'', ``if the computing platform is a public display'', ``if the physical environment is shaky'', ``if the organisational environment is hierarchical''.
 
 
-\section{The User Interface Adaptation Life Cycle}
-\label{sec:lifecycle}
-The UI adaptation life cycle can be decomposed into seven stages~\cite{Abrahao:2021,Lopez:2007} (\autoref{fig:isatine}):
+An atomic condition concerns an observable (its subject) that can belong to the interactive system in its business domain of application (\eg adapt the UI on business processes~\cite{Sousa:2008}) or adaptation parts, the context of use with its components \textsc{User}, \textsc{Platform}, and \textsc{Environment}, or the deployment of the interactive system in its context of use. The condition is expressed as a formula of the first-order logic \textsc{Predicate} evaluated with potential arguments and their names, such as \textsc{isLow(battery)} or \textsc{isNear(user)}. The expression can involve quantifiers (\eg ``For all'', ``There exists'') that may be positive or negative.
+
+A \textsc{Composite Condition} is a combination of conditions (atomic or composite) using operators. For example, ``If the user's smartphone is switched on AND there is no ongoing task on it'', ``If the laptop battery has dropped AND the user turns on his/her mobile phone OR PDA''. These examples implement two classic types of operators in task modeling~\cite{Paterno:2009}: logical and temporal. Temporal operators allow reasoning about the interaction history. Other types of operator could be imagined.
+
+The condition can be decorated with \textsc{properties} which can also be reasoned about (\eg by property-based reasoning~\cite{Blouin:2011}), such as ``If condition C is frequent'', ``If menu item I has a high probability of selection''. Relevant properties include: 
+the actor who evaluated the condition,
+the time of condition evaluation (Time),
+the confidence factor in the condition's evaluation, and
+the frequency of the condition being met. This detailed structure is crucial for creating effective adaptation operations that can be effectively and efficiently implemented to ensure AUIs under varying conditions.
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{Images/Isatine.pdf}
-    \caption{The seven stages of user interface adaptation~\cite{Lopez:2007}.}
-    \label{fig:isatine}
+    \includegraphics[width=\textwidth]{Images/Event.pdf}
+    \vspace{-8pt}
+    \caption{The \textsc{Event} quadrant of our design space for adaptation.}
+    \label{fig:event}
 \end{figure}
+\subsubsection{Event}
+An \textsc{Event} identifies what has changed in the context of use and justifies an action in response to this change. Key elements include (\autoref{fig:event}):
+
+\begin{itemize}
+    \item The \textsc{variable} of change: the change can concern the user, the platform, or the environment. For example, if the user turns on a smartphone, the variable is the platform, which is now enriched with this device.
+    \item The \textsc{nature} of the variation: in this case, it is the arrival (Addition) of a new platform.
+    \item The \textsc{initiator} of the variation: here, it is the user.
+\end{itemize}
+
+The \textsc{Event} can also have properties such as the confidence level in perception, the actor of perception, or the frequency of the event. Reasoning can be applied to these properties. For example, the adaptation operation ``If the user is in front of the PC and the confidence factor for this event is 100\%, then...''.
+The variables identify what has changed in the context of use. According to the ontology of Crowley \etal \cite{Crowley:2002}, four types of changes can occur depending on whether they affect \textsc{entities}, \textsc{roles}, \textsc{relations}, or \textsc{associations} between entities, roles, and relations:
+\begin{figure}
+        \centering
+        \includegraphics[width=0.6\linewidth]{Images/HandMenu.png}
+        \caption{Selection of menu item adapted to the hand~\cite{Antoniac:2002}.}
+        \label{fig:hand}
+%        \vspace{-16pt}
+    \end{figure}
+\begin{itemize}
+    \item \textsc{Entities:} they pertain to the living or inanimate physical world. An entity is a grouping of observables. By measuring observables, the application can detect the presence of physical world entities, recognize them (\eg by gesture recognition through surfaces~\cite{Sluyters:2024}), track them, and determine the value of their attributes and relationships. We generalize this to all observable components of the context of use: user, platform, and environment (\textsc{Type}).
+    \item \textsc{Roles:} they are the functions held by these entities. The roles of input and output devices are predominant. In the past, these roles were assigned to the traditional screen with the keyboard and mouse trio. Today, they are replaced by any physical entity that has the right properties and is observable by the system. For example, a hand, traditionally used as a pointing device, becomes a display surface \cite{Antoniac:2002}. Its proximity to the user and the elongated shape of the fingers make it suitable for menu display (\autoref{fig:hand}). A single entity can have multiple roles. In contrast, a role can be held by several entities simultaneously.
+    
+    \item \textsc{Relations:} they pertain to a set of entities. They can be spatial (\eg ``the user is near the platform''), temporal (\eg ``the device will be available during 5 minutes''), functional (\eg ``the sun illuminates the plant''). Identifying the variables means locating the change in terms of entities (\ie state, roles, or relations) as well as the set of roles and relations held.
+        
+    \item \textsc{Variation:} it characterizes the type of change. According to Crowley's ontology \cite{Crowley:2002}, the notions of context of use (or usage context) and situation are distinguished. A \textsc{context of use} is defined by a set of roles and relations held by a set of entities. A context change occurs when a role or relation appears (\textsc{Create}), is modified (\textsc{Modify}), or disappears (\textsc{Delete}). A \textsc{situation} is characterized by a mapping between entities, roles, and relations. A situation change occurs when these mappings change (\textsc{Create} or \textsc{Delete}  associations between entities and roles/relations) or when entities appear (\textsc{Create}) or disappear (\textsc{Delete}). \textsc{Modify} is planned to integrate changes in the state of entities into the reflection if necessary.
+             This ontology allows the establishment of a graph of contexts and situations. An event is implicitly defined as an arc of this graph. There are two types of events depending on whether they are \textit{intra-context} (\ie between situations within the same context) or \textit{inter-contexts} (\ie between situations of different contexts).
+        
+\end{itemize}
+  
+Schmidt \cite{Schmidt:2000} defines the notion of an event: it is not necessarily the conjunction of an exit from one node (context or situation) and an entry into another node. An event can be more atomic, an exit from a node, an entry into a node, or even the presence in a node. Thus, we distinguish atomic events from compound events. Similarly to compound conditions, compound events use operators, particularly logical operators.
+
+The \textsc{Initiator} of the change identifies the primary responsible agent for the variation. This information can be relevant to avoid conflicting with user actions. For example, if the user has moved the UI to a less visible area of the screen, it would be inappropriate to recentralize the UI in response. The initiator can be the interactive system or its usage context. In the interactive system, we distinguish between the business parts and the adaptation parts. For example, the interactive system \textsc{Diffie} initiates the content adaptation and highlights the results since the last visit of the user (\autoref{fig:diffie}). For the context of use, we refer to its three components: user, platform, and environment \cite{Calvary:2003}. By identifying these changes and their properties, the adaptation can better respond to the dynamic conditions in which an AUI operates, ensuring continued usability and satisfaction.
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{Images/Diffie.png}
+    \caption{\textsc{Diffie} adapts the content and highlights the changes since the last visit~\cite{Teevan:2009}.}
+    \label{fig:diffie}
+\end{figure}
+
+
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{Images/Action.pdf}
+    \caption{The \textsc{Action} quadrant of our design space for adaptation.}
+    \label{fig:action}
+\end{figure}
+
+\subsubsection{Action}
+
+The \textsc{Action} specifies the reaction to implement following a change in the context of use (\autoref{fig:action}). Examples of atomic actions include: ``Migrate the UI to the nearest platform'' \cite{Frosini:2014}, ``Remove infrequent tasks'' \cite{Florins:2004}, ``Execute a specific UI'' \cite{Calvary:2002}, ``Prioritize remodeling'' \cite{Vanderdonckt:2008:multi}, ``Eliminate automatic distribution'' \cite{Grolaux:2004}, ``Declare that the user is tired'', ``Add a specific adaptation operation on top of existing ones'', ``Execute the first applicable operation possible''.
+
+Compound actions can also be imagined by combining actions (atomic or compound) through operators (\eg logical or temporal). Actions, whether atomic or compound, can be decorated with \textsc{properties}. Relevant properties include specifying the actor responsible for their execution and the optimization of their execution (\textsc{Time}). An atomic action is issued with a certain \textsc{force}: the action is either \textsc{proposed} or \textsc{imposed}. Actions are governed by control policies, such as ``Execute all imposed actions''. \textsc{Create}, \textsc{Delete}, and \textsc{Modify} are action types for control policies. These are \textsc{Statement} actions as opposed to \textsc{Strategies}.
+
+\textsc{Strategies} manipulate \textsc{statements}: they filter or weight them. Four types of statements are defined: \textsc{policies}, \textsc{facts}, \textsc{guidelines}, and \textsc{target interventions}. \textsc{Target interventions} act on the context of use (\eg ``turning on the light'') or on the interactive system. For the interactive system, we functionally refine the target into either the business functions (i.e., related to the application domain) or the adaptation itself. In turn, the functional \textsc{coverage} needs to be specified in terms of the components being modified (\ie UI, functional core, and/or dialog control). For the \textsc{functional core}, we simply nuance whether the adaptation concerns the intrinsic functional core or its deployment in the context of use.
+
+Interventions in the UI can be explored from the perspective of software architecture (\textsc{Scope}): which elements (\ie functions, components, processes) and allocations between elements (\ie functions to components, components to processes, processes to physical resources) are concerned. The considered elements and allocations depend on the adaptation level \cite{Vanderdonckt:2008:multi}: \textsc{remodeling} acts on a constant distribution state of the UI on interaction resources, unlike \textsc{redistribution}. Remodeling and redistribution can be specified in terms of \textsc{plan} or \textsc{goal}. The goal sets the objective to be achieved (\eg ``migrate the UI'') without imposing any conceptual or implementation solution, unlike the plan, where all degrees of freedom are fixed.
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{Images/Home.PNG}
+    \caption{Example of a task model for home automation and its related final UI \cite{Sottet:2007}.}
+    \label{fig:home}
+\end{figure}
+
+Research in plasticity~\cite{Calvary:2002} began studying remodeling on various abstraction levels such as the task level (user tasks \cite{Mezhoudi:2021} and concepts~\cite{Vanderdonckt:2008}), the abstract UI level, the concrete UI level, and the final UI level.
+
+The \textsc{task level} describes the user's task and domain concepts independently of any representation and implementation. ConcurTaskTree and its language \cite{Paterno:2009}, UML class diagrams of OWL ontologies, are usually considered for task and domain modeling, respectively. They can be decorated with properties such as frequency, iteration, and optionality. For example, \autoref{fig:home}~illustrates task modeling for a home automation application. The user controls the home temperature (``Manage home temperature'') by iteratively (\ie decoration ``*'') handling the different rooms of the house. Handling a room involves specifying a command (``Specify command'') and optionally checking the feedback (``Check feedback'' with its optionality decoration). Specifying a command involves specifying the room of interest (``Specify room'') and the action to apply: either check its temperature (``Check temperature'') or change its temperature (``Set temperature''). User Interface Description Languages (UIDLs), such as UsiXML \cite{Limbourg:2004} or MariaXML~\cite{Paterno:2009} capture these aspects in a Domain Specific Language.
+ 
+
+
+The \textsc{Final UI level} corresponds to the particular implementation of the UI for a given platform in any programming or markup language. For example, \autoref{fig:plasticlock} performs adaptation at the final UI level by adapting the layout and its widgets depending on the length and height of the window, but also depending on the different time zones when the user needs to fly between two areas.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{Images/PlastiClock.png}
+    \caption{\textsc{PlastiClock}: the final UI changes its layout and widgets depending on the window dimensions and time zone~\cite{Calvary:2004}.}
+    \label{fig:plasticlock}
+%    \vspace{-8pt}
+\end{figure}
+
+
+\subsubsection{Value}
+
+
+In economics, \textsc{Value} measures the ratio between a benefit and a cost, which is suitable for adaptation, which always induces some benefits and drawbacks for a cost~\cite{Lavie:2010}. In this vein, we consider two elements: the application benefit (which we generalize into any positive or negative effect) and the implementation cost related to the execution of the adaptation operation. The cost is practical, as opposed to the effect, which is theoretical. The effect captures the expected outcomes of the adaptation operation by formulating properties expressed in a given reference frame:
+
+\begin{itemize}
+    \item \textsc{Ensured} by the application of the adaptation operation: they were not ensured before the application and they become so after the adaptation operation is completed. For example, task continuity is ensured after migration.
+    \item \textsc{Preserved}: they were initially satisfied and remained so. For example, a domain concept is observable \cite{Cockton:1987} and is still observable after adaptation.
+    \item \textsc{Improved}: they were partially satisfied and are now improved. For example, the cognitive load in terms of informational density is improved by moving to a large screen or multiple displays~\cite{Sluyters:2021}.
+    \item \textsc{Degraded}: they were partially satisfied and are now deteriorated. For example, graceful degradation~\cite{Florins:2004} to a small screen increases navigation among tasks and increases workload in terms of physical actions.
+    \item \textsc{Removed}: they were initially satisfied and they are no longer satisfied. For example, the removal of user guidance due to a lack of display surface will no longer satisfy this property.
+\end{itemize}
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{Images/Value.pdf}
+%    \vspace{-8pt}
+    \caption{The \textsc{Value} quadrant of our design space for adaptation.}
+    \label{fig:value}
+%    \vspace{-8pt}
+\end{figure}
+The \textsc{effect} can be expressed more globally by applying the adaptation operation: does the operation pertain to the survival of the interactive system or the user's comfort? If it is about user comfort, is it functional, \ie related to the system's utility, or extra-functional related to the usability of the adapted UI and/or the meta-UI~\cite{Coutaz:2006} (defined as the UI governing the UI adaptation, later renamed into extra-UI~\cite{Melchior:2012}).
+
+Whether the adaptation operation pertains to the survival of the interactive system or user comfort, it can be applied \textsc{proactively} (\ie in anticipation of a change of context), or \textsc{reactively} (\ie to face a reality). We call this dimension the \textsc{term}.
+
+The \textsc{theoretical value} can be decorated with \textsc{properties} that are useful for reasoning about the adaptation. We identify as relevant the \textsc{validity} of the adaptation operation (\ie expiration date or duration), the \textsc{trust} placed in the operation, its \textsc{actor}, and its \textsc{date of issue} (\eg a recent form adaptation is more trusted than an old one~\cite{Eloi:2024}). Such values can also incorporate software quality factors \cite{iso25010}.
+
+The \textsc{practical value} considers the cost of applying the operation. This cost is measured from a system perspective (\eg by estimating digital and physical resources required for calculation, communication, and interaction) but also from a human (\eg perceptual, cognitive, and motor load) for \textsc{perception} (condition and event) and \textsc{action}. Estimating the cost is a challenging aspect of UI adaptation. The practical value can also be decorated with properties that are evaluated by practice: the frequency of triggering the adaptation, its application and cancellation frequencies \cite{Eloi:2024}, its determinism, which integrates the level of abstraction of the operation. For example, icons in a toolbar (\autoref{fig:promotion}) can be promoted (made larger) or demoted (made smaller) depending on their probability of being selected \cite{Bouzit:2019}. This probability can be computed by recency, frequency, recurrence, importance, or any combination of them \cite{Vanderdonckt:2018, Vanderdonckt:2020}.
+The adaptation operations being defined, the next section studies their life cycle.
+
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{Images/Promotion.pdf}
+    \caption{Promotion or demotion of icons depending on their probability of use \cite{Bouzit:2019}.}
+    \label{fig:promotion}
+\end{figure}
+
+\subsection{Categories of Adaptation Operations}
+While any adaptation operation can be defined according to the terms defined in Section~\ref{sec:operation}, some frequent categories of adaptation operations emerge according to the effect types they produce~\cite{Paterno:2014,Florins:2004}.
+We detail them in the next sub-sections.
+
+ \subsubsection{Property-Changing Operations in Adaptation}
+
+These operations adjust the properties of the interface without replacing or splitting elements, allowing for smooth transitions between different states of a UI based on real-time conditions. Property-changing operations are essential for dynamically modifying the presentation and behavior of UI elements in response to changes in context or user interactions. A common example of a property-changing operation can be observed in the calculator interface on a smartphone, which dynamically adjusts based on the device's orientation property.
+
+\textbf{Example: smartphone calculator.}
+When a smartphone is held vertically in portrait mode, the calculator default configuration displays only simple arithmetic operations (\autoref{fig:calculatorModes}a). When the smartphone is turned horizontally in landscape mode, it provides more space to display sophisticated scientific functions, such as trigonometric functions (\autoref{fig:calculatorModes}b). The underlying components remain the same, but the orientation affects how they are displayed and arranged. This modification is a representative example of an adaptation operation that modifies a property. In contrast, \textsc{MiniAba}~\cite{Schlee:2004} enables the end users to (un)select any subset of arithmetic, trigonometric, or advanced functions they want and to recompile the project to get an adapted version.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Images/Calculator.png}
+    \caption{Comparison of smartphone calculator in different modes: (a) portrait and (b) landscape (Source: \url{https://dribbble.com/shots/6851610-Calculator-light-mode}).}
+    \label{fig:calculatorModes}
+\end{figure}
+%https://dribbble.com/shots/6851610-Calculator-light-mode
+
+This adaptation operation can be represented as follows:
+
+\textsc{On Change(Orientation)} 
+
+\textsc{If Screen.Orientation=vertical}
+
+\textsc{Then} 
+\textsc{(Screen.orientation=horizontal And Display(FullCalculator))} 
+
+\textsc{For Supporting expert mode}.
+
+\begin{itemize}
+\item \textsc{Event:} the user rotates the smartphone from portrait to landscape mode, where the rotation sensor in the device detects that the phone has been turned.
+\item \textsc{Condition:} the device orientation changes from vertical (portrait) to horizontal (landscape). The rotation must be 90° to transition the screen from portrait to landscape.
+\item \textsc{Action:} the calculator UI reveals advanced functions (scientific mode), modifying the layout and visibility of the interface elements and dynamically adjusting its layout to display more advanced functions like trigonometric operators, exponential functions, and memory functions. In this case, the UI structure remains the same, but its presentation properties (such as visible elements and screen space allocation) are modified to accommodate the additional functions. 
+\item \textsc{Value:} to enhance user interaction by dynamically displaying advanced functions, improving efficiency for expert users who need scientific calculations.
+\end{itemize}
+
+%\textbf{Additional Examples of Property-Changing Operations:}
+
+%\begin{enumerate} \item \textbf{Event:} The brightness of the environment changes (detected by a light sensor). \begin{itemize} \item \textbf{Condition:} The ambient light level is below a defined threshold (e.g., low light condition). \item \textbf{Action:} The UI increases the font size and contrast for better readability. \end{itemize} \item \textbf{Event:} The user activates a mobile app in a different time zone. \begin{itemize} \item \textbf{Condition:} The device detects a significant change in geographical location. \item \textbf{Action:} The app updates the displayed time and date based on the new time zone without modifying the core UI elements. \end{itemize} \end{enumerate}
+
+\subsubsection{Splitting Operations}
+Splitting operations divide a UI into smaller, manageable components, elements, or interaction spaces to adapt to devices with different display capabilities. These operations ensure the usability and consistency~\cite{Aquino:2010} across multiple platforms \cite{Florins:2006}:
 
 \begin{enumerate}
-\item \textit{Specification of the adaptation goals}: this first stage states the goals that UI adaptation should pursue, maintain, and update by any entity involved, such as the user ($U$), the application or system ($S$), a third-party ($T$), or any combination of them. Various contextual aspects are considered, such as the user profile, the task at hand, the computational platform (both hardware and software), and the entire physical and organisational environment in which the task is performed. The goals fall into three categories: self-expressed, application-expressed (locally or remotely), or according to their location. When the application is tolerant of faults depending on conditions, a machine-expressed goal is specified.
-
-
-\item \textit{Specification of initiative for adaptation}: this second stage specifies which entity is responsible for initiating the adaptation: the user (explicit initiative), the application (implicit initiative that detects a change in the context of use requiring adaptation), or both jointly (as a decision taken by the entities in control). When the machine initiates an adaptation that the user subsequently cancels, a mixed initiative occurs \cite{Horvitz:1999}. This stage is further refined into an adaptation request, a detection of an adaptation need, and a notification for an adaptation request, depending on their location. 
-
-\item \textit{Specification of adaptation}: this third stage specifies which entity is responsible for deciding that an adaptation should occur. After the adaptation is initiated, a set of adaptation proposals is created that contains zero, one, or many proposals. These proposals can be further elaborated by the user, the application, or a third party, such as a broker.  If the application is responsible for creating adaptation proposals, then adaptation rules generate proposals and even infer new rules. Once the set of proposals is obtained, a decision must be made to accept (\eg which adaptation proposal or which ones are the most appropriate), to reject (\eg if no proposal corresponds to the goals), to cancel (\eg no adaptation is finally needed), to defer (\eg by the next session), or to propose a new set.
-
-
-\item \textit{Application of adaptation}: this fourth stage specifies which entity is responsible for applying the adaptation decided in the previous stage, if any. Since the adaptation will be applied to the UI, it should incorporate a mechanism that supports adaptation (\eg via an API for parameterization \cite{Cockton:1987}). The user adapts the UI (\eg through UI options, personalization) or the application does it on behalf of the user. For example, transformations apply various presentation adaptations of a GUI to multiple platforms with various resolutions~\cite{Furtado:2001,Aquino:2010}. 
-
-\item \textit{Transition with adaptation}: this fifth stage specifies which entity is responsible for ensuring a smooth transition between the UIs before and after adaptation. For example, an application uses some visualization techniques to present the intermediary steps executed (\eg by progressive rendering \cite{Rogers:1999} or by animated transition, by morphing~\cite{Dessart:2011}).
-
-
-\item \textit{Interpretation of evaluation}: this sixth stage specifies which entity is responsible for providing information meaningful for understanding the adaptation. When the application performs some adaptation without any explanation, the user does not necessarily understand why this type of adaptation has been performed. Conversely, when the user has performed some adaptation, the user should tell the application how to interpret this adaptation. For example, a Machine Learning (ML) algorithm first proposes some adaptation to be applied~\cite{Eisenstein:2000}; if this adaptation does not correspond to the goals, the user produces an alternate adaptation and informs the application how to incorporate this new scheme for future use. The machine updates the knowledge base by interpreting this explanation. User-control of the adaptation is key and can be supported by unsupervised learning~\cite{Eloi:2024}.
-
-\item \textit{Evaluation of adaptation}: this seventh stage specifies which entity is responsible for evaluating the quality of the adaptation performed to check whether the initially-specified goals are met. For example, if the application maintains some internal plan of goals, it should update this plan according to the adaptations applied so far. If the goals are in the users’ mind, they could also be evaluated with respect to what has been performed in the previous stages. In this case, the explanation of the adaptation contributes to updating the goals’ status too. For example, \autoref{fig:evaluation} shows how a previously-applied adaptation can be evaluated: the adaptation operation applied is displayed and subject to evaluation by the system itself (based on internal analysis) or by the end-user, which can be qualitative (\eg by a rating bar) or quantitative (\eg by a rating scale).
+    \item \textit{Class 1: Split in sequential operators}: if some tasks are arranged in a sequence (\eg Step 1 $\rightarrow$ Step 2 $\rightarrow$ Step 3), the UI before each sequential task can be split to create separate a screen or a page for each step, such as in a wizard widget.
+    \item \textit{Class 2: Split before optional tasks}: if a sequence includes optional tasks, the UI can be split before the optional task to avoid users see unnecessary options unless needed.
+    \item \textit{Class 3: Use concurrent operators when sequential splitting is not possible}: if sequential splitting is not adequate or possible, the UI can be split using concurrent operators, which indicate tasks that can occur in any order.
+    \item \textit{Class 4: Split at the highest level}: when multiple levels of tasks can be split, choose the highest level. This keeps semantically related tasks together.
+    \item \textit{Class 5: Distribution of tasks}:
+    when splitting occurs under a higher-priority operator, ensure that necessary tasks, like a ``Cancel'' option, are available in all resulting interaction spaces.
 \end{enumerate}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.9\textwidth} % Adjust the width as needed
+        \centering
+        \includegraphics[width=\textwidth]{Images/fig16a.jpg}
+        \caption{A hotel room in three separate windows.}
+        \label{fig:splitting_rules16a}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.9\textwidth} % Adjust the width as needed
+        \centering
+        \includegraphics[width=\textwidth]{Images/Tabbed.jpg}
+        \caption{A hotel room in a tabbed dialog box.}
+        \label{fig:splitting_rules16b}
+    \end{subfigure}
+    \caption{Splitting rules applied to a hotel room booking form~\cite{Florins:2006}.}
+    \label{fig:combined_splitting_rules}
+\end{figure}
+\textbf{Example: Book a hotel room.}
+A form used to book a hotel room usually consists of specifying three parts: the \textit{location} with the arrival and departure dates and the number of guests, the selection of the hotel \textit{category}, and a selection of hotel \textit{preferences}. This form can be split into three independent windows (Class 3) as illustrated in~\autoref{fig:splitting_rules16a} or collected in a tabbed dialog box (Class 4) as reproduced in~\autoref{fig:splitting_rules16b}.
+When the first task related to user information (\eg user identification) is completed, the subsequent task of specifying booking details, as represented above, and payment information can be represented as follows:
+
+\textsc{On Change(Screen.Size)}
+
+\textsc{If Screen.Size = Small And Task.Operator = Sequential} (\eg User Information $\rightarrow$ Booking Details $\rightarrow$ Payment Information)
+
+\textsc{Then  Split Interaction.Space Before Task "Booking Details"}
+
+\textsc{And Create Interaction.Space "Booking Details"}
+
+\textsc{For Consistency}
+
+The task model could also comprise an optional task where the guest can specify any special request, such as a non-smoking room with wi-fi access. This optional task is therefore subject to the following splitting rule (Class 2):
+
+\textsc{On Change(Screen.Size)}
+
+\textsc{If Screen.Size = Small and Task.Type ("Special Requests") = Optional}
+
+\textsc{Then Split Interaction.Space Before Task="Special Requests"}
+
+\textsc{Create Interaction.Space ("Special Requests")}
+
+\textsc{For Optimization}
+
+This adaptation operation ensures that the optional task "Special Requests" is displayed only when necessary to optimize the screen real estate when the screen resolution is constrained. This is part of the overall UI transformation shown in \autoref{fig:splitting_rules16b}, where navigation is adapted:
+
+\textsc{On Change(Screen.Size)}
+
+\textsc{If Screen.Size = Small}
+\textsc{And Task.operator = Concurrent} (\eg User Information $||$ Payment Information)
+
+\textsc{Then Create Interaction.Space ("User Information", "Payment Information") and Create Navigation.Link ("User Information", "Payment Information")}
+
+\textsc{For Reducing(CognitiveLoad)}.
+
+\subsubsection{Replacement Operations}
+To address the needs of users with disabilities, replacement operations entail switching out certain types of UI elements with others. By offering alternate modes of interaction for the same task or action, the expected value concerns accessibility. For example, motor or visually impaired users who need to interact with push buttons, perform text input, and select options in a list, could experience trouble. Replacing these elements or enriching them with voice commands or audio feedback should support a better user experience for them \cite{Minon:2016}.
+\autoref{fig:Fig13} shows the hierarchy of UI elements for entering personal data through such buttons, text fields, and radio buttons to support graphical interaction. \autoref{fig:Fig14} shows the adapted UI hierarchy where graphical elements have been replaced by speech recognition, vocal textual input and selection with audio prompts to support vocal interaction. This adaptation operation can be represented as follows:
+
+\textsc{On Detect(User.Disability)=true}
+This event triggers the operation whenever a user’s disability is detected, such as when the user logs in or the context changes.
+
+\textsc{If UI.Elements=graphical}
+The condition checks if the current UI elements are graphical. This means the user interface contains some elements like buttons, text fields, or icons that may not be accessible to users with certain disabilities.
+
+\textsc{Then Replace(UI.Elements, graphical, vocal)}
+\textsc{And Create(AudioCommands)}
+This action replaces the graphical UI elements with vocal elements and audio commands. The user can now interact with the interface using voice commands and receive audio feedback instead of visual prompts.
+
+\textsc{For Accessibility}
+ 
+\begin{figure}%[H]
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Images/replacement_rule_13.png}
+        \caption{For graphical interaction.}
+        \label{fig:Fig13}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.47\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Images/Replacement_rule_14.png}
+        \caption{For vocal interaction.}
+        \label{fig:Fig14}
+    \end{subfigure}
+    \caption{Hierarchy of UI elements to input personal data~\cite{Paterno:2011}: (a) before adaptation, (b) after adaptation.}
+    \label{fig:combinedFigure}
+\end{figure}
+
+
+\subsubsection{Removal Operations}
+Removal operations remove UI elements at run-time for several reasons: they are irrelevant, inappropriate, unnecessary for particular user groups or use cases, or consuming too many resources, such as screen space. Removal operations could physically remove these UI elements, momentarily hide them, or disable them. In contrast to replacement operations, which replace UI elements with alternatives, removal operations simply delete them, either momentarily or permanently. For example, \textsc{Supple}~\cite{Gajos:2010} dynamically adapts UIs based on user behavior and needs. In \autoref{fig:removal_example15}, a print dialog box is adapted to prioritize frequently used options and remove less relevant components. 
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\textwidth]{Images/supple.pdf}
+    \caption{(a) Original print dialog box with multiple steps to access printing orientation. (b) Adapted dialog box with simplified access to printing orientation, removing unnecessary steps \cite{Gajos:2010}.}
+    \label{fig:removal_example15}
+\end{figure}
+
+\autoref{fig:removal_example15} demonstrates how the UI is adapted to reduce complexity. In the original print dialog box (\autoref{fig:removal_example15}a), changing the print orientation from portrait to landscape requires navigating through multiple steps and options, which can be difficult for users with motor impairments or limited cognitive abilities. This complexity is not only time-consuming, but also increases the risk of errors during interaction. The adapted interface (\autoref{fig:removal_example15}b) simplifies this process by removing unnecessary steps and presenting the landscape printing option directly on the main screen, which reduces the need for complex navigation and makes the UI more intuitive and accessible.
+
+By focusing on the most commonly used functions and removing less relevant options, \textsc{Supple} tailors the UI to the user's needs, resulting in a streamlined interaction experience. This adaptation operation can be represented as follows:
+
+\textsc{On User.Access("LandscapeOption") And Frequency("LandscapeOption") $>$ Threshold}
+
+\textsc{If UI.Contains("IntermediateSteps")}
+
+\textsc{Then UI.Remove("IntermediateSteps") and            UI.Display("LandscapeOption", "MainScreen")}
+       
+\textsc{On User.Preference("SimplifiedUI")}
+
+\textsc{If UI.Contains("RarelyUsedOptions")}
+
+\textsc{Then UI.Remove("RarelyUsedOptions")}
+
+\textsc{For Reducing(TaskTime)}
+\begin{itemize}
+    \item \textsc{Event:} the system detects frequent access to the landscape printing function by comparing it to a reference threshold.
+    \item \textsc{Condition:} the ``Print'' dialog box includes multiple steps for accessing this function.
+    \item \textsc{Action:} the system removes intermediate steps and presents the landscape printing option by default, simplifying the interaction.
+    \item \textsc{Value:} the adaptation aims at simplifying the UI by reducing the task completion time.
+\end{itemize}
+
+This operation dynamically simplifies the user interface based on the user's capabilities, ensuring a more accessible and user-friendly experience.
+
+
+\subsection{The Left Hemisphere for the Specification of the Adaptation Implementation}
+The left hemisphere identifies four stages in the life cycle of an adaptation operation (\autoref{fig:lifecycle}): the definition of an adaptation operation, its execution, its evaluation and, finally, the consolidation of experience gained with this adaptation. For each stage, we are encouraged to answer the same questions of the Quintilian hexameter~\cite{Motti:2013}, as outlined in \autoref{sec:Introduction}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=.65\textwidth]{Images/LifeCycle.pdf}
+    \vspace{-6pt}
+    \caption{Left hemisphere: stages of adaptation life cycle.}
+    \label{fig:lifecycle}
+\end{figure}
+
+\subsubsection{Definition of the Adaptation Operation}
+The \textit{definition} of the adaptation operation is hereby referred to as any specification, possibly by code generation or interpretation of the specification, of the precise instructions to be performed by an adaptation operation. This specification is aimed at enabling the concrete execution of an operation in the next stage. This should not be confused with the specification of adaptation (\autoref{fig:lifecycle}), which specifies which entity is responsible for deciding an adaptation, whereas this definition is aimed at building the adaptation operation itself. This encompasses the research, the design, and the coding of an operation.
+In regard to \textit{What?}, we distinguish the specification of the overall goals of the operation (\eg maximize the cognitive load) and the specification of the operation itself (\eg ``Remove optional widgets''). By overall goals, we may consider the specification of the \textsc{Value} to be guaranteed and the domains or zones of plasticity~\cite{Collignon:2008} to be guaranteed for this value \cite{Calvary:2002}. 
+Specifications can be written by (\textit{Who?}) experts in human factors or adaptation, the designer, the end user, the interactive system, any third party, or any combination of them. For example, \textsc{Scaler}~\cite{Eloi:2024} enables the definition of an adaptation operation by configuring and balancing weights (\autoref{fig:configuration}) specified by a designer, a developer, and the end-user, either in isolation one by one or from a crowd, as suggested by Nichols \etal~\cite{Nichols:2013}.  
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{Images/Configuration.png}
+    \caption{Configuration of parameterization for adaptivity by unsupervised learning \cite{Eloi:2024}.}
+    \label{fig:configuration}
+\end{figure}
+
+The specification tool (\textit{How?}) depends, of course, on the actor in charge of specification. Adaptation operations can be defined according to a wide range of tools, spanning from hard-coded environments (\eg the graceful degradation plug-in offers three families of adaptation operations that are all predefined and coded in Java~\cite{Florins:2004}) and knowledge bases (\eg operations for adapting a graphical UI to a mobile device in \cite{Eisenstein:2000} are stored in a knowledge base that is processed by an inference engine) to specification environments (\eg operations are defined in a domain specific language) and model-driven architectures~\cite{Sottet:2007, Sottet:2008}.
+
+
+Depending on the tools (\textit{How?}), the actor (\textit{Who?}), the definition can be achieved at different times (\textit{When?}): design time, linking time, compilation time, installation or deployment of the interactive system, its execution and inter-session, requiring the interactive system to be stopped and then restarted.
+Operations can be stored (\textit{Where?}) within the interactive system itself
+(internal) or externally, in configuration files for example.
+
+
+\subsubsection{Execution of the Adaptation Operation}
+Adaptation is a seven-stage process (\autoref{fig:lifecycle}) involving (\textit{What?}) detecting the change in the context of use to take the initiative for adaptation (stage 2), to specify which adaptation (stage 3) and apply it (stage 4, which corresponds to the actual \textit{execution} of the adaptation operation). These functions require
+mechanisms that are (\textit{Where?}) internal or external to the interactive system and its AUI. 
+These functions can be carried out by four types of actors (\textit{Who?}): the end-user,
+another user (\eg a controller), the interactive system, or another system. We identify five key moments for their execution (\textit{When?}): either during execution (\eg at any time or at precise moments), the granularity of the stage can range from the physical action to the session, via the elementary task and the compound task. Depending on the support tool, past actions may be lost or retained.
+
+Support tools (\textit{How?}) can be generic and reusable, or integrated into the interactive system, and consequently non-reusable. They can be equipped with an extra-UI~\cite{Coutaz:2006} (formerly known as meta-UI), which is itself a UI that ensures observability and control of the adaptation~\cite{Bouzit:2017:PDA}. This extra-UI may require
+resources (\eg UI components, libraries, perception services, agents, inference engines) that are either prefabricated or generated at runtime~\cite{Blumendorf:2010}. Their location is internal or external to the interactive system and their availability can be perennial (\eg beyond adaptation) or temporary (\eg erased after adaptation).
+
+\subsubsection{Evaluation of the Adaptation Operation}
+The \textit{evaluation} is a process that critically examines to what extent the adaptation operation has been effective and efficient, which involves collecting and analyzing data and outcomes resulting from its execution and outcomes. Its purpose is to assess the overall quality of an adaptation operation to improve its effectiveness and to inform future executions.
+We identify five actors (\textit{Who?}) likely to be involved in evaluation: an evaluation specialist, a designer, the end-user, and the interactive system or any third party, provided that they hold the computational capabilities to perform such an evaluation.
+The evaluation can cover the four stages: the definition of an adaptation operation, its execution, its evaluation (which would then be a recursive process: how to evaluate the evaluation) and its consolidation of experience. For example, \autoref{fig:evaluation} shows how an adaptation operation can be evaluated by the system itself (\eg by performing some automatic evaluation) or by the end user qualitatively (\eg using a rating bar) or quantitatively (\eg using a rating scale). In the past, automatic UI evaluation has been explored, such as by guideline review~\cite{Beirekdar:2005} or agent analysis \cite{Lopez:2009}. More recently, eye tracking and emotion recognition represent attractive candidates to determine to what extent the end-user is happy or not with an adaptation~\cite{Haddad:2024}.
+
+Evaluation can be carried out in the very true context of use or controlled in a specific environment, such as in a usability laboratory. It can be carried out on the fly or off-line (\textit{When?}). For example, captured on-the-fly, the first impression that an end user produces is indicative of the graphical UI being good or bad~\cite{Haddad:2024}. Mechanisms for showing how adaptivity has been performed (\eg \autoref{fig:transition} shows adaptivity at run-time using an animated transition that preserves the context of use) and for explaining it are welcome.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{Images/Evaluation.PNG}
-    \caption{Example of adaptation evaluation in \href{https://symbiotik-infovis.eu/}{Symbiotik}: by the user and/or the system.}
+    \caption{Evaluation of an adaptation operation.}
     \label{fig:evaluation}
 \end{figure}
 
-\section{Targeted Literature Review on User Interface Adaptation}
-\label{sec:TLR}
-Despite the significant progress in AUIs, several challenges persist, which complicate the broader adoption of these systems and their development. Instead of performing a systematic literature review, this section prefers a targeted literature review that summarises the literature on UI adaptation, considering the most relevant and representative references in the domain. 
-
-\subsection{Existing and Future Challenges in User Interface Adaptation}
-
-This section therefore discusses a limited set of challenges that are still active and open today for UI adaptation.
-
-
-\begin{enumerate}[
-    topsep=5pt,
-    itemsep=1pt,
-    parsep=0pt,
-    label={$C_{\arabic*}.$},
-    leftmargin=0.675cm
-]
-
- \item \textbf{Complexity in user modeling.} Building precise and thorough user models that can anticipate and adjust to each user's demands is still challenging. These models must account for the diversity of human behavior and preferences, which are shaped by a wide range of elements such as the user's present emotional state, personal experience, and cultural background. Because of this complexity, models frequently oversimplify the user or become too complicated to be used in real-time adaptivity~\cite{Ontanon:2021}. Several factors influence the complexity in user modeling.
- Human behavior is intrinsically highly variable and influenced by numerous external and internal factors. Capturing this variability in a user model requires sophisticated algorithms and extensive datasets~\cite{AlSeraj:2018}. Various user modeling approaches, such as GOMS models, cognitive architectures, grammar-based models, and application-specific models, have varied levels of complexity and are appropriate for different types of applications~\cite{Castillejo:2014}. The complexity increases while selecting and applying the appropriate strategy in the appropriate situation. End-users interact with AUIs in various contexts of use~\cite{Calvary:2002} that change over time, such as different tasks, devices, platforms, and environments~\cite{Calvary:2003}. Adapting to these dynamic contexts of use adds another layer of complexity~\cite{Coutaz:2006}. Cultural background, personal experiences, and personal traits~\cite{Gajos:2017} significantly influence user preferences and interactions. Models must be sensitive to these differences to provide meaningful adaptations~\cite{Castillejo:2014}. User models used for adaptation may initially be correct or not and become outdated over time due to changes in external factors. Identifying, correcting, and updating these models while the context is evolving is even more complex. Mechanisms need to be in place to detect and address inaccuracies in the user models~\cite{AlSeraj:2018}.
-  Environmental factors in the context of use are often underestimated if not overlooked. The environment in which the user operates~\cite{Dubiel:2022}, including factors like traffic, noise, light, pressure, and the presence of other users, especially in collaborative configurations, significantly impacts user behavior and the effectiveness of AUIs.
-
- Due to all these reasons, obtaining an accurate AUI is no longer a matter of predefined adaptation rules, heuristics, and models, but a matter of taking the evolution into play.
-
-\item \textbf{Balancing adaptation with user control.} While AUIs aim to provide a highly adapted user experience~\cite{Abrahao:2021}, there is a fine line between helpful adaptation and perceived intrusion. Users may feel a loss of control over the UI when changes are too frequent, too disruptive~\cite{Todi:2021}, unexpected~\cite{Lavie:2010}, or disturbing~\cite{Hui:2009}. Ensuring that adaptations enhance user experience without undermining user autonomy is a crucial design consideration that remains largely unresolved. A totally automatic adaptation is certainly disrupting; a totally manual adaptation is probably even more disrupting as the adaptability cost is too expensive for the end-user. The aim of possessing a good AUI is to seem finally as if adaptation lies in mixed-initiative~\cite{Horvitz:1999} control. 
-
-For example, \textsc{MyUI}~\cite{Peissner:2013} tested the effectiveness and acceptability of adaptation patterns in different cost-benefit situations and for different users. The patterns turn out to increase the transparency and controllability~\cite{Gajos:2017} of adaptations as soon as they are under user control. Preference and acceptance of the patterns depend on the cost-benefit condition. In the same vein, \textsc{Scaler}~\cite{Eloi:2024} supports user control by unsupervised learning by enabling end-users to personalise the form widgets based on their preferences or based on the system.
-
-\item \textbf{Integration with existing systems.}
-Integrating advanced adaptive mechanisms into existing technological ecosystems poses technical and operational challenges. Compatibility with legacy systems, scalability, and maintaining consistent performance across different platforms are significant hurdles for developers of AUIs~\cite{Abrahao:2021}. Software engineering techniques, such as reverse engineering of UIs~\cite{Bouillon:2005} are helpful, but will always require some manual code tweaking. 
-
-\item \textbf{Privacy and security.}
-To provide personalised \cite{Ontanon:2021} and context-aware services \cite{Crowley:2002}, AUIs collect a variety of user data, such as demographic data, location history, preferences, and even psychological states. Deep data collecting, however, presents privacy issues \cite{Dwork:2014,Hazard:2016} because private data may be exposed and misused. For example, an AUI can improperly determine a user's home location based on repeated visits \cite{Beresford:2003}. 
-Additionally, AUIs influence user behaviour through subtly nudging them, such as encouraging in-app purchases during decision-weariness-prone moments. This is especially true when it comes to games that use subtle cues to encourage in-app purchases, which is particularly remarkable in some games \cite{Teachout:2016}. This could force end-users to buy at times when they are most likely to be vulnerable, including when they are tired from making decisions. This is an illustration of indirect manipulation of autonomy, in which the interface is made to sway the choices made by the user according to information gathered about their actions and emotional state \cite{Hazard:2016}. 
-Ethical design principles should put user liberty and privacy first to reduce these hazards and protect personal data \cite{Zyskind:2015}.
-
-Differential privacy is one promising strategy that preserves individual privacy while enabling user data analysis. Differential privacy lowers the likelihood of privacy breaches by adding "noise" to the data, which makes it harder to identify particular users \cite{Dwork:2014}. Blockchain technology can also be used to improve data usage accountability and transparency. Users can have more insight into how and by whom their data is being used by keeping track of data transactions on a decentralised ledger. This helps foster trust and prevent data misuse \cite{Zyskind:2015}.
-
-\item \textbf{Handling wrong, outdated, and inadequate data in adaptivity.}
-AUIs heavily rely on user models that are intended to anticipate and react to unique demands, preferences \cite{Eslami:2018}, and behaviours \cite{Cockton:1987}. These models frequently encounter difficulties because of errors resulting from a variety of sources \cite{Abrahao:2021}. User preferences and behaviours may not be fully captured, which might result in incorrect assumptions when building user models. For example, Netflix's recommendation engine begins with user inputs, such as preferred genres, and improves over time by analyzing movie viewing patterns to provide more precise recommendations \cite{Gomez-Uribe:2015}. To avoid these models becoming out of date, they should be regularly updated with new data to preserve the relevance and responsiveness of AUIs. For this purpose, methods like data mining and categorization ensure that the AUI adapts to suit the user's evolving needs \cite{Jalil:2021}.
-
-For example, in a smart home setting, an AUI may adjust lighting settings in response to user behaviour. If the user's schedule changes, the model may become unaligned.
-The system can determine the requirement for model upgrades by identifying more frequent manual illumination adjustments \cite{Mahdavinejad:2018}.
-Furthermore, due to privacy restrictions, incomplete data collection, or difficulties in predicting specific behaviours, the data available for creating user models may occasionally be insufficient, thus resulting in user dissatisfaction, decreased efficiency, and possible disengagement \cite{Abrahao:2021}. 
-\end{enumerate}
-
-\vspace{-8pt}
-\subsection{Recent Advances in User Interface Adaptation}
-
-In response to the aforementioned challenges, recent advances in technology and methodology have been made to enhance the functionality and applicability of AUIs:
-
-\begin{enumerate}[topsep = -3pt, itemsep = 1pt, parsep=0pt, label={A$_\arabic*$.}, leftmargin=0.675cm]
-\item \textbf{Enhanced machine learning techniques.}
-Recent developments in ML, Deep Learning (DL), and neural networks have provided new ways to process and analyze large datasets more effectively for AUIs. These advancements enable more nuanced understanding and prediction of user behaviour, improving the accuracy of user models. For example, techniques like reinforcement learning~\cite{Todi:2021,Gaspar:2024} dynamically adapt AUIs based on user interactions, learning from each user’s preferences to optimize the UI configuration over time. This way of supporting adaptation induces two sets of operations between the end-user and the AUI~\cite{Bouzit:2017:PDA}: a Perception-Decision-Action (PDA) cycle for the user followed by a Learning-Prediction-Action (LPA) cycle for the AUI.
-
-\item \textbf{Multimodal interaction.}
-Advancements in multimodal interfaces, which combine inputs from various sources, such as voice, touch, and even gaze, offer new ways to understand user intentions and context more holistically~\cite{Blumendorf:2010}. These AUIs can adapt more effectively to the user’s current state and preferences by integrating different types of data, leading to a more intuitive and seamless user experience. In particular, the modality can be adapted to environmental conditions \cite{Josifovska:2019} while allowing the end user to choose among the available modalities which is the most adapted. For example, polymodal menus~\cite{Bouzit:2017} enable end-users to select menu items graphically, vocally, or gesturally depending on their preferences and their context of use.
-
-\item \textbf{Context-aware adaptation.}
-Progress in sensor technology and context-aware computing allows AUIs to adapt not only to the user, but also to the entire context of use at once~\cite{Motti:2013,Yigitbas:2016,Yigitbas:2020}. AUIs can now consider factors such as location, time of day, and even the presence of other people to tailor user experiences. For example, a UI might simplify its options and enlarge buttons when it detects that the user is in a moving vehicle.
-
-\item \textbf{User-centered design approaches.}
-There is a growing emphasis on involving users directly in the adaptation process. User-centred design approaches \cite{Velsen:2008} that allow users to set preferences on how and when the UI should adapt are being explored to balance automation with user control. This approach not only addresses the challenge of maintaining user agency but also helps in fine-tuning the system according to individual preferences.
-Although AUIs have made remarkable progress, they continue to evolve in response to technological advances and user feedback. Overcoming existing challenges and effectively leveraging recent advances will be key to developing more intuitive, efficient, and user-friendly AUIs in the future. These advances promise not only to enhance user interaction but also to pave the way for UIs that are truly responsive to the complex and dynamic nature of human needs and behaviours.
-\end{enumerate}
-
-\vspace{-8pt}
-\subsection{Computational Approaches to Adaptive User Interfaces}
-
- Using modern computational techniques, AUIs dynamically adjust user experiences in real-time, adapting to users' changing choices, actions, and environmental situations. The need for these UIs is growing as systems become more complicated and as users demand more customized experiences. Incorporating developed computational methods \cite{Jiang:2022} into the comprehension, creation, and modification of UIs not only improves the adaptability and responsiveness of these UIs, but also addresses important issues in human-computer interaction (HCI), including context awareness, usability, and accessibility. In order to enable AUIs, a number of generations of computational approaches \cite{Jiang:2022} from rule-based systems to machine learning algorithms and model-based techniques \cite{Hussain:2018} have been studied over time.
-
-
-\subsubsection{Model-Based Development of Adaptive User Interfaces}
-Model-based development (MBD)~\cite{Eisenstein:2000,Derakhshanmanesh:2019,Hussain:2018} provides a structured approach to designing AUIs that can dynamically adjust to the user's context of use. By defining high-level abstractions that represent the core functionalities and user interactions, MBD allows for the creation of flexible and adaptable systems. This section explores how MBD facilitates the development of AUIs and examines case studies to illustrate its practical applications.
-MBD focuses on creating a set of models that define the UI at various levels of abstraction, from user interactions down to the specific elements of the UI design. These models include:
-\begin{enumerate}
-\item \textit{Domain models}: Define the data and logic specific to the application domain, ensuring that the UI aligns with the business requirements~\cite{Stocq:2004} and needs \cite{Gomez-Uribe:2015}.
-\item \textit{User models}: Capture information about the users, their preferences, and behaviours to tailor the UI accordingly. These models make it possible to modify the UI in real-time, improving usability and satisfaction by customizing the experience to each user's requirements. For example, the "Mining Minds" platform adapts its UI based on user context, such as increasing the font size for visually impaired users or switching to graphical modes \cite{Hussain:2018}.
-\item \textit{Interaction models}: Specify how users will interact with the system, detailing the flow and dynamic aspects of the UI.
-For example, interaction models can be constantly modified according to user circumstances and preferences using a Rule-Based User Interface (RBUI) method~\cite{Akiki:2016}. RBUI, which uses a rule-based framework, allows real-time UI adaptation by considering many variables, including user experience, device capabilities, and ambient conditions. This method closely adheres to MBD principles while also improving the user experience and facilitating a more customized interaction flow.
-\item \textit{Presentation models}: Describe the UI rendering (\eg the graphical components in the case of graphical UIs) while making sure that they are consistent and easy to use on various platforms \cite{Aquino:2010} and UI types \cite{Martinez:2006}. These models are made to adapt dynamically to changes in context, such as different screen sizes and resolutions, while also retaining a consistent look and feel when users switch between different devices, like desktops, tablets, and smartphones. For example, \textit{graceful degradation} exploits a presentation model to adapt an existing UI for a certain platform to a new UI for a smaller platform (\autoref{fig:graceful}) \cite{Florins:2004}. The opposite operation is called \textit{progressive enhancement}.
-This flexibility offers a productive user experience, especially when the AUI instantly adapts to changing user preferences or environmental circumstances. For example, the UI of a travel planning application adapts based on the user's context~\cite{Abrahao:2021}: a business traveler in a busy airport using a smartphone might see a simplified layout with larger buttons to facilitate quick interactions, while a tourist using a laptop in a quiet hotel room might experience a more detailed UI, taking advantage of the larger screen and calmer environment. 
-\end{enumerate}
-
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{Images/Graceful.pdf}
-    \caption{Graceful degradation of a desktop UI to a mobile~\cite{Amouh:2005}.} 
-    \label{fig:graceful}
+    \includegraphics[width=\textwidth]{Images/Transition.png}
+    \caption{Animated transition showing the various stages of adaptivity \cite{Dessart:2011}.}
+    \label{fig:transition}
 \end{figure}
 
-By abstracting these elements, MBD supports the generation of UIs that can adapt to different user requirements and operating environments without significant rework. This approach not only enhances the adaptability of the UI but also promotes reusability and scalability. The MBD advantages include:
-\begin{itemize}
-\item \textit{Consistency across platforms}: MBD allows developers to maintain a consistent user experience across various platforms by adapting the base model to fit different device specifications \cite{Furtado:2001}.
-\item \textit{Efficiency in development}: by abstracting the UI into models, changes can be implemented more quickly and propagated across platforms automatically \cite{Montero:2006}.
-\item \textit{Improved adaptability}: with models that dynamically adjust based on user data and context, the UI can respond in real-time to changes in user behaviour or environmental conditions, such as ubiquitous environments \cite{Paterno:2009}.
-\item \textit{Model reusability}: once some UI or user aspects have been captured in the models, any model excerpt can be reused in other contexts of use that share some common characteristics \cite{Delgado:2016}. For example, the nomadic gestures \cite{Vatavu:2012} can be reused from one context to another.
-\end{itemize}
-The main MBD limitations are:
-\begin{itemize}
-\item \textit{Required abstraction by modeling}: the big win with MBD is that, when the model(s) change, the UI should change accordingly. This approach always requires abstracting various UI aspects and user parameters into a set of models, an approach that is not straightforward for any designer or developer \cite{Puerta:1996,Puerta:1997}.
-\item \textit{Dependence on rendering engines}: UI rendering engines can produce final AUIs either by code generation or by model parsing and interpretation. In both cases, the quality of produced AUIs heavily depends on the power of such engines and on adaptation rules or operations \cite{Akiki:2014}.
-\item \textit{Increased complexity}: the MBD process adds another layer of complexity on top of the adaptation process, but this is probably inevitable since adaptation cannot happen without such mechanisms \cite{Jalil:2021}.
-\end{itemize}
-
-\subsubsection{Model-Driven Engineering of Adaptive User Interfaces}
-Model-Driven Engineering (MDE) is a computational approach that focuses on creating and exploiting models, which are representations of the knowledge and know-how in specific areas. In the context of AUIs, MDE allows developers to abstract and automate the generation of UIs from high-level models. These models describe the UI independent of technology, enabling the adaptive system to instantiate UIs tailored to different devices, users, or surroundings.
-
-%remplacer le texte par la référence
-For example, Yigitbas \etal \cite{Yigitbas:2020} discuss how MDE can facilitate the development of UIs that automatically adjust to user-specific data and context changes without manual intervention. By employing a model-driven approach, developers can ensure consistency across different platforms while accommodating individual user needs and preferences.
-
-\subsubsection{Model-Free Approaches of Adaptive User Interfaces}
-
-Model-free approaches do not assume to have any particular underlying model. For example, ACE (Adaptive CSS-oriented Engine)~\cite{Leiva:2011} automatically adapts presentation properties of widgets in a web page based on designer's input and interaction history: adapt the font size of title, labels, and contents, changing the margins,  increase the surface of push buttons to enable touch-based interaction. Adaptation of presentation properties can also be generated, either completely or partially unsupervised, according to the collective behavior of a set of web page users~\cite{Leiva:2012,Leiva:2018}. While a representation of the UI elements subject to adaptation exists in both cases, there is no explicit user or complete UI model to support adaptation.
+\subsubsection{Consolidation of Experience}
+Consolidation of the experience gained with the adaptation operation is a new dimension that is required for future use by learning what happened (\eg by keeping an appropriate operation and discarding an inappropriate one~\cite{Zouhaier:2021}). Five players are likely to be involved (\textit{Who?}): an expert in knowledge management or computational approaches \cite{Jiang:2022}, an experienced designer, the end user, the interactive system and its AUI or any other party. Consolidation can be general, covering the value of operations (weak or strong), or limited to values only (\textit{What?}).
+Consolidation requires software mechanisms (\textit{How?}), \eg ML/DL/RL tools~\cite{Bouzit:2017:PDA,Gaspar:2024,Todi:2021}, which can be external or embedded in the interactive system itself. The support offered can range from simple memorization of experiences to the deduction of new adaptation operations. Results can be organized or not, justified or not, stored internally or externally to the interactive system (\textit{Where?}), and consolidated on-the-fly or off-line (\textit{When?}).
 
 
-\subsubsection{Artificial Intelligence, Machine Learning, and Deep Learning of AUIs}
-AI and ML are at the forefront of driving adaptive capabilities in UIs. These technologies enable systems to learn from data, identify patterns, and make decisions with minimal human intervention. In AUIs, machine learning algorithms can predict user behavior, adapt interfaces to new contexts, and even anticipate future needs by analyzing historical data.
 
-The application of AI in AUIs often involves natural language processing (NLP), image recognition, and predictive analytics. For example, NLP can interpret and respond to user inputs in natural language, enhancing UI accessibility and ease of use. More recently, Reinforcement Learning (RL) of AUIs for Accessibility Context \cite{Zouhaier:2021} exploits three Knowledge Layers depending on the target adaptation: the Disability Knowledge Layer learns the behavior of the structure of the UI depending on the disability profile, the Modality Knowledge Layer learns adaptation facilities based on the couple (UI, profile), and the Platform Knowledge Layer exploits platform knowledge to learn adaptation facilities.
-RL can also train agents to learn how to adapt UIs in a specific context of use to maximize user engagement (which can be measured by electroencephalography \cite{Gaspar:2023}) by using an interaction model in a reward function \cite{Gaspar:2024}. \textsc{Marlui} \cite{Langerak:2024} engaged a user agent that mimics a real user and learns to interact via point-and-click actions with a UI agent that learns UI adaptations, to maximize efficiency by observing the user agent's behavior.
 
-%\textbf{Context-Aware Computing}
-
-Context-aware computing is crucial for the development of AUIs that can intelligently \cite{Jalil:2021} adapt to the user environment \cite{Dubiel:2022}. This approach utilizes sensors, data from the device, and other sources to detect and interpret the surrounding physical and digital environment. Then it adjusts the UI accordingly, addressing factors such as location, time, ambient conditions, and even social context.
-
-For example, an AUI might enlarge buttons on a mobile device when it detects that the user is in a shaky environment, such as riding in a vehicle. Similarly, it might switch to a dark mode in low-light conditions to reduce eye strain. 
-
-% \textbf{User Modeling and Simulation}
-
-% User modeling is a computational technique used to represent the behaviors, preferences, and abilities of users within a system. These models are often simulated to predict how changes to the UI will affect user performance and satisfaction. By creating detailed user models, AUIs can adapt to the specific needs and limitations of individual users, enhancing accessibility and usability.
-
-% Simulations allow designers to test and refine adaptive interfaces under varied conditions and with virtual users before deploying them in real-world environments. This approach is particularly beneficial for assessing the usability of interfaces in scenarios that are difficult to replicate physically or where user testing might be impractical or costly.
-
-%\textbf{Adaptive Algorithms}
-
-Adaptive algorithms are designed to modify and control their behavior based on feedback or changes in their operating environment. In AUIs, these algorithms adjust the UI in response to user interactions. They manage the layout, content, and functionality of the UI based on real-time data to optimize the user experience.
-
-For example, an adaptive algorithm might alter the UI layout when it detects that the user frequently accesses certain features but ignores others~\cite{Schlee:2004}. It could bring those frequently used features to a more prominent position within the UI. For example, AUI layout and widgets constraints feed a fuzzy constraint satisfaction problem to dynamically adapt them in a graphical UI depending on the screen resolution and the window size (\autoref{fig:fwl})~\cite{Yanagida:2023}.
-
-\begin{figure}
+\section{Practical Lessons from Experience}
+Existing methods for designing UIs of interactive systems (\eg \cite{Cockton:1987,Gulliksen:2003}) still apply to AUIs, but with the need to pay attention to the context of use and the quality of the use. For both of them, it must be understood that they may result either from user-centered requirements elicited during the \textsf{Analysis} phase (see the \textsf{Problem} part of the design process in \autoref{fig:Gulliksen}) or from design choices made by the practitioner (see the \textsf{Solution} part of the design process in \autoref{fig:Gulliksen}). Several lessons can be drawn from experience. \textbf{Lesson n°1} recommends considering explicitly both the context of use and the quality in use, together with their rationale. User-centered requirements ``must'' be satisfied, while practitioner's decisions ``should'' be preserved for interaction continuity.
+\begin{figure}[b]
     \centering
-    \includegraphics[width=\textwidth]{Images/FWL.pdf}
-    \caption{Adaptive layout and widgets depending on screen resolution~\cite{Yanagida:2023}.}
-    \label{fig:fwl}
+    \vspace{-16pt}
+    \includegraphics[width=.95\textwidth]{Images/UCSD.pdf}
+    \vspace{-8pt}
+    \caption{Gulliksen's method for designing UIs, adapted from \cite{Gulliksen:2003} (Illustration by courtesy of Jan Gulliksen and Bengt Göransson).}
+    \label{fig:Gulliksen}
 \end{figure}
+Once the context of use is determined and the quality in use is decided accordingly, \textbf{lesson from experience n°2} recommends reasoning for the transitions, considering the change from one context of use to another. The \textbf{lesson from experience n°3} recommends designing a UI first for the most constrained context of use, \ie the one combining the most constrained user, platform, and environment. This ``reference UI'' could then be considered for designing UIs for other contexts of use by progressively relaxing, which is referred to as \textit{progressive enhancement}, the inverse of \textit{graceful degradation}~\cite{Florins:2004}. Serna \etal~\cite{Serna:2010} demonstrates that this improves the quality of use of the resulting UIs. Consequently, \textbf{lesson from experience n°4} consists of using the AUIs as a means for quality, \ie to consider very constrained contexts of use, even if they are not targeted, just for quality.
 
-The use of computational design in AUIs represents a significant shift towards more dynamic, responsive, and personalized user experiences. By harnessing model-driven engineering, artificial intelligence, context-aware computing, user modeling, and adaptive algorithms, designers can create UIs that not only meet the diverse needs of users but also anticipate and adapt to changes in user behavior and environmental conditions. These technologies foster a deeper integration of human factors into system design, leading to UIs that are not only more functional but also more intuitive and satisfying to use. As these computational techniques continue to evolve, the potential for creating truly intelligent and adaptive UIs will expand, offering new possibilities to improve interaction.
+\section{Conclusion and Perspectives}
+\label{sec:conclusion}
+This paper provides an overview of UI adaptation since its inception until recent days, by focusing mainly on adaptive UIs, where adaptation is ensured by the interactive system or application itself, as opposed to adaptable UIs (where the end-user is responsible for adapting the UI) and mixed-initiative UIs (where the system and the end-user collaborate to ensure the adaptation).
 
+For this purpose, we discuss the traditional questions of adaptation (\ie what to adapt, why to adapt, how to adapt, with regard to what, who controls the adaptation, when to adapt, and where to adapt) that need to be answered when adaptation should be implemented in a UI. We then presented a generic UI adaptation life cycle, which can be decomposed into seven stages (\eg ranging from UI adaptation goals to evaluation of adaptation). A targeted literature review resulted in a discussion of existing and future challenges encountered in adaptation and in recent advances in the domain, such as those induced by computational approaches. We then presented a comprehensive problem space for UI adaptation made up of two hemispheres: one for the specification of the adaptation operation (which is the cornerstone of adaptivity) and one for the specification of the implementation of adaptation. The first hemisphere is further decomposed into four quadrants: condition, event, action, and value. The second hemisphere is further divided into four stages: definition, execution, evaluation, and consolidation. From experience, we believe that these structuring elements inform and guide the engineering of adaptive UIs.
 
+The greatest challenge posed by adaptation, now and in the future, is that of the evolution of adaptation. Adaptivity is inevitably an evolutionary process for both the end-user and the interactive system. Users evolve in their experience, the way they perform interactive tasks, and in their preferences. The environment in which they evolve also evolves inexorably. The interactive system cannot remain unaffected by these changes. To date, numerous methods have been applied to compensate for this lack of evolution, mainly by adding new adaptation rules, modifying and improving their application strategies, or taking better account of user parameters. This compensation remains insufficient to draw relevant and useful conclusions about the future of the interactive system.
 
-% \textbf{Integrated Model-Driven Development of Self-Adaptive User Interfaces} This case study discussed in "Integrated model-driven development of self-adaptive user interfaces" highlights the implementation of an MBD approach in developing a UI that automatically adjusts according to the user's current context and device capabilities. The system utilizes context-aware models to detect changes in the user's environment and adapts the UI components dynamically to provide an optimal user experience.\item 
+That is why machine learning, in general, \cite{Mahdavinejad:2018} and reinforcement learning in particular offer many suitable advantages, enabling us to take into account how the UI evolves in its context of use. The most recent advances \cite{Gaspar:2024,Langerak:2024,Todi:2021,Zouhaier:2021,Mezhoudi:2021,Eloi:2024} are heading in this direction, and are already taking constructive steps towards overcoming this lack of consideration for evolution. A second potential avenue is to determine to what extent adaptation can be fragmented in time and space (\eg Todi \etal \cite{Todi:2021} gradually transform graphical adaptive menus, Bouzit \etal \cite{Bouzit:2016} suggest step-by-step progress and adaptation in mobile menus) to deliver an adaptation experience that would reduce adverse effects~\cite{Lavie:2010}, such as disruption~\cite{Hui:2009}.
+
+We hope that the future will allow us to determine the best methods, techniques, and algorithms to ensure the best possible adaptivity. Meanwhile, lessons from experience are reported to reconcile generic know-how in engineering HCI and specific advances in AUIs.
+
+ 
