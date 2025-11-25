@@ -11,7 +11,7 @@ and
 \end{enumerate}
 
 Figure~\ref{fig:circle} sets out these three aspects with the object, power and quality dials, which we refine into six non-oriented axes:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item For the manipulated objects dial: nature of objects and type of object visualization,
     \item For the power quadrant: services offered and extensibility of the interaction language,
     \item For the qualities quadrant: level of categorization and level of user control.
@@ -23,7 +23,7 @@ In the following sections, we present each of these axes in detail.
 
 In the context of UI adaptation, there are many design spaces \cite{Alvarez:2009,Bouzit:2017:PDA,Vanderdonckt:2020}, taxonomies \cite{Kuhme:1992,Dieterich:1994}, and frameworks \cite{Calvary:2002,Lopez:2007,Nivethika:2013,Dubiel:2022}, each shedding light on different perspectives based on the authors' concerns. Here, we adopt a comprehensive approach for the specification of UI adaptation, while also considering the quality of adaptation. We propose a dual problem space model called \textsc{Hemispheres} \cite{Calvary:2007}, designed for the engineering of ``plastic'' interactive systems \cite{Sottet:2007,Sottet:2008,Vanderdonckt:2008,Vanderdonckt:2008:multi}, i.e. systems whose adaptation preserves quality in use over the evolution of the context of use. This problem space separates concerns into two areas:
 
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item The specification of the adaptation operation (\eg ``If the battery gets low, then migrate the UI to the nearest platform'');
     \item The specification of the adaptation implementation (\eg including when and how to adapt).
 \end{itemize}
@@ -40,7 +40,7 @@ The right hemisphere (Adaptation operation) and left hemisphere (Life cycle) are
 \end{figure}
 \subsection{The Right Hemisphere for the Specification of Adaptation Operations}
 The right hemisphere examines the specification of \textit{adaptation operations}, which under condition associate a response to a change in the context of use, aiming to preserve a certain set of values, such as quality factors, altogether contributing to the system's worth. The overall format of an adaptation operation is: \textsc{On Event, If Condition, Then Action for Value(s)}. For example, in the adaptation operation ``If the laptop battery gets low, when a smartphone becomes available around, then propose migrating the UI from the laptop to the smartphone'':
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item The \textsc{Condition} concerns the battery state of the laptop: ``If the battery gets low'';
     \item The \textsc{Event} occurs when the context of use changes with the arrival of the smartphone: ``when a smartphone becomes available around'';
     \item The \textsc{Action} proposed in response to this contextual change response is a UI migration: ``then propose migrating the UI from the laptop to the smartphone'';

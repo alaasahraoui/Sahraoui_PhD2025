@@ -11,7 +11,7 @@
 
 Ambient intelligent environments, such as smart homes, intelligent meeting rooms, or context-aware workspaces, automatically tailor UIs to situational factors (user preferences, devices at hand, physical environment) in order to enhance usability. This vision of ubiquitous computing promises UIs that seamlessly ``mold'' to their context of use, \ie exhibit \textit{plasticity}~\cite{Calvary:2007}. Adaptive User Interfaces (AUIs) incorporate \textit{adaptivity}: the ability of the system to autonomously adjust UI content, layout, or behavior in response to contextual changes~\cite{Browne:1990}. Typical examples include a smartphone application switching to a dark theme at night, or a car dashboard simplifying its display when the driver’s cognitive load is high. These adaptive capabilities are associated with several \textbf{anticipated advantages}~\cite{Gajos:2008,Gajos:2010}:
 
-\begin{itemize}
+\begin{itemize}[noitemsep]
   \item \textbf{Improved efficiency:} the system pre-configures the UI for the current context of use, reducing the number of manual steps required from the user.
   \item \textbf{Reduced cognitive load:} by hiding non-relevant functions and emphasizing relevant ones, the UI can become easier to scan and operate.
   \item \textbf{Better fit to the context of use:} adaptation enables the same application to function across a variety of devices, environments, and user profiles, supporting UI plasticity.
@@ -19,12 +19,12 @@ Ambient intelligent environments, such as smart homes, intelligent meeting rooms
 \end{itemize}
 
 However, these benefits often come with important \textit{drawbacks}~\cite{Lavie:2010} when adaptation remains opaque to the user~\cite{Eloi:2024}:
-\begin{itemize}
+\begin{itemize}[noitemsep]
   \item \textbf{Loss of control:} the system may make changes that the user does not understand or did not request, creating a feeling of being ``acted upon'' rather than in charge.
   \item \textbf{Lack of predictability:} if users cannot anticipate when and how the UI will adapt, they may struggle to form stable mental models of the interface.
   \item \textbf{Opacity and ``black-box'' behavior:} adaptation logic frequently operates behind the scenes; users cannot see which rules or models are responsible for changes, nor inspect alternative options.
   \item \textbf{Mismatches and errors:} when system assumptions about relevance are wrong (\eg due to noisy context sensing or biased models), critical information can be hidden or distorted without the user noticing.
-  \item \textbf{Erosion of trust:} repeated unexpected changes and unexplained system decisions can reduce user confidence in the system’s reliability and fairness \cite{Bellotti:2001}.
+  \item \textbf{Erosion of trust:} repeated unexpected changes and unexplained system decisions can reduce user confidence in the system's reliability and fairness \cite{Bellotti:2001}.
 \end{itemize}
 
 Traditional UIs are largely static~\cite{Vanderdonckt:2020}: they require manual reconfiguration if the context changes, placing the burden on users to adapt themselves to the interface. AUIs remove part of this burden but introduce a new problem: because adaptation logic is automated and often invisible, users frequently have no clear way to observe or influence it. The UI might change suddenly without explanation and users are expected to simply accept these changes. In low-stakes scenarios this may remain a mild annoyance (``Why did the font size change on its own?''), but in high-stakes contexts the lack of control can be detrimental.
@@ -43,9 +43,9 @@ Meta-UIs have thus been \textit{reasonably well explored} in the literature and 
 
 \paragraph{From Meta-UI to Extra-UI and Mega-UI.}
 Over time, the meta-UI idea has been refined and extended. Extra-User Interfaces (Extra-UIs) have emerged as a modern evolution of the meta-UI, aiming to more explicitly empower users (and sometimes designers) to intervene in adaptive behaviors at runtime. The terminology was clarified to distinguish levels of control granularity in what Coutaz \etal called the ``(meta–extra–mega)-UI'' framework \cite{Demeure:2011}, in whic:
-\begin{itemize}
+\begin{itemize}[noitemsep]
   \item an \textbf{Extra-UI} provides mechanisms to observe and modify \emph{UI design decisions} at runtime by exposing the underlying UI models (for instance, allowing a user to redistribute UI components across available devices, or adjust interface parameters);
-  \item a \textbf{Meta-UI} (in the updated sense) goes a level deeper, letting designers alter or extend the \emph{language or model} that defines the UI (\eg introducing new interaction modalities or rules into the UI’s specification);
+  \item a \textbf{Meta-UI} (in the updated sense) goes a level deeper, letting designers alter or extend the \emph{language or model} that defines the UI (\eg introducing new interaction modalities or rules into the UI's specification);
   \item a \textbf{Mega-UI} is a hypothetical superset that permits observation and control of \emph{everything} in the interactive system-including the base UI, any Extra-UIs and Meta-UIs, and the relationships among them (\eg a Mega-UI could manage model-to-model transformations ~\cite{Sottet:2010} or the entire adaptation infrastructure itself) \cite{Vanderdonckt:2009}.
   \^item a \textbf{Supra-UI}
 \end{itemize}
@@ -56,9 +56,9 @@ While the Meta-UI concept has been revisited in various works, the Extra-UI noti
 
 \paragraph{Extra-User Interfaces as focal concept.}
 In line with this progression, Extra-User Interfaces serve as the focal point of our research. An Extra-UI can be seen as an interface layer that sits ``above'' or ``around'' the regular user interface of an application, with the dedicated purpose of making adaptation \textit{observable} and \textit{controllable} by users in real time. Rather than the system adapting silently and unilaterally, an Extra-UI offers tools for the user to~\cite{Melchior:2010}:
-\begin{itemize}
+\begin{itemize}[noitemsep]
   \item \textbf{Discover} what adaptive changes are possible or ongoing (e.g., viewing which UI elements have changed, which contextual rules fired, or which resources are available);
-  \item \textbf{Remodel} or adjust the UI’s configuration (e.g., rearrange layout or swap a widget for an alternative);
+  \item \textbf{Remodel} or adjust the UI's configuration (e.g., rearrange layout or swap a widget for an alternative);
   \item \textbf{Redistribute} parts of the interface across multiple screens or devices;
   \item \textbf{Parameterize} adaptive behaviors (e.g., tuning the sensitivity of a gesture recognizer or the threshold of an alert);
   \item \textbf{Extend} the interface with new functionality or content on the fly.
