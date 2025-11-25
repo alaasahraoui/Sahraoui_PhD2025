@@ -1,3 +1,4 @@
+
 \chapter{Operationalizing Extra-User Interfaces: Model-Driven Methods, Use Cases, and Prototypes}
 \label{chap:operationalization}
 
@@ -14,7 +15,7 @@ The objective of this chapter is threefold:
     \item To analyze these implementations as use cases of the design space introduced in Chapter~\ref{chap:design}, and to extract design lessons for future Extra-UIs.
 \end{itemize}
 
-he chapter is structured as follows. Section~\ref{sec:chap4-from-design-space} connects the design space to the requirements and constraints of the SYMBIOTIK project. Section~\ref{sec:chap4-model-driven} presents the underlying models that drive the Extra-UI: user models, adaptation models, and adaptation operations. Section~\ref{sec:chap4-arch} introduces the architecture of the SYMBIOTIK adaptation engine and its Extra-UI. Section~\ref{sec:chap4-usecase-panel} details the SYMBIOTIK adaptation panel as a concrete Extra-UI that guides users through a seven-stage adaptation cycle. Section~\ref{sec:chap4-evolution} describes three successive implementations of the adaptation engine, including the current version used for a user study and for integration with a reinforcement learning (RL) module. Section~\ref{sec:chap4-discussion} discusses the main design lessons with respect to user control, transparency, and the design space. Section~\ref{sec:chap4-conclusion} concludes and prepares the transition toward the evaluation of Extra-UIs in the next chapter.
+The chapter is structured as follows. Section~\ref{sec:chap4-from-design-space} connects the design space to the requirements and constraints of the SYMBIOTIK project. Section~\ref{sec:chap4-model-driven} presents the underlying models that drive the Extra-UI: user models, adaptation models, and adaptation operations. Section~\ref{sec:chap4-arch} introduces the architecture of the SYMBIOTIK adaptation engine and its Extra-UI. Section~\ref{sec:chap4-usecase-panel} details the SYMBIOTIK adaptation panel as a concrete Extra-UI that guides users through a seven-stage adaptation cycle. Section~\ref{sec:chap4-evolution} describes three successive implementations of the adaptation engine, including the current version used for a user study and for integration with a reinforcement learning (RL) module. Section~\ref{sec:chap4-discussion} discusses the main design lessons with respect to user control, transparency, and the design space. Section~\ref{sec:chap4-conclusion} concludes and prepares the transition toward the evaluation of Extra-UIs in the next chapter.
 
 \section{From Design Space to Project Requirements}
 \label{sec:chap4-from-design-space}
@@ -67,6 +68,13 @@ The first pillar of the model-driven method is an explicit user model. In SYMBIO
     \item adaptation life cycle preferences (cycle preferences, sense and measure preferences, locations of log files).
 \end{itemize}
 
+\begin{figure}[htbp]
+    \centering
+    % TODO: \includegraphics[width=\linewidth]{figures/symbiotik-user-class}
+    \caption{UML diagram of the SYMBIOTIK \texttt{User} class and related classes.}
+    \label{fig:symbiotik-user-class}
+\end{figure}
+
 This model serves several roles in the Extra-UI:
 \begin{itemize}
     \item It supports initial configuration of adaptation behavior through the user profile page.
@@ -88,6 +96,13 @@ The second pillar is a model of the adaptation itself. SYMBIOTIK adopts a seven-
     \item \textbf{Adaptation interpretation.} The interpretation of changes in user-based measures after adaptation, for example how performance, error rates, or cognitive load evolved.
     \item \textbf{Adaptation evaluation.} User and system evaluations of the adaptation, including ratings, scales, and comparisons with baseline behavior.
 \end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    % TODO: \includegraphics[width=\linewidth]{figures/symbiotik-adaptation-class}
+    \caption{UML diagram of the \texttt{Adaptation} class and its core subcomponents.}
+    \label{fig:symbiotik-adaptation-class}
+\end{figure}
 
 By grounding each stage in an explicit submodel, the Extra-UI can offer dedicated UI components for editing, inspecting, and evaluating each part of the adaptation. This modularity also supports traceability from user actions in the Extra-UI to changes in the underlying adaptation model.
 
@@ -149,6 +164,13 @@ At the architectural level, the SYMBIOTIK adaptation engine comprises two logica
 
 Figure~\ref{fig:symbiotik-architecture} provides an overview of this architecture, including interactions with the AVT module and external services such as authentication (Keycloak), Kafka-based event streams, and the RL module.
 
+\begin{figure}[htbp]
+    \centering
+    % TODO: \includegraphics[width=\linewidth]{figures/symbiotik-architecture}
+    \caption{Architecture of the SYMBIOTIK adaptation engine, showing the intelligent driver, adaptation engine, AVT, and external services.}
+    \label{fig:symbiotik-architecture}
+\end{figure}
+
 \subsection{Front-end, back-end, database, and AVT integration}
 \label{subsec:chap4-tech-arch}
 
@@ -189,6 +211,20 @@ The next section details how this panel is used in a concrete use case to guide 
 
 When a user reaches the SYMBIOTIK adaptation panel, the first interaction is authentication. The Extra-UI provides sign-in and sign-up pages for creating and accessing user accounts (Figures~\ref{fig:symbiotik-signin} and~\ref{fig:symbiotik-signup}). Users can register with a unique username and password, and administrators can assign roles and permissions.
 
+\begin{figure}[htbp]
+    \centering
+    % TODO: \includegraphics[width=0.7\linewidth]{figures/symbiotik-signin}
+    \caption{Sign-in page of the SYMBIOTIK adaptation panel.}
+    \label{fig:symbiotik-signin}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    % TODO: \includegraphics[width=0.7\linewidth]{figures/symbiotik-signup}
+    \caption{Sign-up page of the SYMBIOTIK adaptation panel.}
+    \label{fig:symbiotik-signup}
+\end{figure}
+
 From the design space perspective, this step configures the \emph{subject} of adaptation: instead of adapting for a generic user, the Extra-UI works with a personalized user model bound to a specific account.
 
 \subsection{Configuring user preferences and sensing}
@@ -204,6 +240,34 @@ Once authenticated, users can access their profile and set preferences that will
 
 Figures~\ref{fig:symbiotik-profile-general}--\ref{fig:symbiotik-profile-measures} illustrate these sections. These configurations instantiate the design space along the \emph{object} axis (which measures and devices are manipulated) and influence the \emph{qualities} axis (e.g., the granularity and invasiveness of sensing, the level of automation that is acceptable for the user).
 
+\begin{figure}[htbp]
+    \centering
+    % TODO: \includegraphics[width=\linewidth]{figures/symbiotik-profile-general}
+    \caption{General section of the user profile in the SYMBIOTIK adaptation panel.}
+    \label{fig:symbiotik-profile-general}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    % TODO: \includegraphics[width=\linewidth]{figures/symbiotik-profile-preferences}
+    \caption{Preferences section of the user profile, where users configure their adaptation preferences.}
+    \label{fig:symbiotik-profile-preferences}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    % TODO: \includegraphics[width=\linewidth]{figures/symbiotik-profile-devices}
+    \caption{Sensing devices section of the user profile, where available devices are selected.}
+    \label{fig:symbiotik-profile-devices}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    % TODO: \includegraphics[width=\linewidth]{figures/symbiotik-profile-measures}
+    \caption{Measures section of the user profile, where monitored measures are configured.}
+    \label{fig:symbiotik-profile-measures}
+\end{figure}
+
 \subsection{Creating and running an adaptation cycle}
 \label{subsec:chap4-cycle-ui}
 
@@ -212,23 +276,72 @@ The core functionality of the Extra-UI is to support the creation and execution 
 \paragraph{Goal statement.}
 In the \emph{Goal} section (Figure~\ref{fig:symbiotik-goal}), the user specifies the objective of the adaptation: the type of goal, the optimization operator (e.g., minimize selection time, maximize accuracy), the measure to optimize, and the visual element(s) to be targeted. This stage links the adaptation to measurable objectives and explicit visual targets.
 
+\begin{figure}[htbp]
+    \centering
+    % TODO: \includegraphics[width=\linewidth]{figures/symbiotik-goal}
+    \caption{Goal configuration section in the SYMBIOTIK adaptation panel, where users define the objective of the adaptation.}
+    \label{fig:symbiotik-goal}
+\end{figure}
+
 \paragraph{Initiative.}
 In the \emph{Initiative} section (Figure~\ref{fig:symbiotik-initiative}), the user chooses which agent should trigger the adaptation (e.g., the user, the intelligent driver, an RL module, or a mixed-initiative combination), as well as the temporal and contextual conditions that should lead to an adaptation. This stage configures the initiative dimension of mixed-initiative interfaces~\cite{Horvitz:1999} along the adaptability--adaptivity continuum.
+
+\begin{figure}[htbp]
+    \centering
+    % TODO: \includegraphics[width=\linewidth]{figures/symbiotik-initiative}
+    \caption{Initiative configuration section, where users select who triggers adaptations and under which conditions.}
+    \label{fig:symbiotik-initiative}
+\end{figure}
 
 \paragraph{Specification.}
 In the \emph{Specification} section (Figure~\ref{fig:symbiotik-specification}), the user defines what will be changed in the UI: which adaptation operations will be applied, on which dashboard elements, and with which parameters. Operations can be selected from a catalog, suggested by the adaptation engine based on the scoring function, or specified manually. This stage connects the goal to a concrete set of lateral transformations.
 
+\begin{figure}[htbp]
+    \centering
+    % TODO: \includegraphics[width=\linewidth]{figures/symbiotik-specification}
+    \caption{Specification section of the adaptation panel, where users select and configure adaptation operations.}
+    \label{fig:symbiotik-specification}
+\end{figure}
+
 \paragraph{Application.}
 In the \emph{Application} section (Figure~\ref{fig:symbiotik-application}), the user validates the set of operations and configures application details such as timing, execution mode, and rollback strategies. The Extra-UI thus supports both one-shot and repeatable adaptations, and makes explicit how to recover if an adaptation degrades performance or usability.
+
+\begin{figure}[htbp]
+    \centering
+    % TODO: \includegraphics[width=\linewidth]{figures/symbiotik-application}
+    \caption{Application section, where users control how and when the selected operations are applied.}
+    \label{fig:symbiotik-application}
+\end{figure}
 
 \paragraph{Transition.}
 In the \emph{Transition} section (Figure~\ref{fig:symbiotik-transition}), the user chooses how the transition from the original UI state to the adapted state should be visualized. Options include immediate changes, animated transitions~\cite{Dessart:2012,Schlienger:2007}, or progressive disclosure. This stage is crucial to preserve users’ mental models and to mitigate change blindness.
 
+\begin{figure}[htbp]
+    \centering
+    % TODO: \includegraphics[width=\linewidth]{figures/symbiotik-transition}
+    \caption{Transition configuration section, where users select how adaptations are visually introduced.}
+    \label{fig:symbiotik-transition}
+\end{figure}
+
 \paragraph{Interpretation.}
 In the \emph{Interpretation} section (Figure~\ref{fig:symbiotik-interpretation}), the Extra-UI displays summary statistics and visual feedback on how the chosen measures evolved after adaptation. This may include performance metrics, error rates, or cognitive load indicators gathered from sensing devices~\cite{GasparFigueiredo:2023}. The user can inspect these outcomes in relation to the original goal.
 
+\begin{figure}[htbp]
+    \centering
+    % TODO: \includegraphics[width=\linewidth]{figures/symbiotik-interpretation}
+    \caption{Interpretation section, showing feedback on how measures evolved after adaptation.}
+    \label{fig:symbiotik-interpretation}
+\end{figure}
+
 \paragraph{Evaluation.}
 Finally, in the \emph{Evaluation} section (Figure~\ref{fig:symbiotik-evaluation}), the user can rate the adaptation using scales or questionnaires, compare it to baselines, and decide whether to accept it, reject it, or trigger a new cycle with modified parameters. The system can also compute automatic evaluations based on the optimization objective.
+
+\begin{figure}[htbp]
+    \centering
+    % TODO: \includegraphics[width=\linewidth]{figures/symbiotik-evaluation}
+    \caption{Evaluation section, where users assess the adaptation and decide on acceptance or further changes.}
+    \label{fig:symbiotik-evaluation}
+\end{figure}
 
 Not all stages need to involve the user at runtime. When all stages are driven by the user, the adaptation corresponds to full adaptability. When all stages are executed automatically based on predefined policies and learned models, the adaptation corresponds to full adaptivity. Intermediate levels can be defined by selectively involving the user in some stages while performing others transparently.
 
@@ -362,4 +475,6 @@ This chapter has operationalized the concept of Extra-User Interfaces introduced
 
 The next chapter will ...................
 .......................
+```
 
+ 
