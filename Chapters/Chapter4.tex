@@ -10,12 +10,12 @@ I adopt a broad definition of Extra-UIs as \emph{any user interface aimed at sup
 
 The objective of this chapter is threefold:
 \begin{itemize}
-    \item To present a model-driven method for engineering Extra-UIs, grounded in explicit models of users, adaptations, and adaptation operations.
+    \item To present a model-based method for engineering Extra-UIs, grounded in explicit models of users, adaptations, and adaptation operations.
     \item To describe how this method has been instantiated in the SYMBIOTIK project through several successive implementations of an adaptation engine and its Extra-UI.
     \item To analyze these implementations as use cases of the design space introduced in Chapter~\ref{chap:design}, and to extract design lessons for future Extra-UIs.
 \end{itemize}
 
-The chapter is structured as follows. Section~\ref{sec:chap4-from-design-space} connects the design space to the requirements and constraints of the SYMBIOTIK project. Section~\ref{sec:chap4-model-driven} presents the underlying models that drive the Extra-UI: user models, adaptation models, and adaptation operations. Section~\ref{sec:chap4-arch} introduces the architecture of the SYMBIOTIK adaptation engine and its Extra-UI. Section~\ref{sec:chap4-usecase-panel} details the SYMBIOTIK adaptation panel as a concrete Extra-UI that guides users through a seven-stage adaptation cycle. Section~\ref{sec:chap4-evolution} describes three successive implementations of the adaptation engine, including the current version used for a user study and for integration with a reinforcement learning (RL) module. Section~\ref{sec:chap4-discussion} discusses the main design lessons with respect to user control, transparency, and the design space. Section~\ref{sec:chap4-conclusion} concludes and prepares the transition toward the evaluation of Extra-UIs in the next chapter.
+The chapter is structured as follows. Section~\ref{sec:chap4-from-design-space} connects the design space to the requirements and constraints of the SYMBIOTIK project. Section~\ref{sec:chap4-model-driven} presents the underlying models that drive the Extra-UI: user models, adaptation models, and adaptation operations. Section~\ref{sec:chap4-arch} introduces the architecture of the SYMBIOTIK adaptation engine and its Extra-UI. Section~\ref{sec:chap4-usecase-panel} details the SYMBIOTIK adaptation panel as a concrete Extra-UI that guides users through a seven-stage adaptation cycle. Section~\ref{sec:chap4-evolution} describes two successive implementations of the adaptation engine, including the current version used for a user study and for integration with a reinforcement learning (RL) module. Section~\ref{sec:chap4-discussion} discusses the main design lessons with respect to user control, transparency, and the design space. Section~\ref{sec:chap4-conclusion} concludes and prepares the transition toward the evaluation of Extra-UIs in the next chapter.
 
 \section{From Design Space to Project Requirements}
 \label{sec:chap4-from-design-space}
@@ -50,15 +50,15 @@ The non-functional requirements further refine the qualities dial of the design 
     \item \textbf{Documentation.} Users, administrators, and developers must have access to comprehensive documentation on how to use, configure, and maintain the adaptation engine and its Extra-UI.
 \end{itemize}
 
-These requirements articulate the expectations placed on Extra-UIs in a real-world, multi-partner European project. They guide the model-driven approach presented in the next section.
+These requirements articulate the expectations placed on Extra-UIs in a real-world, multi-partner European project. They guide the model-based approach presented in the next section.
 
-\section{Model-Driven Methods for Extra-UIs}
+\section{Model-Based Methods for Extra-UIs}
 \label{sec:chap4-model-driven}
 
 \subsection{Modeling the user: preferences, context of use, and adaptation profile}
 \label{subsec:chap4-user-model}
 
-The first pillar of the model-driven method is an explicit user model. In SYMBIOTIK, the user model is captured by a \texttt{User} class and related classes, represented in a UML diagram (Figure~\ref{fig:symbiotik-user-class}). This class encodes both static and dynamic user attributes relevant to UI adaptation:
+The first pillar of the model-based method is an explicit user model. In SYMBIOTIK, the user model is captured by a \texttt{User} class and related classes, represented in a UML diagram (Figure~\ref{fig:symbiotik-user-class}). This class encodes both static and dynamic user attributes relevant to UI adaptation:
 \begin{itemize}[noitemsep]
     \item identity and contact attributes (first and last name, email);
     \item psychological and experiential attributes (MBTI profile, experience level with the adaptation engine);
@@ -124,31 +124,6 @@ Each adaptation operation is characterized by:
 \end{itemize}
 
 In earlier work on adaptive menus, preference scores were used to rank different adaptive menu variants (e.g., greyscale, transparency, highlighting) according to empirical acceptance~\cite{Lavie:2010}. In SYMBIOTIK, preference scores are combined with other signals to rank operations and to support recommendation.
-
-\subsection{Scoring and recommendation of adaptation operations}
-\label{subsec:chap4-scoring-knn}
-
-To promote user control while leveraging past behavior and expert knowledge, the adaptation engine integrates scoring and recommendation mechanisms for adaptation operations. The scoring function considers several perspectives:
-\begin{itemize}[noitemsep]
-    \item a \emph{score of changes} (SC), which increases when a user modifies an operation suggested by the engine;
-    \item a \emph{score of unchanges} (SU), which increases when a user leaves a suggested operation unchanged;
-    \item a \emph{design score} (SA), which captures expert judgment on the quality and relevance of an operation;
-    \item a \emph{global score} (SG), which summarizes how frequently an operation is executed, possibly taking into account recency and popularity.
-\end{itemize}
-
-A basic scoring function can be expressed as:
-\[
-\text{Score}(\text{operation}) = P \times SC + D \times SU
-\]
-where \(P\) and \(D\) weight how often an operation is actively selected versus merely accepted as default. A more advanced scoring function enriches this with global and design scores:
-\[
-\text{Score}(\text{operation}) = P \times SC + D \times SU + T \times SG + f(w, SA)
-\]
-where \(T\) is the total number of executions and \(f(w,SA)\) integrates designer recommendations with configurable weights.
-
-To turn these scores into recommendations, a k-nearest neighbors (k-NN) algorithm is used in a lazy-learning fashion~\cite{Zhang:2007}. Each user is associated with a vector over adaptation operations, where each component reflects whether an operation has been accepted (+1), rejected (-1), or never used (0). A similarity matrix is computed over users, and prediction scores are obtained by weighting other users’ choices by their similarity to the current user. Four compatibility scores distinguish between null, undetermined, compatible, and incompatible usage patterns, allowing the Extra-UI to balance exploration and exploitation when suggesting operations.
-
-This model-driven and data-driven selection mechanism is not directly visible to the user. It is mediated by the Extra-UI, which presents candidate operations in a ranked list, allows the user to inspect and modify them, and logs subsequent behavior for future refinement.
 
 \section{Architecture of the SYMBIOTIK Adaptation Engine}
 \label{sec:chap4-arch}
@@ -345,7 +320,7 @@ Finally, in the \emph{Evaluation} section (Figure~\ref{fig:symbiotik-evaluation}
 
 Not all stages need to involve the user at runtime. When all stages are driven by the user, the adaptation corresponds to full adaptability. When all stages are executed automatically based on predefined policies and learned models, the adaptation corresponds to full adaptivity. Intermediate levels can be defined by selectively involving the user in some stages while performing others transparently.
 
-\section{Evolution of the Adaptation Engine Through Three Implementations}
+\section{Evolution of the Adaptation Engine Through Two Implementations}
 \label{sec:chap4-evolution}
 
 \subsection{First implementation: architecture and model grounding}
@@ -358,26 +333,12 @@ The first implementation of the adaptation engine served to operationalize the s
     \item implementing a preliminary set of adaptation operations and their execution on dashboard configurations.
 \end{itemize}
 
-This implementation validated the feasibility of using a model-driven approach to connect user profiles, adaptation goals, and concrete operations on dashboards. It also provided early feedback on the usability of the Extra-UI for editing complex adaptation models.
+This implementation validated the feasibility of using a model-based approach to connect user profiles, adaptation goals, and concrete operations on dashboards. It also provided early feedback on the usability of the Extra-UI for editing complex adaptation models.
 
-\subsection{Second implementation: scoring function and recommendation engine}
+\subsection{Second implementation: user study engine and RL-integrated engine}
 \label{subsec:chap4-second-impl}
 
-The second implementation focused on the selection of adaptation operations through a scoring function and a k-NN recommendation engine. It built upon earlier work on adaptive forms and menus and was instantiated in a form-based adaptive system for a car rental case study.
-
-In this case study, users could adapt form widgets (such as text fields and text areas) based on their preferences and tasks. User actions were logged and fed into the scoring function, and a k-NN algorithm suggested operations that similar users had found beneficial. A user study with 55 participants showed that over time, users’ adaptations converged toward a set of preferred widgets for each field, indicating that the combination of user-driven and engine-driven adaptation could stabilize on configurations that were broadly acceptable.
-
-From an Extra-UI perspective, this implementation demonstrated that:
-\begin{itemize}[noitemsep]
-    \item exposing recommendations as ranked options within an Extra-UI can support progressive tailoring without forcing users to accept opaque adaptations;
-    \item logging adaptation choices and outcomes creates a feedback loop that can improve future recommendations;
-    \item scoring factors and similarity metrics can be tuned to balance expert-designed operations with end-user preferences.
-\end{itemize}
-
-\subsection{Third implementation: user study engine and RL-integrated engine}
-\label{subsec:chap4-third-impl}
-
-The third implementation, which is the current version in SYMBIOTIK, consists of two closely related variants of the adaptation engine. Both use the same core architecture (React front-end, Node.js/Express or NestJS back-end, MongoDB, Kafka, Socket.IO, and AVT), but differ in how adaptation operations are triggered and selected.
+The second implementation, which is the current version in SYMBIOTIK, consists of two closely related variants of the adaptation engine. Both use the same core architecture (React front-end, Node.js/Express or NestJS back-end, MongoDB, Kafka, Socket.IO, and AVT), but differ in how adaptation operations are triggered and selected.
 
 \paragraph{Adaptation engine for user study.}
 The first variant was designed to support a controlled user study (Experiment \#5 in SYMBIOTIK Deliverable D3.3). The Extra-UI allows experimenters to configure study conditions:
@@ -471,7 +432,7 @@ Future work could explore:
 \section{Conclusion}
 \label{sec:chap4-conclusion}
 
-This chapter has operationalized the concept of Extra-User Interfaces introduced in earlier chapters by presenting a model-driven method, architecture, and concrete use cases in the context of the SYMBIOTIK project. The SYMBIOTIK adaptation panel exemplifies how an Extra-UI can be shipped with an interactive system to govern a full adaptation life cycle, while preserving user control, transparency, and traceability.
+This chapter has operationalized the concept of Extra-User Interfaces introduced in earlier chapters by presenting a model-based method, architecture, and concrete use cases in the context of the SYMBIOTIK project. The SYMBIOTIK adaptation panel exemplifies how an Extra-UI can be shipped with an interactive system to govern a full adaptation life cycle, while preserving user control, transparency, and traceability.
 
 The next chapter will ...................
 .......................
