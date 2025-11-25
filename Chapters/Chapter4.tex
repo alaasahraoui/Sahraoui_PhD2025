@@ -35,7 +35,7 @@ Third, the Extra-UI must mediate between heterogeneous sources of intelligence: 
 \label{subsec:chap4-requirements}
 
 The SYMBIOTIK adaptation engine and its Extra-UI are driven by a set of functional and non-functional requirements that can be expressed as user stories. They instantiate the design space in terms of concrete capabilities of the Extra-UI. The main functional epics include:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item \textbf{Widget and chart management.} Users must be able to reorder, resize, add, and remove widgets and charts on the visualization canvas to adjust the layout to their analytical needs.
     \item \textbf{AI-enabled adaptation control.} Users must be able to enable or disable AI-enabled adaptations for specific widgets and charts, and to configure criteria under which adaptations should be applied.
     \item \textbf{Adaptation engine evaluation.} Users must be able to evaluate the performance of the adaptation engine, provide feedback on the quality of suggested adaptations, and compare AI-enabled adaptations with manual adjustments.
@@ -43,7 +43,7 @@ The SYMBIOTIK adaptation engine and its Extra-UI are driven by a set of function
 \end{itemize}
 
 The non-functional requirements further refine the qualities dial of the design space. They cover:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item \textbf{Usability.} The Extra-UI must remain intuitive enough for analysts, with efficient task execution for configuration and evaluation tasks.
     \item \textbf{Performance and scalability.} Adaptations must be applied within a reasonable time frame and the system must remain responsive under an increasing number of users and dashboards.
     \item \textbf{Security and privacy.} Communications between the Extra-UI, the adaptation engine, and the backend must be secure, and user data must comply with data protection regulations.
@@ -59,7 +59,7 @@ These requirements articulate the expectations placed on Extra-UIs in a real-wor
 \label{subsec:chap4-user-model}
 
 The first pillar of the model-driven method is an explicit user model. In SYMBIOTIK, the user model is captured by a \texttt{User} class and related classes, represented in a UML diagram (Figure~\ref{fig:symbiotik-user-class}). This class encodes both static and dynamic user attributes relevant to UI adaptation:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item identity and contact attributes (first and last name, email);
     \item psychological and experiential attributes (MBTI profile, experience level with the adaptation engine);
     \item global adaptation preferences (overall adaptation level);
@@ -76,7 +76,7 @@ The first pillar of the model-driven method is an explicit user model. In SYMBIO
 \end{figure}
 
 This model serves several roles in the Extra-UI:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item It supports initial configuration of adaptation behavior through the user profile page.
     \item It parameterizes the adaptation life cycle, for example by setting thresholds for cognitive load or determining which sensing devices can be used.
     \item It provides features for similarity computations in recommendation-based selection of adaptation operations, by associating each user with an indexed vector over adaptation operations.
@@ -112,7 +112,7 @@ By grounding each stage in an explicit submodel, the Extra-UI can offer dedicate
 The third pillar consists of adaptation operations that concretely transform the UI. In SYMBIOTIK, an adaptation operation is defined as a high-level function that modifies one or several parts of a concrete UI model, such as the AVT configuration file, while preserving the level of abstraction. Following the Cameleon Reference Framework, such transformations correspond to \emph{lateral adaptations} at the concrete level~\cite{Calvary:2003}.
 
 Each adaptation operation is characterized by:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item a unique identifier and short name;
     \item an optional long description clarifying the expected effect;
     \item a reference to the adaptation strategy it contributes to;
@@ -129,7 +129,7 @@ In earlier work on adaptive menus, preference scores were used to rank different
 \label{subsec:chap4-scoring-knn}
 
 To promote user control while leveraging past behavior and expert knowledge, the adaptation engine integrates scoring and recommendation mechanisms for adaptation operations. The scoring function considers several perspectives:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item a \emph{score of changes} (SC), which increases when a user modifies an operation suggested by the engine;
     \item a \emph{score of unchanges} (SU), which increases when a user leaves a suggested operation unchanged;
     \item a \emph{design score} (SA), which captures expert judgment on the quality and relevance of an operation;
@@ -157,7 +157,7 @@ This model-driven and data-driven selection mechanism is not directly visible to
 \label{subsec:chap4-modules}
 
 At the architectural level, the SYMBIOTIK adaptation engine comprises two logical modules within an adaptation manager:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item The \textbf{Adaptation Intelligent Driver}, responsible for ensuring and managing the entire adaptation life cycle. It parses adaptation strategies (for example, generated by an RL module), selects candidate adaptation operations using the models and scoring functions described above, and orchestrates iterations with the user through the Extra-UI.
     \item The \textbf{Symbiotik Adaptation Engine}, responsible for executing the selected adaptation operations on the concrete UI model. In the SYMBIOTIK project, this corresponds to modifying AVT configuration files that describe dashboard visualizations and pushing updated configurations back to AVT.
 \end{itemize}
@@ -175,7 +175,7 @@ Figure~\ref{fig:symbiotik-architecture} provides an overview of this architectur
 \label{subsec:chap4-tech-arch}
 
 The current implementation is structured around four technical components:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item A \textbf{front-end Extra-UI}, implemented in React and TypeScript, that presents the adaptation panel, user profile pages, configuration controls for experiments, and real-time feedback on applied adaptations. Material-UI and Redux are used respectively for styling and state management.
     \item A \textbf{back-end adaptation service}, implemented with NestJS or Node.js/Express, that processes Extra-UI requests, interfaces with MongoDB, manages experiment trials, and orchestrates adaptation operations.
     \item A \textbf{MongoDB database} that stores user accounts, profiles, preferences, adaptation definitions, and logs.
@@ -188,14 +188,14 @@ Real-time communication between the front-end and back-end is handled via Socket
 \label{subsec:chap4-panel-extra-ui}
 
 The adaptation panel is the extra-UI of the SYMBIOTIK dashboard. It is conceptually distinct from the dashboard UI in several ways:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item It manipulates \emph{models of the dashboard} (AVT configuration, adaptation models, user models), not the underlying data.
     \item It exposes \emph{controls on the adaptation life cycle}, rather than direct analytic filters or visual encodings.
     \item It mediates \emph{mixed-initiative} collaboration between the user and automated modules (scoring engine, RL engine, catalog of operations).
 \end{itemize}
 
 From the perspective of the design space in Chapter~\ref{chap:design}, the adaptation panel:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item manipulates objects such as adaptation goals, operations, strategies, and measures;
     \item offers services such as creating a new adaptation, inspecting and editing existing adaptations, applying or rolling back an adaptation, and evaluating its impact;
     \item provides qualities such as transparency (visualization of strategies and operations), traceability (logging and replay), and a tunable level of user control along the adaptability--adaptivity continuum.
@@ -231,7 +231,7 @@ From the design space perspective, this step configures the \emph{subject} of ad
 \label{subsec:chap4-preferences}
 
 Once authenticated, users can access their profile and set preferences that will guide the adaptation life cycle. The profile is structured into several sections:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item a \textbf{general section} where users specify their overall adaptation level, experience, and MBTI profile;
     \item a \textbf{preferences section} where they indicate how much they want to rely on automated adaptations versus manual control;
     \item a \textbf{sensing devices section} where they define which sensing devices (such as EEG sensors) are available and should be used;
@@ -352,7 +352,7 @@ Not all stages need to involve the user at runtime. When all stages are driven b
 \label{subsec:chap4-first-impl}
 
 The first implementation of the adaptation engine served to operationalize the seven-stage adaptation life cycle and the associated models in a proof-of-concept architecture. It focused on:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item defining the software architecture of the adaptation engine and its integration with AVT;
     \item modeling the \texttt{User} and \texttt{Adaptation} classes and their relationships;
     \item implementing a preliminary set of adaptation operations and their execution on dashboard configurations.
@@ -368,7 +368,7 @@ The second implementation focused on the selection of adaptation operations thro
 In this case study, users could adapt form widgets (such as text fields and text areas) based on their preferences and tasks. User actions were logged and fed into the scoring function, and a k-NN algorithm suggested operations that similar users had found beneficial. A user study with 55 participants showed that over time, users’ adaptations converged toward a set of preferred widgets for each field, indicating that the combination of user-driven and engine-driven adaptation could stabilize on configurations that were broadly acceptable.
 
 From an Extra-UI perspective, this implementation demonstrated that:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item exposing recommendations as ranked options within an Extra-UI can support progressive tailoring without forcing users to accept opaque adaptations;
     \item logging adaptation choices and outcomes creates a feedback loop that can improve future recommendations;
     \item scoring factors and similarity metrics can be tuned to balance expert-designed operations with end-user preferences.
@@ -381,7 +381,7 @@ The third implementation, which is the current version in SYMBIOTIK, consists of
 
 \paragraph{Adaptation engine for user study.}
 The first variant was designed to support a controlled user study (Experiment \#5 in SYMBIOTIK Deliverable D3.3). The Extra-UI allows experimenters to configure study conditions:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item \emph{Frequency} of adaptations (e.g., every 5, 10, 20, 30, or 60 seconds).
     \item \emph{Adaptation mode} (no adaptations, one adaptation at a time, or applying all available adaptations).
     \item \emph{Automation} (randomly generated adaptations versus RL-suggested adaptations).
@@ -390,7 +390,7 @@ The first variant was designed to support a controlled user study (Experiment \#
 \end{itemize}
 
 The back-end manages trials by:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item establishing Kafka consumers for mouse-tracking and dialog events;
     \item scheduling adaptation operations according to the configured frequency and mode;
     \item applying operations from an adaptation catalog to the active graph (timeline, network, or distribution chart);
@@ -401,7 +401,7 @@ This variant instantiates the Extra-UI not only as a tool for end users, but als
 
 \paragraph{RL-integrated adaptation engine.}
 The second variant integrates the adaptation engine with an RL module that suggests adaptation strategies and target graphs. The engine:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item listens to RL events on a dedicated Kafka topic;
     \item maps RL actions to adaptation strategies (e.g., color-based, shape-based, thickness-based, proximity-based, or combinations thereof);
     \item maps RL representations to target graphs (network, timeline, distribution);
@@ -419,7 +419,7 @@ In this configuration, the Extra-UI remains the primary place where users can ob
 \label{subsec:chap4-discussion-control}
 
 The SYMBIOTIK Extra-UI demonstrates that user control can be supported at multiple points in the adaptation life cycle:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item \emph{Before} adaptation, through explicit configuration of goals, initiatives, and specifications.
     \item \emph{During} adaptation, through control over timing, execution mode, and transitions.
     \item \emph{After} adaptation, through interpretation and evaluation stages, logging, and rollback options.
@@ -431,7 +431,7 @@ By associating each stage with a dedicated section in the Extra-UI, the design s
 \label{subsec:chap4-discussion-transparency}
 
 The implementations also highlight the role of Extra-UIs in making adaptations transparent and traceable:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item The adaptation panel exposes which goals, strategies, and operations are in effect.
     \item Real-time feedback shows which graph is currently active and what operation was just applied.
     \item Logs and CSV files provide a persistent record of how the system behaved over time.
@@ -443,7 +443,7 @@ These features make it possible to explain why a certain adaptation occurred and
 \label{subsec:chap4-discussion-designspace}
 
 The SYMBIOTIK use case covers several regions of the design space introduced in Chapter~\ref{chap:design}:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item On the \emph{object} axis, the Extra-UI manipulates user models, adaptation models, and catalogues of adaptation operations, as well as dashboard widgets and measures.
     \item On the \emph{power} axis, it offers services ranging from simple configuration and inspection to complex orchestration of RL-based strategies, and it is extensible through the addition of new operations and strategies.
     \item On the \emph{qualities} axis, it provides a high level of categorization (separate models and stages) and a tunable level of user control (through preferences, initiative configuration, and evaluation tools).
@@ -455,14 +455,14 @@ This coverage shows that the design space is not purely theoretical: it can guid
 \label{subsec:chap4-limitations}
 
 The current implementations also reveal several limitations:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item The configuration interfaces can become complex for non-expert users, especially when multiple measures, devices, and strategies are available.
     \item The scoring and recommendation mechanisms rely on sufficient data to be effective and can be sensitive to the choice of similarity metrics and weighting schemes.
     \item RL integration introduces new challenges in terms of stability, exploration/exploitation trade-offs, and alignment with users’ preferences.
 \end{itemize}
 
 Future work could explore:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item adaptive complexity of the Extra-UI itself, simplifying views for novices and exposing more advanced controls for experts;
     \item richer forms of explanation and what-if analysis, allowing users to simulate the effects of potential adaptations before committing;
     \item explicit modeling and measurement of cognitive, conative, and computational costs of adaptation, in order to assess the symbiosis between the user and the adaptive system~\cite{Zeng:2023}.

@@ -39,7 +39,7 @@ and
 \end{enumerate}
 
 Figure~\ref{fig:circle} sets out these three aspects with the object, power and quality dials, which we refine into six non-oriented axes:
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item For the manipulated objects dial: nature of objects and type of object visualization,
     \item For the power quadrant: services offered and extensibility of the interaction language,
     \item For the qualities quadrant: level of categorization and level of user control.
@@ -51,7 +51,7 @@ In the following sections, we present each of these axes in detail.
 
 In the context of UI adaptation, there are many design spaces \cite{Alvarez:2009,Bouzit:2017:PDA,Vanderdonckt:2020}, taxonomies \cite{Kuhme:1992,Dieterich:1994}, and frameworks \cite{Calvary:2002,Lopez:2007,Nivethika:2013,Dubiel:2022}, each shedding light on different perspectives based on the authors' concerns. Here, we adopt a comprehensive approach for the specification of UI adaptation, while also considering the quality of adaptation. We propose a dual problem space model called \textsc{Hemispheres} \cite{Calvary:2007}, designed for the engineering of ``plastic'' interactive systems \cite{Sottet:2007,Sottet:2008,Vanderdonckt:2008,Vanderdonckt:2008:multi}, i.e. systems whose adaptation preserves quality in use over the evolution of the context of use. This problem space separates concerns into two areas:
 
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item The specification of the adaptation operation (\eg ``If the battery gets low, then migrate the UI to the nearest platform'');
     \item The specification of the adaptation implementation (\eg including when and how to adapt).
 \end{itemize}
@@ -68,7 +68,7 @@ The right hemisphere (Adaptation operation) and left hemisphere (Life cycle) are
 \end{figure}
 \subsection{The Right Hemisphere for the Specification of Adaptation Operations}
 The right hemisphere examines the specification of \textit{adaptation operations}, which under condition associate a response to a change in the context of use, aiming to preserve a certain set of values, such as quality factors, altogether contributing to the system's worth. The overall format of an adaptation operation is: \textsc{On Event, If Condition, Then Action for Value(s)}. For example, in the adaptation operation ``If the laptop battery gets low, when a smartphone becomes available around, then propose migrating the UI from the laptop to the smartphone'':
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item The \textsc{Condition} concerns the battery state of the laptop: ``If the battery gets low'';
     \item The \textsc{Event} occurs when the context of use changes with the arrival of the smartphone: ``when a smartphone becomes available around'';
     \item The \textsc{Action} proposed in response to this contextual change response is a UI migration: ``then propose migrating the UI from the laptop to the smartphone'';
@@ -107,7 +107,7 @@ the frequency of the condition being met. This detailed structure is crucial for
 \subsubsection{Event}
 An \textsc{Event} identifies what has changed in the context of use and justifies an action in response to this change. Key elements include (\autoref{fig:event}):
 
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item The \textsc{variable} of change: the change can concern the user, the platform, or the environment. For example, if the user turns on a smartphone, the variable is the platform, which is now enriched with this device.
     \item The \textsc{nature} of the variation: in this case, it is the arrival (Addition) of a new platform.
     \item The \textsc{initiator} of the variation: here, it is the user.
@@ -122,7 +122,7 @@ The variables identify what has changed in the context of use. According to the 
         \label{fig:hand}
 %        \vspace{-16pt}
     \end{figure}
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item \textsc{Entities:} they pertain to the living or inanimate physical world. An entity is a grouping of observables. By measuring observables, the application can detect the presence of physical world entities, recognize them (\eg by gesture recognition through surfaces~\cite{Sluyters:2024}), track them, and determine the value of their attributes and relationships. We generalize this to all observable components of the context of use: user, platform, and environment (\textsc{Type}).
     \item \textsc{Roles:} they are the functions held by these entities. The roles of input and output devices are predominant. In the past, these roles were assigned to the traditional screen with the keyboard and mouse trio. Today, they are replaced by any physical entity that has the right properties and is observable by the system. For example, a hand, traditionally used as a pointing device, becomes a display surface \cite{Antoniac:2002}. Its proximity to the user and the elongated shape of the fingers make it suitable for menu display (\autoref{fig:hand}). A single entity can have multiple roles. In contrast, a role can be held by several entities simultaneously.
     
@@ -191,7 +191,7 @@ The \textsc{Final UI level} corresponds to the particular implementation of the 
 
 In economics, \textsc{Value} measures the ratio between a benefit and a cost, which is suitable for adaptation, which always induces some benefits and drawbacks for a cost~\cite{Lavie:2010}. In this vein, we consider two elements: the application benefit (which we generalize into any positive or negative effect) and the implementation cost related to the execution of the adaptation operation. The cost is practical, as opposed to the effect, which is theoretical. The effect captures the expected outcomes of the adaptation operation by formulating properties expressed in a given reference frame:
 
-\begin{itemize}
+\begin{itemize}[noitemsep]
     \item \textsc{Ensured} by the application of the adaptation operation: they were not ensured before the application and they become so after the adaptation operation is completed. For example, task continuity is ensured after migration.
     \item \textsc{Preserved}: they were initially satisfied and remained so. For example, a domain concept is observable \cite{Cockton:1987} and is still observable after adaptation.
     \item \textsc{Improved}: they were partially satisfied and are now improved. For example, the cognitive load in terms of informational density is improved by moving to a large screen or multiple displays~\cite{Sluyters:2021}.
@@ -254,7 +254,7 @@ This adaptation operation can be represented as follows:
 
 \textsc{For Supporting expert mode}.
 
-\begin{itemize}
+\begin{itemize}[noitemsep]
 \item \textsc{Event:} the user rotates the smartphone from portrait to landscape mode, where the rotation sensor in the device detects that the phone has been turned.
 \item \textsc{Condition:} the device orientation changes from vertical (portrait) to horizontal (landscape). The rotation must be 90° to transition the screen from portrait to landscape.
 \item \textsc{Action:} the calculator UI reveals advanced functions (scientific mode), modifying the layout and visibility of the interface elements and dynamically adjusting its layout to display more advanced functions like trigonometric operators, exponential functions, and memory functions. In this case, the UI structure remains the same, but its presentation properties (such as visible elements and screen space allocation) are modified to accommodate the additional functions. 
